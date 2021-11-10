@@ -17,7 +17,6 @@
 		"resolveJsonModule": true,
 		"outDir": "dist",
 		"pretty": true,
-		"removeComments": true,
 		"sourceMap": true,
 		"declaration": true,
 		"declarationDir": "types",
