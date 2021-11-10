@@ -1,30 +1,21 @@
 {
-  "name": "apiroyale",
-  "version": "0.0.1",
+  "author": "DTrombett",
   "description": "A Node.js library to interact with the Clash Royale API",
+  "homepage": "https://github.com/DTrombett/apiroyale#readme",
+  "license": "Apache-2.0",
   "main": "dist/index.js",
+  "name": "apiroyale",
   "types": "types/index.d.ts",
-  "scripts": {
-    "test": "eslint src && prettier --check src/**/*.ts && tsc --noEmit",
-    "prepublish": "npm run build",
-    "build": "tsc",
-    "lint": "eslint src/**/*.ts --fix && prettier --write src/**/*.ts",
-    "precommit": "npm run lint && npm run test",
-    "start": "npm run build && node ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DTrombett/apiroyale.git"
-  },
-  "engines": {
-    "node": ">=16.13.0"
-  },
+  "version": "0.0.1",
+  "keywords": [
+    "nodejs",
+    "api",
+    "clash-royale-api",
+    "clashroyale"
+  ],
   "bugs": {
     "url": "https://github.com/DTrombett/apiroyale/issues"
   },
-  "homepage": "https://github.com/DTrombett/apiroyale#readme",
-  "author": "DTrombett",
-  "license": "Apache-2.0",
   "dependencies": {
     "@discordjs/collection": "^0.3.2",
     "@sapphire/async-queue": "^1.1.9",
@@ -37,5 +28,20 @@
     "eslint": "^8.2.0",
     "prettier": "^2.4.1",
     "typescript": "^4.4.4"
+  },
+  "engines": {
+    "node": ">=16.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DTrombett/apiroyale.git"
+  },
+  "scripts": {
+    "test": "eslint src && prettier --check src/**/*.ts && tsc --noEmit",
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts --fix && prettier --write src/**/*.ts",
+    "precommit": "npm run lint && npm run test",
+    "start": "npm run build && node ."
   }
 }
