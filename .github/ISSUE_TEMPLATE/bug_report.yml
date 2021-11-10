@@ -49,19 +49,28 @@ body:
       placeholder: |
         1. Run the code sample
         2. See if the error occurs
+  - type: textarea
+    attributes:
+      label: Code Sample
+      description: A reproducible code sample.
+      placeholder: |
+        import ClientRoyale from "apiroyale";
+
+        const client = new ClientRoyale();
+        client.clans.fetch("#000000").then(console.log)
     validations:
       required: false
-  - type: textarea
+  - type: input
     attributes:
       label: Version
       description: The version of the library you're using.
       placeholder: ex. 1.0.0
-  - type: textarea
+  - type: input
     attributes:
       label: Node.js version
       description: The version of Node.js you're using.
       placeholder: ex. 16.13.0 (This library requires Node.js v16.13.0 or higher)
-  - type: textarea
+  - type: input
     attributes:
       label: Operating System
       description: The operating system you're using.
