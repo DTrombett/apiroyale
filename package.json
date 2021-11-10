@@ -1,0 +1,41 @@
+{
+  "name": "apiroyale",
+  "version": "0.0.1",
+  "description": "A Node.js library to interact with the Clash Royale API",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "test": "eslint src && prettier --check src/**/*.ts && tsc --noEmit",
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts --fix && prettier --write src/**/*.ts",
+    "precommit": "npm run lint && npm run test",
+    "start": "npm run build && node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DTrombett/apiroyale.git"
+  },
+  "engines": {
+    "node": ">=16.13.0"
+  },
+  "bugs": {
+    "url": "https://github.com/DTrombett/apiroyale/issues"
+  },
+  "homepage": "https://github.com/DTrombett/apiroyale#readme",
+  "author": "DTrombett",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@discordjs/collection": "^0.3.2",
+    "@sapphire/async-queue": "^1.1.9",
+    "@tsconfig/node16": "^1.0.2",
+    "@types/node": "^16.11.7"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "eslint": "^8.2.0",
+    "prettier": "^2.4.1",
+    "typescript": "^4.4.4"
+  }
+}

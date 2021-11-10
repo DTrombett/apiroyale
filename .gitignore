@@ -1,0 +1,7 @@
+node_modules/
+*.map
+.env
+coverage/
+*.log
+dist/
+types/
