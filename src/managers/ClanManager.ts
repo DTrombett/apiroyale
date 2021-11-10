@@ -26,8 +26,8 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 
 	/**
 	 * Fetches a clan from the API.
-	 * @param - tag The tag of the clan to fetch
-	 * @param - options The options for the fetch
+	 * @param tag - The tag of the clan to fetch
+	 * @param options - The options for the fetch
 	 */
 	fetch(tag: APITag, options?: FetchOptions): Promise<Clan> {
 		return super.fetch(tag, options);
@@ -35,7 +35,7 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 
 	/**
 	 * Removes a clan from this manager.
-	 * @param - id The id of the clan to remove
+	 * @param id - The id of the clan to remove
 	 * @returns The removed clan, if it exists
 	 */
 	remove(tag: APITag): Clan | undefined {
