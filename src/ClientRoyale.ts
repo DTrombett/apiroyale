@@ -1,8 +1,12 @@
+import EventEmitter from "node:events";
 import { ArenaManager, ClanManager, LocationManager } from "./managers";
 import Rest from "./rest";
 import type { ClientEvents, ClientOptions } from "./util";
 
-export interface ClientRoyale {
+/**
+ * A class to connect to the Clash Royale API
+ */
+export interface ClientRoyale extends EventEmitter {
 	on: <T extends keyof ClientEvents>(
 		event: T,
 		listener: (...args: ClientEvents[T]) => any
@@ -40,7 +44,7 @@ export interface ClientRoyale {
 /**
  * A class to connect to the Clash Royale API
  */
-export class ClientRoyale {
+export class ClientRoyale extends EventEmitter {
 	/**
 	 * A manager for arenas
 	 */
@@ -70,6 +74,8 @@ export class ClientRoyale {
 	 * @param options - Options for the client
 	 */
 	constructor({ token }: ClientOptions = {}) {
+		super();
+
 		if (token != null) this.token = token;
 		if (!this.token) throw new TypeError("No token provided for the client.");
 	}
