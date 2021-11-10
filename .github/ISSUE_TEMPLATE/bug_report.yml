@@ -1,0 +1,70 @@
+name: Bug Report
+description: Report a bug with the library
+title: "bug: "
+labels: ["bug"]
+assignees:
+  - DTrombett
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched and no existing issue exists for the bug I encountered
+          required: true
+  - type: checkboxes
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Contributing Guidelines](https://github.com/DTrombett/apiroyale/blob/main/CONTRIBUTING.md) and our [Code of Conduct](https://github.com/DTrombett/apiroyale/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Contributing Guidelines and Code of Conduct
+          required: true
+  - type: textarea
+    attributes:
+      label: Bug description
+      description: |
+        Please describe the bug you encountered.
+        Remember to use other fields below to describe the bug too.
+      placeholder: ex. When I fetch a clan, I get an error.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: A concise description of what you expect to happen.
+      placeholder: ex. I expect to get a clan object back.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Current Behavior
+      description: A concise description of what you're experiencing.
+      placeholder: ex. I get a TypeError.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the bug.
+      placeholder: |
+        1. Run the code sample
+        2. See if the error occurs
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Version
+      description: The version of the library you're using.
+      placeholder: ex. 1.0.0
+  - type: textarea
+    attributes:
+      label: Node.js version
+      description: The version of Node.js you're using.
+      placeholder: ex. 16.13.0 (This library requires Node.js v16.13.0 or higher)
+  - type: textarea
+    attributes:
+      label: Operating System
+      description: The operating system you're using.
+      placeholder: ex. Windows 11
+    validations:
+      required: false
