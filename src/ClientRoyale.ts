@@ -2,6 +2,7 @@ import EventEmitter from "node:events";
 import { ArenaManager, ClanManager, LocationManager } from "./managers";
 import Rest from "./rest";
 import type { ClientEvents, ClientOptions } from "./util";
+import { Errors } from "./util";
 
 /**
  * A class to connect to the Clash Royale API
@@ -77,7 +78,7 @@ export class ClientRoyale extends EventEmitter {
 		super();
 
 		if (token != null) this.token = token;
-		if (!this.token) throw new TypeError("No token provided for the client.");
+		if (!this.token) throw new TypeError(Errors.tokenMissing());
 	}
 }
 

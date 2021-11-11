@@ -1,5 +1,6 @@
 import { AsyncQueue } from "@sapphire/async-queue";
 import type { ClientRoyale, Json, Path, RequestOptions } from "..";
+import { Errors } from "../util";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
 
@@ -48,9 +49,7 @@ export class Rest {
 		await this.queue.wait();
 
 		if (this.rateLimited && options?.force !== true)
-			throw new Error(
-				"The rest is ratelimited so no other requests are allowed until you set the force option to true"
-			);
+			throw new Error(Errors.restRateLimited());
 
 		const request = new APIRequest(this, path, options);
 

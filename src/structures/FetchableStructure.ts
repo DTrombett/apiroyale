@@ -1,5 +1,5 @@
 import type { Path, FetchOptions, JsonObject } from "../util";
-import Defaults from "../util";
+import Constants from "../util";
 import { Structure } from "./Structure";
 
 /**
@@ -29,7 +29,7 @@ export class FetchableStructure<
 	 */
 	fetch({
 		force = false,
-		maxAge = Defaults.maxAge,
+		maxAge = Constants.defaultMaxAge,
 	}: FetchOptions = {}): Promise<this> {
 		if (!force && Date.now() - this.lastUpdate.getTime() < maxAge)
 			return Promise.resolve(this);

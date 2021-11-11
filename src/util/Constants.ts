@@ -1,5 +1,5 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import type { URLSearchParams } from "node:url";
+import type { URL, URLSearchParams } from "node:url";
 import type ClientRoyale from "..";
 import type {
 	APIRequest,
@@ -12,22 +12,47 @@ import type {
 	Structure,
 } from "..";
 
-export const enum Defaults {
+export const enum Constants {
 	/**
-	 * Default maximum time passed after the structure was last fetched before fetching again. (2 minutes)
+	 * The value to pass to the `Accept` header
 	 */
-	maxAge = 120_000,
+	acceptHeader = "application/json",
 
 	/**
-	 * Default maximum time before cancelling a REST request. (10 seconds)
+	 * The prefix to use for the `Authorization` header
 	 */
-	AbortTimeout = 10_000,
+	authorizationHeaderPrefix = "Bearer ",
 
 	/**
 	 * The base URL for the API
 	 */
-	APIUrl = "https://proxy.royaleapi.dev/v1",
+	baseAPIUrl = "https://proxy.royaleapi.dev/v1",
+
+	/**
+	 * Default maximum time passed after the structure was last fetched before fetching again. (2 minutes)
+	 */
+	defaultMaxAge = 120_000,
+
+	/**
+	 * Default maximum time before cancelling a REST request. (10 seconds)
+	 */
+	defaultAbortTimeout = 10_000,
 }
+
+/**
+ * Error messages
+ */
+export const Errors = {
+	tokenMissing: () => "No token provided for the client" as const,
+	requestAborted: (path: Path) =>
+		`Request to path ${path} took more than ${
+			Constants.defaultAbortTimeout / 1_000
+		} seconds and was aborted before ending` as const,
+	requestError: (url: URL, error: Error) =>
+		`Request to ${url.href} failed with reason: ${error.message}` as const,
+	restRateLimited: () =>
+		"The rest is ratelimited so no other requests are allowed until you set the force option to true" as const,
+} as const;
 
 /**
  * Events that can be emitted by the client
@@ -232,4 +257,4 @@ export enum ClanType {
 	open,
 }
 
-export default Defaults;
+export default Constants;

@@ -1,8 +1,8 @@
-import type { IncomingMessage, OutgoingHttpHeaders } from "node:http";
+import type { OutgoingHttpHeaders } from "node:http";
 import { get } from "node:https";
 import { URL, URLSearchParams } from "node:url";
 import type { Path, RequestOptions, Rest } from "..";
-import Defaults, { RequestStatus } from "../util";
+import Constants, { Errors, RequestStatus } from "../util";
 import Response from "./Response";
 
 /**
@@ -47,7 +47,7 @@ export class APIRequest {
 	constructor(
 		rest: Rest,
 		path: Path,
-		{ url = Defaults.APIUrl, query, headers }: RequestOptions = {}
+		{ url = Constants.baseAPIUrl, query, headers }: RequestOptions = {}
 	) {
 		this.path = path;
 		this.rest = rest;
@@ -56,8 +56,8 @@ export class APIRequest {
 		this.query = new URLSearchParams(query);
 
 		this.headers = {
-			Accept: "application/json",
-			Authorization: `Bearer ${rest.client.token}`,
+			Accept: Constants.acceptHeader,
+			Authorization: `${Constants.authorizationHeaderPrefix} ${rest.client.token}`,
 			...headers,
 		};
 	}
@@ -108,60 +108,45 @@ export class APIRequest {
 		let data = "";
 
 		const timeout = setTimeout(() => {
-			// Abort the request if it takes more than Constants.AbortTimeout
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
-			req.destroy(
-				new Error(
-					`Request to path ${this.path} took more than ${
-						Defaults.AbortTimeout / 1_000
-					} seconds and was aborted before ending.`
-				)
-			);
-		}, Defaults.AbortTimeout).unref();
-		const callback = (res: IncomingMessage) => {
-			if (
-				[301, 302].includes(res.statusCode!) &&
-				res.headers.location != null
-			) {
-				// Handle a possible redirect
-				this.url.href = res.headers.location;
-				this.url.search = this.query.toString();
-				this.make(resolve, reject);
-				return;
-			}
-
-			// Handle the data received
-			res.on("data", (d: string) => {
-				data += d;
-				this.rest.client.emit("chunk", d);
-			});
-			res.once("end", () => {
-				if (!res.complete)
-					throw new Error(
-						`Request to path ${this.path} ended before all data was transferred.`
-					);
-				clearTimeout(timeout);
-				const response = new Response(data, res, this);
-
-				resolve(response);
-				this.status = RequestStatus.Finished;
-				this.rest.client.emit("requestEnd", response);
-			});
-		};
+			req.destroy(new Error(Errors.requestAborted(this.path)));
+		}, Constants.defaultAbortTimeout).unref();
 		const req = get(
 			this.url,
 			{
 				headers: this.headers,
 			},
-			callback
+			(res) => {
+				if (
+					[301, 302].includes(res.statusCode!) &&
+					res.headers.location != null
+				) {
+					// Handle a possible redirect
+					this.url.href = res.headers.location;
+					this.url.search = this.query.toString();
+					this.make(resolve, reject);
+					return;
+				}
+
+				// Handle the data received
+				res.on("data", (d: string) => {
+					data += d;
+					this.rest.client.emit("chunk", d);
+				});
+				res.once("end", () => {
+					if (!res.complete) return;
+					clearTimeout(timeout);
+					const response = new Response(data, res, this);
+
+					resolve(response);
+					this.status = RequestStatus.Finished;
+					this.rest.client.emit("requestEnd", response);
+				});
+			}
 		);
 
 		req.once("error", (error) => {
-			reject(
-				new Error(
-					`Request to ${this.url.href} failed with reason: ${error.message}`
-				)
-			);
+			reject(new Error(Errors.requestError(this.url, error)));
 			this.status = RequestStatus.Failed;
 		});
 		req.end();

@@ -1,13 +1,19 @@
 import type ClientRoyale from "..";
-import type { APIMember, Clan, FetchOptions } from "..";
+import type { APIMember, APITag, Clan, FetchOptions } from "..";
 import { ClanMember } from "../structures";
-import Defaults from "../util";
+import type { Path } from "../util";
+import Constants from "../util";
 import Manager from "./Manager";
 
 /**
  * A manager for clan members
  */
 export class ClanMemberManager extends Manager<typeof ClanMember> {
+	/**
+	 * The route to fetch the members from
+	 */
+	static route: Path = `/clans/:id/members`;
+
 	/**
 	 * The clan this manager is for
 	 */
@@ -25,18 +31,27 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	}
 
 	/**
+	 * Gets the path to fetch the members from
+	 * @param tag - The tag of the clan
+	 * @returns The path to fetch the members from
+	 */
+	static path(tag: APITag): Path {
+		return this.route.replace(":id", tag) as Path;
+	}
+
+	/**
 	 * Fetches the members of this clan.
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched members
 	 */
 	async fetch({
 		force = false,
-		maxAge = Defaults.maxAge,
+		maxAge = Constants.defaultMaxAge,
 	}: FetchOptions = {}): Promise<this> {
 		if (!force && Date.now() - this.clan.lastUpdate.getTime() < maxAge)
 			return Promise.resolve(this);
 		return this.client.api
-			.get<APIMember[]>(`/clans/${this.clan.tag}/members`)
+			.get<APIMember[]>(ClanMemberManager.path(this.clan.tag))
 			.then((memberList) => this.clan.patch({ memberList }))
 			.then(() => this);
 	}

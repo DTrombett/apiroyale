@@ -3,7 +3,7 @@ import type {
 	FetchOptions,
 	StructureType,
 } from "..";
-import Defaults from "../util";
+import Constants from "../util";
 import Manager from "./Manager";
 
 /**
@@ -20,7 +20,7 @@ export class FetchableManager<
 	 */
 	async fetch(
 		id: string,
-		{ force = false, maxAge = Defaults.maxAge }: FetchOptions = {}
+		{ force = false, maxAge = Constants.defaultMaxAge }: FetchOptions = {}
 	): Promise<this["structure"]["prototype"]> {
 		const data = this.get(id);
 

@@ -1,6 +1,6 @@
-import Defaults from "./Constants";
+import Constants from "./Constants";
 
 export * from "./Constants";
 export * from "./enums";
 
-export default Defaults;
+export default Constants;
