@@ -4,7 +4,6 @@ import type {
 	APIClan,
 	APIClanSearchResults,
 	APITag,
-	FetchOptions,
 	SearchClanOptions,
 } from "..";
 import { Errors, Constants } from "../util";
@@ -22,24 +21,6 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 	 */
 	constructor(client: ClientRoyale, data?: APIClan[]) {
 		super(client, Clan, data);
-	}
-
-	/**
-	 * Adds a clan to this manager.
-	 * @param data - The data of the clan to add
-	 * @returns The added clan
-	 */
-	add(data: APIClan): Clan {
-		return super.add(data);
-	}
-
-	/**
-	 * Fetches a clan from the API.
-	 * @param tag - The tag of the clan to fetch
-	 * @param options - The options for the fetch
-	 */
-	fetch(tag: APITag, options?: FetchOptions): Promise<Clan> {
-		return super.fetch(tag, options);
 	}
 
 	/**

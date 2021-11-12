@@ -3,6 +3,7 @@ import type {
 	FetchOptions,
 	StructureType,
 } from "..";
+import type { NonNullableProperties } from "../util";
 import Constants from "../util";
 import Manager from "./Manager";
 
@@ -21,10 +22,20 @@ export class FetchableManager<
 	async fetch(
 		id: string,
 		{ force = false, maxAge = Constants.defaultMaxAge }: FetchOptions = {}
-	): Promise<this["structure"]["prototype"]> {
+	): Promise<
+		NonNullableProperties<
+			this["structure"]["prototype"],
+			keyof this["structure"]["prototype"]
+		>
+	> {
 		const data = this.get(id);
 
-		if (data && !force && Date.now() - data.lastUpdate.getTime() < maxAge)
+		if (
+			data &&
+			!force &&
+			data.isNotPartial() &&
+			Date.now() - data.lastUpdate.getTime() < maxAge
+		)
 			return data;
 		return this.add(
 			await this.client.api.get<StructureType<T>>(this.structure.path(id))

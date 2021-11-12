@@ -16,15 +16,6 @@ export class ArenaManager extends Manager<typeof Arena> {
 	}
 
 	/**
-	 * Adds an arena to this manager.
-	 * @param data - The data of the arena to add
-	 * @returns The added arena
-	 */
-	add(data: APIArena): Arena {
-		return super.add(data);
-	}
-
-	/**
 	 * Removes an arena from the manager.
 	 * @param id - The id of the arena to remove
 	 * @returns The removed arena, if it exists

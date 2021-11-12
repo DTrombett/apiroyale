@@ -243,8 +243,10 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the new clan
 	 */
-	fetch(options?: FetchOptions): Promise<this> {
-		return this.client.clans.fetch(this.tag, options) as Promise<this>;
+	fetch(options?: FetchOptions) {
+		return this.client.clans.fetch(this.tag, options) as Promise<
+			NonPartialClan<this>
+		>;
 	}
 }
 

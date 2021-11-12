@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { JsonObject } from "..";
+import type { JsonObject, NonNullableProperties } from "..";
 
 /**
  * Base class for all structures
@@ -51,6 +51,13 @@ export class Structure<T extends JsonObject = JsonObject> {
 	 */
 	equals(other: Structure): boolean {
 		return this.id === other.id;
+	}
+
+	/**
+	 * Checks if this structure is not partial.
+	 */
+	isNotPartial(): this is NonNullableProperties<this, keyof this> {
+		return true;
 	}
 
 	/**
