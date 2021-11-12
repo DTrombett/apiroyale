@@ -62,6 +62,14 @@ export const Errors = {
 	missingQuery: () => "You didn't provide any query" as const,
 	clanNameSearchTooShort: () =>
 		"The clan name must be at least 3 characters long" as const,
+	clanMaxMembersTooLow: () =>
+		"The maximum number of members must be greater than or equal to the minimum" as const,
+	clanMaxMembersNotPositive: () =>
+		"The maximum number of members must be a positive number" as const,
+	clanMinMembersNotPositive: () =>
+		"The minimum number of members must be a positive number" as const,
+	clanMinScoreNotPositive: () =>
+		"The minimum score must be a positive number" as const,
 } as const;
 
 /**

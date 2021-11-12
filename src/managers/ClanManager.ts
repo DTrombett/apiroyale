@@ -52,12 +52,27 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 					? options.location
 					: options.location.id
 			);
-		if (options.minMembers !== undefined)
+		if (options.minMembers !== undefined) {
+			if (options.minMembers < 1)
+				return Promise.reject(
+					new TypeError(Errors.clanMinMembersNotPositive())
+				);
 			query.append("minMembers", options.minMembers.toString());
-		if (options.maxMembers !== undefined)
+		}
+		if (options.maxMembers !== undefined) {
+			if (options.maxMembers < (options.minMembers ?? 0))
+				return Promise.reject(new TypeError(Errors.clanMaxMembersTooLow()));
+			if (options.maxMembers < 1)
+				return Promise.reject(
+					new TypeError(Errors.clanMaxMembersNotPositive())
+				);
 			query.append("maxMembers", options.maxMembers.toString());
-		if (options.minScore !== undefined)
+		}
+		if (options.minScore !== undefined) {
+			if (options.minScore < 1)
+				return Promise.reject(new TypeError(Errors.clanMinScoreNotPositive()));
 			query.append("minScore", options.minScore.toString());
+		}
 
 		if (query.toString() === "")
 			return Promise.reject(new TypeError(Errors.missingQuery()));
