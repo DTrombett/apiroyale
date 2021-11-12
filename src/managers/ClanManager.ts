@@ -58,11 +58,11 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 			query.append("maxMembers", options.maxMembers.toString());
 		if (options.minScore !== undefined)
 			query.append("minScore", options.minScore.toString());
-		if (options.limit !== undefined)
-			query.append("limit", options.limit.toString());
 
 		if (query.toString() === "") throw new TypeError(Errors.missingQuery());
 
+		if (options.limit !== undefined)
+			query.append("limit", options.limit.toString());
 		if (options.after !== undefined) query.append("after", options.after);
 		if (options.before !== undefined) query.append("before", options.before);
 
