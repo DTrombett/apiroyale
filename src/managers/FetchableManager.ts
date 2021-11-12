@@ -19,16 +19,11 @@ export class FetchableManager<
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched structure
 	 */
-	async fetch(
+	async fetch<S extends T["prototype"] = T["prototype"]>(
 		id: string,
 		{ force = false, maxAge = Constants.defaultMaxAge }: FetchOptions = {}
-	): Promise<
-		NonNullableProperties<
-			this["structure"]["prototype"],
-			keyof this["structure"]["prototype"]
-		>
-	> {
-		const data = this.get(id);
+	): Promise<NonNullableProperties<S, keyof S>> {
+		const data = this.get(id) as S | undefined;
 
 		if (
 			data &&

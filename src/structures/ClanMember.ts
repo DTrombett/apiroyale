@@ -1,5 +1,6 @@
 import type ClientRoyale from "..";
 import type { APILastSeen, APIMember, APITag, Arena, Clan } from "..";
+import type { NonNullableProperties } from "../util";
 import { ClanMemberRole, getEnumString } from "../util";
 import Structure from "./Structure";
 
@@ -148,6 +149,8 @@ export class ClanMember extends Structure<APIMember> {
 	 * @param data - The data to update this clan member with
 	 * @returns The updated clan member
 	 */
+	patch(data: APIMember): NonNullableProperties<this, keyof this>;
+	patch(data: Partial<APIMember>): this;
 	patch(data: Partial<APIMember>): this {
 		const old = this.clone();
 		super.patch(data);

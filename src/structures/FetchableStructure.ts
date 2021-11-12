@@ -1,4 +1,9 @@
-import type { Path, FetchOptions, JsonObject } from "../util";
+import type {
+	Path,
+	FetchOptions,
+	JsonObject,
+	NonNullableProperties,
+} from "../util";
 import Constants from "../util";
 import { Structure } from "./Structure";
 
@@ -30,13 +35,17 @@ export class FetchableStructure<
 	fetch({
 		force = false,
 		maxAge = Constants.defaultMaxAge,
-	}: FetchOptions = {}): Promise<this> {
-		if (!force && Date.now() - this.lastUpdate.getTime() < maxAge)
+	}: FetchOptions = {}): Promise<NonNullableProperties<this, keyof this>> {
+		if (
+			!force &&
+			this.isNotPartial() &&
+			Date.now() - this.lastUpdate.getTime() < maxAge
+		)
 			return Promise.resolve(this);
 
 		return this.client.api
 			.get<T>((this.constructor as typeof FetchableStructure).path(this.id))
-			.then(this.patch.bind(this));
+			.then((data) => this.patch(data));
 	}
 }
 

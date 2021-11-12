@@ -65,6 +65,8 @@ export class Structure<T extends JsonObject = JsonObject> {
 	 * @param _data - The data to update this structure with
 	 * @returns The updated structure
 	 */
+	patch(data: T): NonNullableProperties<this, keyof this>;
+	patch(data: Partial<T>): this;
 	patch(_data: Partial<T>): this {
 		this.lastUpdate = new Date();
 

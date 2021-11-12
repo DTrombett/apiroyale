@@ -1,5 +1,11 @@
 import type ClientRoyale from "..";
-import type { APILocation, FetchOptions, Path, StringId } from "..";
+import type {
+	APILocation,
+	FetchOptions,
+	NonNullableProperties,
+	Path,
+	StringId,
+} from "..";
 import FetchableStructure from "./FetchableStructure";
 
 /**
@@ -76,7 +82,9 @@ export class Location extends FetchableStructure<APILocation> {
 	 * @param data - The data to update this location with
 	 * @returns The updated location
 	 */
-	patch(data: Partial<APILocation>) {
+	patch(data: APILocation): NonNullableProperties<this, keyof this>;
+	patch(data: Partial<APILocation>): this;
+	patch(data: Partial<APILocation>): this {
 		const old = this.clone();
 		super.patch(data);
 
@@ -115,8 +123,8 @@ export class Location extends FetchableStructure<APILocation> {
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the new location
 	 */
-	fetch(options: FetchOptions): Promise<this> {
-		return this.client.locations.fetch(this.id, options) as Promise<this>;
+	fetch(options: FetchOptions) {
+		return this.client.locations.fetch<this>(this.id, options);
 	}
 }
 

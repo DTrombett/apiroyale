@@ -291,8 +291,9 @@ export type StructureType<T extends ConstructableStructure> = T extends new (
 /**
  * Makes some properties of a structure non-nullable
  */
-export type NonNullableProperties<T, K extends keyof T> = Omit<T, K> &
-	Required<Pick<T, K>>;
+export type NonNullableProperties<T, K extends keyof T> = {
+	[P in keyof T]-?: P extends K ? NonNullable<T[P]> : T[P];
+};
 
 /**
  * A JSON error received from the API

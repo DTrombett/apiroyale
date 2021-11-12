@@ -45,13 +45,12 @@ export class Manager<
 	 * @param data - The data of the structure to add
 	 * @returns The added structure
 	 */
-	add(
+	add<S extends T["prototype"] = T["prototype"]>(
 		data: StructureType<T>
-	): NonNullableProperties<
-		this["structure"]["prototype"],
-		keyof this["structure"]["prototype"]
-	>;
-	add(data: Partial<StructureType<T>>): this["structure"]["prototype"];
+	): NonNullableProperties<S, keyof S>;
+	add<S extends T["prototype"] = T["prototype"]>(
+		data: Partial<StructureType<T>>
+	): S;
 	add(data: Partial<StructureType<T>>): this["structure"]["prototype"] {
 		const existing = this.get(data[this.structure.id] as string);
 		if (existing != null) return existing.patch(data);

@@ -1,4 +1,9 @@
-import type { APIArena, ClientRoyale, StringId } from "..";
+import type {
+	APIArena,
+	ClientRoyale,
+	NonNullableProperties,
+	StringId,
+} from "..";
 import Structure from "./Structure";
 
 /**
@@ -49,11 +54,13 @@ export class Arena extends Structure<APIArena> {
 	 * @param data - The data to update this arena with
 	 * @returns The updated arena
 	 */
-	patch(data: APIArena): this {
+	patch(data: APIArena): NonNullableProperties<this, keyof this>;
+	patch(data: Partial<APIArena>): this;
+	patch(data: Partial<APIArena>): this {
 		const old = this.clone();
 		super.patch(data);
 
-		this.name = data.name;
+		if (data.name !== undefined) this.name = data.name;
 		if (!this.equals(old)) this.client.emit("arenaUpdate", old, this);
 		return this;
 	}

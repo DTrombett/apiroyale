@@ -126,8 +126,8 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	/**
 	 * The location name of this clan
 	 */
-	get locationName(): string | null {
-		return this.location?.name ?? null;
+	get locationName() {
+		return this.location?.name;
 	}
 
 	/**
@@ -185,6 +185,9 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	 * @param data - The data to update this clan with
 	 * @returns The updated clan
 	 */
+	patch(data: APIClan): NonPartialClan<this> & this;
+	patch(data: APIClanResultPreview): ClanResultPreview<this> & this;
+	patch(data: Partial<APIClan>): this;
 	patch(data: Partial<APIClan>): this {
 		const old = this.clone();
 		super.patch(data);
@@ -244,9 +247,7 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	 * @returns A promise that resolves with the new clan
 	 */
 	fetch(options?: FetchOptions) {
-		return this.client.clans.fetch(this.tag, options) as Promise<
-			NonPartialClan<this>
-		>;
+		return this.client.clans.fetch<this>(this.tag, options);
 	}
 }
 
