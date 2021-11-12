@@ -1,20 +1,39 @@
 import type {
 	APIClan,
+	APIClanPreview,
+	APIClanResultPreview,
 	APITag,
 	ClanMember,
 	ClientRoyale,
 	FetchOptions,
 	Path,
+	NonNullableProperties,
 } from "..";
 import { ClanMemberManager } from "../managers";
 import { ClanType, getEnumString } from "../util";
 import FetchableStructure from "./FetchableStructure";
 import Location from "./Location";
 
+export type ClanConstructor = APIClan | APIClanPreview | APIClanResultPreview;
+export type ClanResultPreview<C extends Clan = Clan> = NonNullableProperties<
+	C,
+	| "donationsPerWeek"
+	| "location"
+	| "memberCount"
+	| "requiredTrophies"
+	| "score"
+	| "type"
+	| "warTrophies"
+>;
+export type NonPartialClan<C extends Clan = Clan> = NonNullableProperties<
+	C,
+	keyof C
+>;
+
 /**
  * A class representing a clan
  */
-export class Clan extends FetchableStructure<APIClan> {
+export class Clan extends FetchableStructure<ClanConstructor> {
 	static route: Path = "/clans/:id";
 
 	/**
@@ -25,17 +44,22 @@ export class Clan extends FetchableStructure<APIClan> {
 	/**
 	 * The description of the clan
 	 */
-	description: string;
+	description?: string;
 
 	/**
 	 * The clan's donations per week
 	 */
-	donationsPerWeek: number;
+	donationsPerWeek?: number;
 
 	/**
 	 * The location of the clan
 	 */
-	location: Location;
+	location?: Location;
+
+	/**
+	 * The clan's member count
+	 */
+	memberCount?: number;
 
 	/**
 	 * The members of the clan
@@ -50,12 +74,12 @@ export class Clan extends FetchableStructure<APIClan> {
 	/**
 	 * The required trophies to join the clan
 	 */
-	requiredTrophies: number;
+	requiredTrophies?: number;
 
 	/**
 	 * The clan's score
 	 */
-	score: number;
+	score?: number;
 
 	/**
 	 * The tag of the clan
@@ -65,45 +89,45 @@ export class Clan extends FetchableStructure<APIClan> {
 	/**
 	 * The type of the clan
 	 */
-	type: ClanType;
+	type?: ClanType;
 
 	/**
 	 * The clan's trophies in the war
 	 */
-	warTrophies: number;
+	warTrophies?: number;
 
 	/**
 	 * @param client - The client that instantiated this clan
 	 * @param data - The data of the clan
 	 */
-	constructor(client: ClientRoyale, data: APIClan) {
+	constructor(client: ClientRoyale, data: ClanConstructor) {
 		super(client, data);
 
 		this.tag = data.tag;
 		this.name = data.name;
-		this.type = ClanType[data.type];
-		this.description = data.description;
+		if ("type" in data) this.type = ClanType[data.type];
+		if ("description" in data) this.description = data.description;
 		this.badge = data.badgeId;
-		this.score = data.clanScore;
-		this.warTrophies = data.clanWarTrophies;
-		this.location = new Location(client, data.location);
-		this.requiredTrophies = data.requiredTrophies;
-		this.donationsPerWeek = data.donationsPerWeek;
-		this.members = new ClanMemberManager(client, this, data.memberList);
+		if ("clanScore" in data) this.score = data.clanScore;
+		if ("clanWarTrophies" in data) this.warTrophies = data.clanWarTrophies;
+		if ("location" in data) this.location = new Location(client, data.location);
+		if ("requiredTrophies" in data)
+			this.requiredTrophies = data.requiredTrophies;
+		if ("donationsPerWeek" in data)
+			this.donationsPerWeek = data.donationsPerWeek;
+		this.members = new ClanMemberManager(
+			client,
+			this,
+			"memberList" in data ? data.memberList : undefined
+		);
+		if ("members" in data) this.memberCount = data.members;
 	}
 
 	/**
 	 * The location name of this clan
 	 */
-	get locationName(): string {
-		return this.location.name;
-	}
-
-	/**
-	 * The clan's member count
-	 */
-	get memberCount(): number {
-		return this.members.size;
+	get locationName(): string | null {
+		return this.location?.name ?? null;
 	}
 
 	/**
@@ -129,13 +153,31 @@ export class Clan extends FetchableStructure<APIClan> {
 			this.badge === other.badge &&
 			this.score === other.score &&
 			this.warTrophies === other.warTrophies &&
-			this.location.equals(other.location) &&
+			((this.location &&
+				other.location &&
+				this.location.equals(other.location)) ||
+				(!this.location && !other.location)) &&
 			this.requiredTrophies === other.requiredTrophies &&
 			this.donationsPerWeek === other.donationsPerWeek &&
 			this.members
 				.mapValues(mapMembers)
 				.equals(other.members.mapValues(mapMembers))
 		);
+	}
+
+	/**
+	 * Checks if this clan is from a search result.
+	 * Note that this is meant to be a typeguard so will return `false` ONLY if the clan is not from a user clan preview.
+	 */
+	isSearchResult(): this is ClanResultPreview<this> {
+		return this.score !== undefined;
+	}
+
+	/**
+	 * Checks if this clan isn't partial, so it has all properties.
+	 */
+	isNotPartial(): this is NonPartialClan<this> {
+		return this.description !== undefined;
 	}
 
 	/**
@@ -160,7 +202,7 @@ export class Clan extends FetchableStructure<APIClan> {
 		if (data.donationsPerWeek !== undefined)
 			this.donationsPerWeek = data.donationsPerWeek;
 		if (data.memberList)
-			this.members = new ClanMemberManager(this.client, this, data.memberList);
+			for (const member of data.memberList) this.members.add(member);
 
 		if (!this.equals(old)) this.client.emit("clanUpdate", old, this);
 		return this;
@@ -170,7 +212,7 @@ export class Clan extends FetchableStructure<APIClan> {
 	 * Gets a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
-	toJson(): APIClan {
+	toJson(): ClanConstructor {
 		return {
 			...super.toJson(),
 			badgeId: this.badge,
@@ -178,15 +220,12 @@ export class Clan extends FetchableStructure<APIClan> {
 			clanWarTrophies: this.warTrophies,
 			description: this.description,
 			donationsPerWeek: this.donationsPerWeek,
-			location: this.location.toJson(),
+			location: this.location?.toJson(),
 			name: this.name,
 			requiredTrophies: this.requiredTrophies,
 			tag: this.tag,
-			type: getEnumString(ClanType, this.type),
+			type: this.type ? getEnumString(ClanType, this.type) : undefined,
 			memberList: this.members.map((member) => member.toJson()),
-			clanChestLevel: 1,
-			clanChestMaxLevel: 0,
-			clanChestStatus: "inactive",
 			members: this.memberCount,
 		};
 	}

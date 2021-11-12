@@ -37,6 +37,11 @@ export const enum Constants {
 	 * Default maximum time before cancelling a REST request. (10 seconds)
 	 */
 	defaultAbortTimeout = 10_000,
+
+	/**
+	 * Minimum number of characters in a clan name
+	 */
+	minClanNameLength = 3,
 }
 
 /**
@@ -52,6 +57,11 @@ export const Errors = {
 		`Request to ${url.href} failed with reason: ${error.message}` as const,
 	restRateLimited: () =>
 		"The rest is ratelimited so no other requests are allowed until you set the force option to true" as const,
+	missingAfter: () => "The next page isn't available" as const,
+	missingBefore: () => "The previous page isn't available" as const,
+	missingQuery: () => "You didn't provide any query" as const,
+	clanNameSearchTooShort: () =>
+		"The clan name must be at least 3 characters long" as const,
 } as const;
 
 /**
@@ -84,6 +94,57 @@ export type Json =
  */
 export type JsonObject = {
 	[property: string]: Json;
+};
+
+/**
+ * Options for searching a clan
+ */
+export type SearchClanOptions = {
+	/**
+	 * The name of the clan.
+	 * It needs to be at least three characters long.
+	 * Name search parameter is interpreted as wild card search, so it may appear anywhere in the clan name
+	 */
+	name?: string;
+
+	/**
+	 * Clan location identifier
+	 */
+	location?: Location | Location["id"];
+
+	/**
+	 * Minimum number of clan members
+	 */
+	minMembers?: number;
+
+	/**
+	 * Maximum number of clan members
+	 */
+	maxMembers?: number;
+
+	/**
+	 * Minimum amount of clan score
+	 */
+	minScore?: number;
+
+	/**
+	 * Limit the number of items returned in the response
+	 */
+	limit?: number;
+
+	/**
+	 * Return only items that occur after this marker.
+	 * This marker can be found in the search results, inside the 'paging' property.
+	 * Note that only after or before can be specified for a request, not both
+	 */
+	after?: string;
+
+	/**
+	 * Return only items that occur before this marker.
+	 * This marker can be found in the search results, inside the 'paging' property.
+	 * Note that only after or before can be specified for a request, not both
+	 */
+	before?: string;
 };
 
 /**
@@ -226,6 +287,12 @@ export type StructureType<T extends ConstructableStructure> = T extends new (
 ) => Structure
 	? R
 	: never;
+
+/**
+ * Makes some properties of a structure non-nullable
+ */
+export type NonNullableProperties<T, K extends keyof T> = Omit<T, K> &
+	Required<Pick<T, K>>;
 
 /**
  * A JSON error received from the API

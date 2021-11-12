@@ -49,17 +49,29 @@ export type APIClan = {
 	location: APILocation;
 	requiredTrophies: number;
 	donationsPerWeek: number;
-	clanChestStatus: "inactive";
-	clanChestLevel: 1;
-	clanChestMaxLevel: 0;
 	members: number;
 	memberList: APIMember[];
 };
 
-export type APIClanPreview = {
-	tag: APITag;
-	name: string;
-	badgeId: number;
+export type APIClanPreview = Pick<APIClan, "badgeId" | "name" | "tag">;
+
+export type APIClanResultPreview = Pick<
+	APIClan,
+	| "badgeId"
+	| "clanScore"
+	| "clanWarTrophies"
+	| "donationsPerWeek"
+	| "location"
+	| "members"
+	| "name"
+	| "requiredTrophies"
+	| "tag"
+	| "type"
+>;
+
+export type APIClanSearchResults = {
+	items: APIClanResultPreview[];
+	paging: APIPaging;
 };
 
 export type APICurrentSeason = APISeason & {
@@ -91,7 +103,13 @@ export type APIMember = {
 	previousClanRank: number;
 	donations: number;
 	donationsReceived: number;
-	clanChestPoints: 0;
+};
+
+export type APIPaging = {
+	cursors: {
+		before?: string;
+		after?: string;
+	};
 };
 
 export type APIPlayer = {

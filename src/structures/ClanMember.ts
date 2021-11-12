@@ -107,10 +107,12 @@ export class ClanMember extends Structure<APIMember> {
 	}
 
 	/**
-	 * The contribution to the total donations of this member
+	 * The contribution to the total donations of this member, or null if there's no data for clan donations
 	 */
-	get donationPercentage(): number {
-		return (this.donationsPerWeek / this.clan.donationsPerWeek) * 100;
+	get donationPercentage(): number | null {
+		return this.clan.donationsPerWeek !== undefined
+			? (this.donationsPerWeek / this.clan.donationsPerWeek) * 100
+			: null;
 	}
 
 	/**
@@ -187,7 +189,6 @@ export class ClanMember extends Structure<APIMember> {
 		return {
 			...super.toJson(),
 			arena: this.arena.toJson(),
-			clanChestPoints: 0,
 			clanRank: this.rank,
 			donations: this.donationsPerWeek,
 			donationsReceived: this.donationsReceived,
