@@ -11,8 +11,9 @@ export class SearchResults<
 			before: string;
 			after: string;
 		}): Promise<SearchResults<T>>;
-	}
-> extends Collection<string, T["structure"]["prototype"]> {
+	},
+	V extends T["structure"]["prototype"] = T["structure"]["prototype"]
+> extends Collection<string, V> {
 	/**
 	 * The client that instantiated this search
 	 */
@@ -40,6 +41,7 @@ export class SearchResults<
 
 	/**
 	 * @param manager - The manager for this search
+	 * @param structure - The structure class these results are for
 	 * @param options - The options used to get these results
 	 * @param data - The data to create the results from
 	 */
@@ -51,7 +53,7 @@ export class SearchResults<
 	) {
 		super(
 			data.items.map((APIInstance) => {
-				const instance = manager.add(APIInstance);
+				const instance = manager.add(APIInstance) as V;
 
 				return [instance.id, instance];
 			})
