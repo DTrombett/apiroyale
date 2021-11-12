@@ -42,7 +42,7 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 
 		if (options.name !== undefined) {
 			if (options.name.length < Constants.minClanNameLength)
-				throw new TypeError(Errors.clanNameSearchTooShort());
+				return Promise.reject(new TypeError(Errors.clanNameSearchTooShort()));
 			query.append("name", options.name);
 		}
 		if (options.location !== undefined)
@@ -59,7 +59,8 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 		if (options.minScore !== undefined)
 			query.append("minScore", options.minScore.toString());
 
-		if (query.toString() === "") throw new TypeError(Errors.missingQuery());
+		if (query.toString() === "")
+			return Promise.reject(new TypeError(Errors.missingQuery()));
 
 		if (options.limit !== undefined)
 			query.append("limit", options.limit.toString());
