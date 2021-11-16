@@ -7,7 +7,7 @@ import type {
 	SearchClanOptions,
 } from "..";
 import { Errors, Constants } from "../util";
-import { ClanSearchResults } from "../searchResults";
+import { ClanSearchResults } from "../lists";
 import { Clan } from "../structures";
 import FetchableManager from "./FetchableManager";
 

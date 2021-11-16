@@ -1,6 +1,6 @@
 import type ClientRoyale from "..";
 import type { APIMember, APITag, Clan, FetchOptions } from "..";
-import { ClanMember } from "../structures";
+import { Player } from "../structures";
 import type { Path } from "../util";
 import Constants from "../util";
 import Manager from "./Manager";
@@ -8,7 +8,7 @@ import Manager from "./Manager";
 /**
  * A manager for clan members
  */
-export class ClanMemberManager extends Manager<typeof ClanMember> {
+export class ClanMemberManager extends Manager<typeof Player> {
 	/**
 	 * The route to fetch the members from
 	 */
@@ -25,7 +25,7 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	 * @param data - The data to initialize this manager with
 	 */
 	constructor(client: ClientRoyale, clan: Clan, data?: APIMember[]) {
-		super(client, ClanMember, data);
+		super(client, Player, data);
 
 		this.clan = clan;
 	}

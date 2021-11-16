@@ -41,7 +41,7 @@ export type APICard = {
 export type APIClan = {
 	tag: APITag;
 	name: string;
-	type: "closed" | "inviteOnly" | "open";
+	type: APIClanType;
 	description: string;
 	badgeId: number;
 	clanScore: number;
@@ -69,10 +69,21 @@ export type APIClanResultPreview = Pick<
 	| "type"
 >;
 
-export type APIClanSearchResults = {
-	items: APIClanResultPreview[];
-	paging: APIPaging;
+export type APIClanSearchResults = APIList<APIClanResultPreview>;
+
+export type APIClanStanding = {
+	tag: APITag;
+	name: string;
+	badgeId: number;
+	fame: number;
+	repairPoints: 0;
+	finishTime: APIDate;
+	periodPoints: 0;
+	clanScore: number;
+	participants: APIRiverRaceLogParticipant[];
 };
+
+export type APIClanType = "closed" | "inviteOnly" | "open";
 
 export type APICurrentSeason = APISeason & {
 	bestTrophies: number;
@@ -81,7 +92,7 @@ export type APICurrentSeason = APISeason & {
 export type APIImageLink<P extends string = string> =
 	`https://api-assets.clashroyale.com${P}`;
 
-export type APILastSeen =
+export type APIDate =
 	`${number}${number}${number}${number}${number}${number}${number}${number}T${number}${number}${number}${number}${number}${number}.000Z`;
 
 export type APILocation = {
@@ -95,7 +106,7 @@ export type APIMember = {
 	tag: APITag;
 	name: string;
 	role: APIRole;
-	lastSeen: APILastSeen;
+	lastSeen: APIDate;
 	expLevel: number;
 	trophies: number;
 	arena: APIArena;
@@ -159,6 +170,36 @@ export type APIPreviousSeason = APICurrentSeason & {
 };
 
 export type APIRole = "coLeader" | "elder" | "leader" | "member";
+
+export type APIList<T> = {
+	items: T[];
+	paging: APIPaging;
+};
+
+export type APIRiverRaceLog = APIList<APIRiverRaceLogEntry>;
+
+export type APIRiverRaceLogEntry = {
+	seasonId: number;
+	sectionIndex: number;
+	createdDate: APIDate;
+	standings: APIRiverRaceLogStanding[];
+};
+
+export type APIRiverRaceLogParticipant = {
+	tag: APITag;
+	name: string;
+	fame: number;
+	repairPoints: 0;
+	boatAttacks: number;
+	decksUsed: number;
+	decksUsedToday: 0;
+};
+
+export type APIRiverRaceLogStanding = {
+	rank: number;
+	trophyChange: number;
+	clan: APIClanStanding;
+};
 
 export type APISeason = {
 	trophies: number;

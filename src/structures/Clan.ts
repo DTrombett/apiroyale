@@ -1,16 +1,23 @@
+import Collection from "@discordjs/collection";
+import { URLSearchParams } from "url";
 import type {
 	APIClan,
 	APIClanPreview,
 	APIClanResultPreview,
 	APITag,
-	ClanMember,
+	Player,
 	ClientRoyale,
 	FetchOptions,
 	Path,
 	NonNullableProperties,
+	APIClanType,
+	APIRiverRaceLog,
+	RiverRace,
 } from "..";
+import { RiverRaceLog } from "../lists";
 import { ClanMemberManager } from "../managers";
-import { ClanType, getEnumString } from "../util";
+import type { FetchRiverRaceLogOptions } from "../util";
+import { ClanType } from "../util";
 import FetchableStructure from "./FetchableStructure";
 import Location from "./Location";
 
@@ -75,6 +82,11 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	 * The required trophies to join the clan
 	 */
 	requiredTrophies?: number;
+
+	/**
+	 * The river race log of this clan
+	 */
+	riverRaceLog = new Collection<number, RiverRace>();
 
 	/**
 	 * The clan's score
@@ -143,7 +155,7 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	 * @returns Whether the clans are equal
 	 */
 	equals(other: Clan): boolean {
-		const mapMembers = (member: ClanMember): APITag => member.tag;
+		const mapMembers = (member: Player): APITag => member.tag;
 
 		return (
 			super.equals(other) &&
@@ -212,25 +224,69 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	}
 
 	/**
+	 * Fetch the river race log of this clan.
+	 * @param options - Options for fetching the river race log
+	 * @returns The river race log for this clan
+	 */
+	fetchRiverRaceLog(options?: FetchRiverRaceLogOptions) {
+		const query = new URLSearchParams();
+
+		if (options?.limit !== undefined)
+			query.append("limit", options.limit.toString());
+		if (options?.after !== undefined) query.append("after", options.after);
+		if (options?.before !== undefined) query.append("before", options.before);
+
+		return this.client.api
+			.get<APIRiverRaceLog>(`/clans/${this.tag}/riverracelog`, { query })
+			.then((results) => new RiverRaceLog(this, options, results))
+			.then((log) => {
+				for (const [key, value] of log) this.riverRaceLog.set(key, value);
+				return log;
+			});
+	}
+
+	/**
 	 * Gets a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
 	toJson(): ClanConstructor {
-		return {
-			...super.toJson(),
-			badgeId: this.badge,
-			clanScore: this.score,
-			clanWarTrophies: this.warTrophies,
-			description: this.description,
-			donationsPerWeek: this.donationsPerWeek,
-			location: this.location?.toJson(),
-			name: this.name,
-			requiredTrophies: this.requiredTrophies,
-			tag: this.tag,
-			type: this.type ? getEnumString(ClanType, this.type) : undefined,
-			memberList: this.members.map((member) => member.toJson()),
-			members: this.memberCount,
-		};
+		let result: ClanConstructor;
+
+		if (this.isSearchResult())
+			result = {
+				tag: this.tag,
+				badgeId: this.badge,
+				name: this.name,
+				clanScore: this.score,
+				clanWarTrophies: this.warTrophies,
+				donationsPerWeek: this.donationsPerWeek,
+				location: this.location.toJson(),
+				requiredTrophies: this.requiredTrophies,
+				type: ClanType[this.type] as APIClanType,
+			};
+		else if (this.isNotPartial())
+			result = {
+				badgeId: this.badge,
+				clanScore: this.score,
+				clanWarTrophies: this.warTrophies,
+				description: this.description,
+				donationsPerWeek: this.donationsPerWeek,
+				location: this.location?.toJson(),
+				name: this.name,
+				requiredTrophies: this.requiredTrophies,
+				tag: this.tag,
+				type: this.type ? (ClanType[this.type!] as APIClanType) : undefined,
+				memberList: this.members.map((member) => member.toJson()),
+				members: this.memberCount,
+			};
+		else
+			result = {
+				tag: this.tag,
+				badgeId: this.badge,
+				name: this.name,
+			};
+
+		return result;
 	}
 
 	/**

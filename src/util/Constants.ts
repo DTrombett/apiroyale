@@ -5,10 +5,11 @@ import type {
 	APIRequest,
 	Arena,
 	Clan,
-	ClanMember,
+	Player,
 	FetchableStructure,
 	Location,
 	Response,
+	RiverRace,
 	Structure,
 } from "..";
 
@@ -83,8 +84,9 @@ export type ClientEvents = {
 	requestEnd: [request: Response];
 	arenaUpdate: [oldArena: Arena, newArena: Arena];
 	clanUpdate: [oldClan: Clan, newClan: Clan];
-	clanMemberUpdate: [oldMember: ClanMember, newMember: ClanMember];
+	playerUpdate: [oldMember: Player, newMember: Player];
 	locationUpdate: [oldLocation: Location, newLocation: Location];
+	riverRaceUpdate: [oldRiverRace: RiverRace, newRiverRace: RiverRace];
 };
 
 /**
@@ -95,7 +97,8 @@ export type Json =
 	| boolean
 	| number
 	| string
-	| { [property: string]: Json };
+	| { [property: string]: Json }
+	| null;
 
 /**
  * A JSON object
@@ -107,7 +110,7 @@ export type JsonObject = {
 /**
  * Options for searching a clan
  */
-export type SearchClanOptions = {
+export type SearchClanOptions = ListOptions & {
 	/**
 	 * The name of the clan.
 	 * It needs to be at least three characters long.
@@ -134,7 +137,14 @@ export type SearchClanOptions = {
 	 * Minimum amount of clan score
 	 */
 	minScore?: number;
+};
 
+export type FetchRiverRaceLogOptions = ListOptions;
+
+/**
+ * Base options for fetching a list
+ */
+export type ListOptions = {
 	/**
 	 * Limit the number of items returned in the response
 	 */

@@ -18,7 +18,7 @@ export class Structure<T extends JsonObject = JsonObject> {
 	/**
 	 * An unique identifier for this structure
 	 */
-	readonly id: string;
+	id: string;
 
 	/**
 	 * When this structure was last updated
@@ -38,10 +38,7 @@ export class Structure<T extends JsonObject = JsonObject> {
 	 * Clone this structure.
 	 */
 	clone() {
-		return new (this.constructor as typeof Structure)(
-			this.client,
-			this.toJson()
-		);
+		return new Structure(this.client, this.toJson());
 	}
 
 	/**

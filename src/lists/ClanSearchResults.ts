@@ -1,15 +1,16 @@
-import type { APIClanSearchResults, ClanManager, SearchClanOptions } from "..";
-import type { ClanResultPreview } from "../structures";
+import type {
+	APIClanSearchResults,
+	APITag,
+	ClanManager,
+	SearchClanOptions,
+} from "..";
 import { Clan } from "../structures";
-import SearchResults from "./SearchResults";
+import List from "./List";
 
 /**
  * A class to manage clan search results
  */
-export class ClanSearchResults extends SearchResults<
-	ClanManager,
-	ClanResultPreview
-> {
+export class ClanSearchResults extends List<APITag, Clan> {
 	/**
 	 * @param manager - The clan manager for this search
 	 * @param options - The options used to get these results
@@ -20,7 +21,16 @@ export class ClanSearchResults extends SearchResults<
 		options: SearchClanOptions,
 		data: APIClanSearchResults
 	) {
-		super(manager, Clan, options, data);
+		super(
+			manager.client,
+			manager.search.bind(manager),
+			options,
+			data.items.map((result) => [
+				result.tag,
+				new Clan(manager.client, result),
+			]),
+			data.paging
+		);
 	}
 }
 
