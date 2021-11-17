@@ -73,7 +73,7 @@ export type APIClanStanding = {
 	finishTime: APIDate;
 	name: string;
 	participants: APIRiverRaceParticipant[];
-	periodPoints: 0;
+	periodPoints: number;
 	repairPoints: 0;
 	tag: APITag;
 };
