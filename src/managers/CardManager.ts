@@ -9,7 +9,10 @@ import Manager from "./Manager";
  * A manager for cards
  */
 export class CardManager<
-	T extends typeof Card = typeof Card
+	T extends Omit<typeof Card, "constructor"> & {
+		prototype: Card;
+		new (client: ClientRoyale, ...args: any[]): Card;
+	} = typeof Card
 > extends Manager<T> {
 	/**
 	 * The route to fetch the cards from

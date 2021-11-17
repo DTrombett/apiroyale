@@ -8,7 +8,7 @@ import Structure from "./Structure";
  * A river race standing
  */
 export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
-	static id = "rank";
+	static id = "rank" as const;
 
 	/**
 	 * The rank of the clan in this race
@@ -73,6 +73,7 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 		this.finishedAt = finishedAt.getTime() <= 0 ? null : finishedAt;
 		this.participants = new RiverRaceParticipantManager(
 			this.client,
+			this,
 			data.clan.participants
 		);
 	}

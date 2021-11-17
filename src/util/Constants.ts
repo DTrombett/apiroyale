@@ -311,7 +311,7 @@ export type StringId = `${number}`;
  */
 export type ConstructableStructure = Omit<typeof Structure, "constructor"> & {
 	prototype: Structure;
-	new (client: ClientRoyale, data: any, ...args: any[]): Structure;
+	new (client: ClientRoyale, ...args: any[]): Structure;
 };
 
 /**

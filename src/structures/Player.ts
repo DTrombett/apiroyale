@@ -73,6 +73,7 @@ export type RiverRaceParticipantData<T extends Player = Player> =
  */
 export class Player extends FetchableStructure<PlayerConstructor> {
 	static route: Path = "/players/:id";
+	static id = "tag" as const;
 
 	/**
 	 * The arena this player is currently in
@@ -197,22 +198,22 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 	/**
 	 * The badges of this player
 	 */
-	badges = new PlayerBadgeManager(this.client);
+	badges = new PlayerBadgeManager(this.client, this);
 
 	/**
 	 * The achievements of this player
 	 */
-	achievements = new PlayerAchievementManager(this.client);
+	achievements = new PlayerAchievementManager(this.client, this);
 
 	/**
 	 * The cards of this player
 	 */
-	cards = new PlayerCardManager(this.client);
+	cards = new PlayerCardManager(this.client, this);
 
 	/**
 	 * The deck of this player
 	 */
-	deck = new PlayerCardManager(this.client);
+	deck = new PlayerCardManager(this.client, this);
 
 	/**
 	 * The most used card of this player
@@ -245,7 +246,11 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 	 * @param clan - The clan of the player
 	 */
 	constructor(client: ClientRoyale, data: APIMember, clan: Clan);
-	constructor(client: ClientRoyale, data: PlayerConstructor, clan?: Clan);
+	constructor(
+		client: ClientRoyale,
+		data: Exclude<PlayerConstructor, APIMember>,
+		clan?: Clan
+	);
 	constructor(client: ClientRoyale, data: PlayerConstructor, clan?: Clan) {
 		super(client, data);
 
@@ -267,23 +272,26 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 		if ("leagueStatistics" in data) {
 			this.achievements = new PlayerAchievementManager(
 				this.client,
+				this,
 				data.achievements
 			);
 			this.arena = this.client.arenas.add(data.arena);
-			this.badges = new PlayerBadgeManager(this.client, data.badges);
+			this.badges = new PlayerBadgeManager(this.client, this, data.badges);
 			this.battleCount = data.battleCount;
 			this.bestTrophies = data.bestTrophies;
-			this.cards = new PlayerCardManager(this.client, data.cards);
+			this.cards = new PlayerCardManager(this.client, this, data.cards);
 			this.cardsWonInChallenges = data.challengeCardsWon;
 			this.clan = this.client.clans.add(data.clan);
 			this.clan = this.client.clans.add(data.clan);
-			this.deck = new PlayerCardManager(this.client, data.currentDeck);
+			this.deck = new PlayerCardManager(this.client, this, data.currentDeck);
 			this.donations = data.totalDonations;
 			this.donationsPerWeek = data.donations;
 			this.donationsReceived = data.donationsReceived;
 			this.expLevel = data.expLevel;
 			this.expPoints = data.expPoints;
-			this.favouriteCard = this.cards.add(data.currentFavouriteCard);
+			this.favouriteCard = this.cards.get(
+				data.currentFavouriteCard.id.toString()
+			);
 			this.leagueStatistics = data.leagueStatistics;
 			this.losses = data.losses;
 			this.maxWinsInChallenge = data.challengeMaxWins;
@@ -499,7 +507,9 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 			if (data.expLevel != null) this.expLevel = data.expLevel;
 			if (data.expPoints != null) this.expPoints = data.expPoints;
 			if (data.currentFavouriteCard != null)
-				this.favouriteCard = this.cards.add(data.currentFavouriteCard);
+				this.favouriteCard = this.cards.get(
+					data.currentFavouriteCard.id.toString()
+				);
 			if (data.leagueStatistics != null)
 				this.leagueStatistics = data.leagueStatistics;
 			if (data.losses != null) this.losses = data.losses;

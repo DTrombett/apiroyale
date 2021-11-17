@@ -6,7 +6,7 @@ import Structure from "./Structure";
  * A river race participant
  */
 export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
-	static id = "tag";
+	static id = "tag" as const;
 
 	/**
 	 * The clan standing in the race related to this participant

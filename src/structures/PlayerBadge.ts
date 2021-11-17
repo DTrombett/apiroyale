@@ -2,6 +2,7 @@ import type {
 	APIBadge,
 	APIMultipleLevelsBadge,
 	NonNullableProperties,
+	Player,
 } from "..";
 import type ClientRoyale from "..";
 import Structure from "./Structure";
@@ -13,7 +14,7 @@ export type PlayerMultipleLevelsBadge<T extends PlayerBadge = PlayerBadge> =
  * A player's badge
  */
 export class PlayerBadge extends Structure<APIBadge> {
-	static id = "name";
+	static id = "name" as const;
 
 	/**
 	 * The name of the badge
@@ -41,12 +42,18 @@ export class PlayerBadge extends Structure<APIBadge> {
 	target?: number;
 
 	/**
+	 * The player that owns this badge
+	 */
+	player: Player;
+
+	/**
 	 * @param client - The client that instantiated this badge
 	 * @param data - The data of the badge
 	 */
-	constructor(client: ClientRoyale, data: APIBadge) {
+	constructor(client: ClientRoyale, data: APIBadge, player: Player) {
 		super(client, data);
 
+		this.player = player;
 		this.name = data.name;
 		this.progress = data.progress;
 
@@ -85,7 +92,7 @@ export class PlayerBadge extends Structure<APIBadge> {
 	 */
 	clone<T extends PlayerBadge>(): T;
 	clone(): PlayerBadge {
-		return new PlayerBadge(this.client, this.toJson());
+		return new PlayerBadge(this.client, this.toJson(), this.player);
 	}
 
 	/**

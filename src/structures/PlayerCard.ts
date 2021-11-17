@@ -1,4 +1,4 @@
-import type { APICard, APIPlayerCard } from "..";
+import type { APICard, APIPlayerCard, Player } from "..";
 import type ClientRoyale from "..";
 import { Card } from "./Card";
 
@@ -22,12 +22,18 @@ export class PlayerCard extends Card {
 	starLevel: number | undefined;
 
 	/**
+	 * The player that owns this card
+	 */
+	player: Player;
+
+	/**
 	 * @param client - The client that instantiated this card
 	 * @param data - The data of the card
 	 */
-	constructor(client: ClientRoyale, data: APIPlayerCard) {
+	constructor(client: ClientRoyale, data: APIPlayerCard, player: Player) {
 		super(client, data);
 
+		this.player = player;
 		this.count = data.count;
 		this.level = data.level;
 		this.starLevel = data.starLevel;
@@ -38,7 +44,7 @@ export class PlayerCard extends Card {
 	 */
 	clone<T extends Card>(): T;
 	clone(): PlayerCard {
-		return new PlayerCard(this.client, this.toJson());
+		return new PlayerCard(this.client, this.toJson(), this.player);
 	}
 
 	/**

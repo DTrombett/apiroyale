@@ -6,7 +6,7 @@ import Structure from "./Structure";
  * A card
  */
 export class Card extends Structure<APICard> {
-	static id = "id";
+	static id = "id" as const;
 
 	/**
 	 * The name of the card

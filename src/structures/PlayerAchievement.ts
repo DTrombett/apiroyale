@@ -1,4 +1,4 @@
-import type { APIAchievement } from "..";
+import type { APIAchievement, Player } from "..";
 import type ClientRoyale from "..";
 import Structure from "./Structure";
 
@@ -6,7 +6,7 @@ import Structure from "./Structure";
  * A player's achievement
  */
 export class PlayerAchievement extends Structure<APIAchievement> {
-	static id = "name";
+	static id = "name" as const;
 
 	/**
 	 * The name of the achievement
@@ -34,10 +34,15 @@ export class PlayerAchievement extends Structure<APIAchievement> {
 	info: string;
 
 	/**
+	 * The player that owns this achievement
+	 */
+	player: Player;
+
+	/**
 	 * @param client - The client that instantiated this achievement
 	 * @param data - The data of the achievement
 	 */
-	constructor(client: ClientRoyale, data: APIAchievement) {
+	constructor(client: ClientRoyale, data: APIAchievement, player: Player) {
 		super(client, data);
 
 		this.name = data.name;
@@ -45,6 +50,7 @@ export class PlayerAchievement extends Structure<APIAchievement> {
 		this.level = data.stars;
 		this.target = data.target;
 		this.progress = data.value;
+		this.player = player;
 	}
 
 	/**
@@ -66,7 +72,7 @@ export class PlayerAchievement extends Structure<APIAchievement> {
 	 */
 	clone<T extends PlayerAchievement>(): T;
 	clone(): PlayerAchievement {
-		return new PlayerAchievement(this.client, this.toJson());
+		return new PlayerAchievement(this.client, this.toJson(), this.player);
 	}
 
 	/**

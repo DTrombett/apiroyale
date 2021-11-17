@@ -1,4 +1,5 @@
 import type ClientRoyale from "..";
+import { Player } from "../structures";
 import type { APIMember, APITag, Clan, FetchOptions } from "..";
 import PlayerManager from "./PlayerManager";
 import type { Path } from "../util";
@@ -37,6 +38,20 @@ export class ClanMemberManager extends PlayerManager {
 	 */
 	static path(tag: APITag): Path {
 		return this.route.replace(":id", tag) as Path;
+	}
+
+	/**
+	 * Adds a structure to this manager.
+	 * @param data - The data of the structure to add
+	 * @returns The added structure
+	 */
+	add<S extends Player = Player>(data: APIMember): S {
+		const existing = this.get(data[Player.id]) as S | undefined;
+		if (existing != null) return existing.patch(data);
+		const player = new Player(this.client, data, this.clan) as S;
+		this.set(player.id, player);
+		this.client.emit("structureAdd", player);
+		return player;
 	}
 
 	/**

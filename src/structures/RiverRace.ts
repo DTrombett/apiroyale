@@ -7,7 +7,7 @@ import { APIDateToObject, dateObjectToAPIDate } from "../util";
  * Represents a river race
  */
 export class RiverRace extends Structure<APIRiverRaceLogEntry> {
-	static id = "seasonId";
+	static id = "seasonId" as const;
 
 	/**
 	 * The season id of this race
@@ -41,6 +41,7 @@ export class RiverRace extends Structure<APIRiverRaceLogEntry> {
 		this.finishTime = APIDateToObject(data.createdDate);
 		this.leaderboard = new RiverRaceStandingManager(
 			this.client,
+			this,
 			data.standings
 		);
 	}
