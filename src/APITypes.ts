@@ -1,10 +1,10 @@
 export type APIAchievement = {
+	completionInfo: null;
+	info: string;
 	name: string;
 	stars: number;
-	value: number;
 	target: number;
-	info: string;
-	completionInfo: null;
+	value: number;
 };
 
 export type APIArena = {
@@ -12,45 +12,37 @@ export type APIArena = {
 	name: string;
 };
 
-export type APIBadge =
-	| {
-			name: string;
-			progress: number;
-			level: number;
-			maxLevel: number;
-			target: number;
-	  }
-	| {
-			name: string;
-			progress: number;
-	  };
+export type APIBadge = APIBaseBadge | APIMultipleLevelsBadge;
+
+export type APIBaseBadge = {
+	name: string;
+	progress: number;
+};
 
 export type APIBestSeason = APISeason & {
 	id: APISeasonId;
 };
 
 export type APICard = {
-	name: string;
+	iconUrls: { medium: APIImageLink<`/cards/${number}/${string}.png`> };
 	id: number;
 	maxLevel: number;
-	iconUrls: {
-		medium: APIImageLink<`/cards/${number}/${string}.png`>;
-	};
+	name: string;
 };
 
 export type APIClan = {
-	tag: APITag;
-	name: string;
-	type: APIClanType;
-	description: string;
 	badgeId: number;
 	clanScore: number;
 	clanWarTrophies: number;
-	location: APILocation;
-	requiredTrophies: number;
+	description: string;
 	donationsPerWeek: number;
-	members: number;
+	location: APILocation;
 	memberList: APIMember[];
+	members: number;
+	name: string;
+	requiredTrophies: number;
+	tag: APITag;
+	type: APIClanType;
 };
 
 export type APIClanPreview = Pick<APIClan, "badgeId" | "name" | "tag">;
@@ -72,15 +64,15 @@ export type APIClanResultPreview = Pick<
 export type APIClanSearchResults = APIList<APIClanResultPreview>;
 
 export type APIClanStanding = {
-	tag: APITag;
-	name: string;
 	badgeId: number;
-	fame: number;
-	repairPoints: 0;
-	finishTime: APIDate;
-	periodPoints: 0;
 	clanScore: number;
+	fame: number;
+	finishTime: APIDate;
+	name: string;
 	participants: APIRiverRaceLogParticipant[];
+	periodPoints: 0;
+	repairPoints: 0;
+	tag: APITag;
 };
 
 export type APIClanType = "closed" | "inviteOnly" | "open";
@@ -95,74 +87,82 @@ export type APIImageLink<P extends string = string> =
 export type APIDate =
 	`${number}${number}${number}${number}${number}${number}${number}${number}T${number}${number}${number}${number}${number}${number}.000Z`;
 
+export type APILeagueStatistics = {
+	bestSeason: APIBestSeason;
+	currentSeason: APICurrentSeason;
+	previousSeason: APIPreviousSeason;
+};
+
 export type APILocation = {
-	id: number;
-	name: string;
-	isCountry: boolean;
 	countryCode?: string;
+	id: number;
+	isCountry: boolean;
+	name: string;
 };
 
 export type APIMember = {
-	tag: APITag;
-	name: string;
-	role: APIRole;
-	lastSeen: APIDate;
-	expLevel: number;
-	trophies: number;
 	arena: APIArena;
 	clanRank: number;
-	previousClanRank: number;
 	donations: number;
 	donationsReceived: number;
+	expLevel: number;
+	lastSeen: APIDate;
+	name: string;
+	previousClanRank: number;
+	role: APIRole;
+	tag: APITag;
+	trophies: number;
+};
+
+export type APIMultipleLevelsBadge = APIBaseBadge & {
+	level: number;
+	maxLevel: number;
+	target: number;
 };
 
 export type APIPaging = {
 	cursors: {
-		before?: string;
 		after?: string;
+		before?: string;
 	};
 };
 
 export type APIPlayer = {
-	tag: APITag;
-	name: string;
-	expLevel: number;
-	trophies: number;
-	bestTrophies: number;
-	wins: number;
-	losses: number;
+	achievements: APIAchievement[];
+	arena: APIArena;
+	badges: APIBadge[];
 	battleCount: number;
-	threeCrownWins: number;
+	bestTrophies: number;
+	cards: APIPlayerCard[];
 	challengeCardsWon: number;
 	challengeMaxWins: number;
-	tournamentCardsWon: number;
-	tournamentBattleCount: number;
-	role: APIRole;
-	donations: number;
-	donationsReceived: number;
-	totalDonations: number;
-	warDayWins: number;
-	clanCardsCollected: number;
 	clan: APIClanPreview;
-	arena: APIArena;
-	leagueStatistics: {
-		currentSeason: APICurrentSeason;
-		previousSeason: APIPreviousSeason;
-		bestSeason: APIBestSeason;
-	};
-	badges: APIBadge[];
-	achievements: APIAchievement[];
-	cards: APIPlayerCard[];
+	clanCardsCollected: number;
 	currentDeck: APIPlayerCard[];
 	currentFavouriteCard: APICard;
-	starPoints: number;
+	donations: number;
+	donationsReceived: number;
+	expLevel: number;
 	expPoints: number;
+	leagueStatistics: APILeagueStatistics;
+	losses: number;
+	name: string;
+	role: APIRole;
+	starPoints: number;
+	tag: APITag;
+	threeCrownWins: number;
+	totalDonations: number;
+	tournamentBattleCount: number;
+	tournamentCardsWon: number;
+	trophies: number;
+	warDayWins: number;
+	wins: number;
 };
 
 export type APIPlayerCard = APICard & {
+	count: number;
 	level: number;
 	starLevel?: number;
-	count: number;
 };
 
 export type APIPreviousSeason = APICurrentSeason & {
@@ -179,26 +179,26 @@ export type APIList<T> = {
 export type APIRiverRaceLog = APIList<APIRiverRaceLogEntry>;
 
 export type APIRiverRaceLogEntry = {
+	createdDate: APIDate;
 	seasonId: number;
 	sectionIndex: number;
-	createdDate: APIDate;
 	standings: APIRiverRaceLogStanding[];
 };
 
 export type APIRiverRaceLogParticipant = {
-	tag: APITag;
-	name: string;
-	fame: number;
-	repairPoints: 0;
 	boatAttacks: number;
 	decksUsed: number;
 	decksUsedToday: 0;
+	fame: number;
+	name: string;
+	repairPoints: 0;
+	tag: APITag;
 };
 
 export type APIRiverRaceLogStanding = {
+	clan: APIClanStanding;
 	rank: number;
 	trophyChange: number;
-	clan: APIClanStanding;
 };
 
 export type APISeason = {

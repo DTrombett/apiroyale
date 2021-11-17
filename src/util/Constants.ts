@@ -11,6 +11,9 @@ import type {
 	Response,
 	RiverRace,
 	Structure,
+	PlayerBadge,
+	PlayerAchievement,
+	Card,
 } from "..";
 
 export const enum Constants {
@@ -87,6 +90,12 @@ export type ClientEvents = {
 	playerUpdate: [oldMember: Player, newMember: Player];
 	locationUpdate: [oldLocation: Location, newLocation: Location];
 	riverRaceUpdate: [oldRiverRace: RiverRace, newRiverRace: RiverRace];
+	playerBadgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
+	playerAchievementUpdate: [
+		oldAchievement: PlayerAchievement,
+		newAchievement: PlayerAchievement
+	];
+	cardUpdate: [oldCard: Card, newCard: Card];
 };
 
 /**

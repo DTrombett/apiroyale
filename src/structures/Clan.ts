@@ -186,7 +186,7 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	}
 
 	/**
-	 * Checks if this clan isn't partial, so it has all properties.
+	 * Checks if this clan has all properties returned by the API.
 	 */
 	isNotPartial(): this is NonPartialClan<this> {
 		return this.description !== undefined;
@@ -267,17 +267,17 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 		else if (this.isNotPartial())
 			result = {
 				badgeId: this.badge,
-				clanScore: this.score,
-				clanWarTrophies: this.warTrophies,
-				description: this.description,
-				donationsPerWeek: this.donationsPerWeek,
-				location: this.location?.toJson(),
+				clanScore: this.score!,
+				clanWarTrophies: this.warTrophies!,
+				description: this.description!,
+				donationsPerWeek: this.donationsPerWeek!,
+				location: this.location!.toJson(),
 				name: this.name,
-				requiredTrophies: this.requiredTrophies,
+				requiredTrophies: this.requiredTrophies!,
 				tag: this.tag,
-				type: this.type ? (ClanType[this.type!] as APIClanType) : undefined,
+				type: ClanType[this.type!] as APIClanType,
 				memberList: this.members.map((member) => member.toJson()),
-				members: this.memberCount,
+				members: this.memberCount!,
 			};
 		else
 			result = {

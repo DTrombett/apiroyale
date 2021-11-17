@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { JsonObject, NonNullableProperties } from "..";
+import type { JsonObject } from "..";
 
 /**
  * Base class for all structures
@@ -30,8 +30,13 @@ export class Structure<T extends JsonObject = JsonObject> {
 	 * @param data - The data of the structure
 	 */
 	constructor(client: ClientRoyale, data: T) {
+		const id = data[(this.constructor as typeof Structure).id]?.toString();
+
 		this.client = client;
-		this.id = data[(this.constructor as typeof Structure).id].toString();
+
+		if (id == null) throw new Error(`${this.constructor.name} id is null`);
+
+		this.id = id;
 	}
 
 	/**
@@ -51,19 +56,10 @@ export class Structure<T extends JsonObject = JsonObject> {
 	}
 
 	/**
-	 * Checks if this structure is not partial.
-	 */
-	isNotPartial(): this is NonNullableProperties<this, keyof this> {
-		return true;
-	}
-
-	/**
 	 * Patches this structure.
 	 * @param _data - The data to update this structure with
 	 * @returns The updated structure
 	 */
-	patch(data: T): NonNullableProperties<this, keyof this>;
-	patch(data: Partial<T>): this;
 	patch(_data: Partial<T>): this {
 		this.lastUpdate = new Date();
 

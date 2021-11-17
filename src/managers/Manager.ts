@@ -1,10 +1,5 @@
 import Collection from "@discordjs/collection";
-import type {
-	ClientRoyale,
-	ConstructableStructure,
-	NonNullableProperties,
-	StructureType,
-} from "..";
+import type { ClientRoyale, ConstructableStructure, StructureType } from "..";
 
 /**
  * A manager to handle structures' data
@@ -46,15 +41,13 @@ export class Manager<
 	 * @returns The added structure
 	 */
 	add<S extends T["prototype"] = T["prototype"]>(
-		data: StructureType<T>
-	): NonNullableProperties<S, keyof S>;
-	add<S extends T["prototype"] = T["prototype"]>(
 		data: Partial<StructureType<T>>
-	): S;
-	add(data: Partial<StructureType<T>>): this["structure"]["prototype"] {
-		const existing = this.get(data[this.structure.id] as string);
+	): S {
+		const existing = this.get(data[this.structure.id] as string) as
+			| S
+			| undefined;
 		if (existing != null) return existing.patch(data);
-		const instance = new this.structure(this.client, data);
+		const instance = new this.structure(this.client, data) as S;
 		this.set(instance.id, instance);
 		this.client.emit("structureAdd", instance);
 		return instance;

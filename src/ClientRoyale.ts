@@ -1,5 +1,11 @@
 import EventEmitter from "node:events";
-import { ArenaManager, ClanManager, LocationManager } from "./managers";
+import {
+	ArenaManager,
+	CardManager,
+	ClanManager,
+	LocationManager,
+	PlayerManager,
+} from "./managers";
 import Rest from "./rest";
 import type { ClientEvents, ClientOptions } from "./util";
 import { Errors } from "./util";
@@ -52,6 +58,11 @@ export class ClientRoyale extends EventEmitter {
 	arenas = new ArenaManager(this);
 
 	/**
+	 * A manager of cards
+	 */
+	cards = new CardManager(this);
+
+	/**
 	 * A manager for clans
 	 */
 	clans = new ClanManager(this);
@@ -60,6 +71,11 @@ export class ClientRoyale extends EventEmitter {
 	 * A manager for locations
 	 */
 	locations = new LocationManager(this);
+
+	/**
+	 * A manager for players
+	 */
+	players = new PlayerManager(this);
 
 	/**
 	 * The rest client
