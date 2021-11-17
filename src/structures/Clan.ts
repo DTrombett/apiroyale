@@ -22,6 +22,7 @@ import FetchableStructure from "./FetchableStructure";
 import Location from "./Location";
 
 export type ClanConstructor = APIClan | APIClanPreview | APIClanResultPreview;
+
 export type ClanResultPreview<C extends Clan = Clan> = NonNullableProperties<
 	C,
 	| "donationsPerWeek"

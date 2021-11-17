@@ -24,3 +24,5 @@ export class PlayerManager extends FetchableManager<typeof Player> {
 		return super.remove(tag) as OnlyPlayer | undefined;
 	}
 }
+
+export default PlayerManager;

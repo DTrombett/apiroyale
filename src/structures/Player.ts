@@ -4,6 +4,7 @@ import type {
 	APILeagueStatistics,
 	APIMember,
 	APIPlayer,
+	APIRiverRaceParticipant,
 	APIRole,
 	APITag,
 	Arena,
@@ -18,7 +19,10 @@ import type { FetchOptions, NonNullableProperties, Path } from "../util";
 import { APIDateToObject, ClanMemberRole, dateObjectToAPIDate } from "../util";
 import FetchableStructure from "./FetchableStructure";
 
-export type PlayerConstructor = APIMember | APIPlayer;
+export type PlayerConstructor =
+	| APIMember
+	| APIPlayer
+	| Pick<APIRiverRaceParticipant, "decksUsedToday" | "name" | "tag">;
 
 export type ClanMember<T extends Player = Player> = NonNullableProperties<
 	T,
@@ -28,7 +32,6 @@ export type ClanMember<T extends Player = Player> = NonNullableProperties<
 	| "donationsReceived"
 	| "expLevel"
 	| "lastSeen"
-	| "name"
 	| "previousClanRank"
 	| "role"
 	| "trophies"
@@ -41,7 +44,6 @@ export type OnlyPlayer<T extends Player = Player> = NonNullableProperties<
 	| "bestTrophies"
 	| "cards"
 	| "cardsWonInChallenges"
-	| "clan"
 	| "clan"
 	| "deck"
 	| "donations"
@@ -63,6 +65,8 @@ export type OnlyPlayer<T extends Player = Player> = NonNullableProperties<
 	| "trophies"
 	| "wins"
 >;
+export type RiverRaceParticipantData<T extends Player = Player> =
+	NonNullableProperties<T, "warDecksUsedToday">;
 
 /**
  * A class representing a player
@@ -231,6 +235,11 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 	tournamentCardsWon?: number;
 
 	/**
+	 * Number of decks used in war today
+	 */
+	warDecksUsedToday?: number;
+
+	/**
 	 * @param client - The client that instantiated this clan player
 	 * @param data - The data of the player
 	 * @param clan - The clan of the player
@@ -288,6 +297,7 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 			this.trophies = data.trophies;
 			this.wins = data.wins;
 		}
+		if ("decksUsedToday" in data) this.warDecksUsedToday = data.decksUsedToday;
 	}
 
 	/**
@@ -403,7 +413,8 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 			this.tournamentBattleCount === player.tournamentBattleCount &&
 			this.tournamentCardsWon === player.tournamentCardsWon &&
 			this.trophies === player.trophies &&
-			this.wins === player.wins
+			this.wins === player.wins &&
+			this.warDecksUsedToday === player.warDecksUsedToday
 		);
 	}
 
@@ -422,6 +433,13 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 	}
 
 	/**
+	 * Checks if this object has all properties of a river race participant.
+	 */
+	isRiverRaceParticipant(): this is RiverRaceParticipantData<this> {
+		return this.warDecksUsedToday !== undefined;
+	}
+
+	/**
 	 * Patches this player.
 	 * @param data - The data to update this player with
 	 * @returns The updated player
@@ -434,10 +452,10 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 		super.patch(data);
 
 		if (data.name != null) this.name = data.name;
-		if (data.role != null) this.role = ClanMemberRole[data.role];
-		if (data.arena != null) this.arena = this.client.arenas.add(data.arena);
 
 		if ("lastSeen" in data) {
+			if (data.arena != null) this.arena = this.client.arenas.add(data.arena);
+			if (data.role != null) this.role = ClanMemberRole[data.role];
 			if (data.clanRank != null) this.clanRank = data.clanRank;
 			if (data.donations != null) this.donationsPerWeek = data.donations;
 			if (data.donationsReceived != null)
@@ -450,6 +468,8 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 			if (data.trophies != null) this.trophies = data.trophies;
 		}
 		if ("leagueStatistics" in data) {
+			if (data.role != null) this.role = ClanMemberRole[data.role];
+			if (data.arena != null) this.arena = this.client.arenas.add(data.arena);
 			if (data.achievements != null) {
 				this.achievements.clear();
 				for (const achievement of data.achievements)
@@ -498,6 +518,9 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 			if (data.trophies != null) this.trophies = data.trophies;
 			if (data.wins != null) this.wins = data.wins;
 		}
+		if ("decksUsedToday" in data)
+			if (data.decksUsedToday != null)
+				this.warDecksUsedToday = data.decksUsedToday;
 
 		if (!this.equals(old)) this.client.emit("playerUpdate", old, this);
 		return this;
@@ -557,6 +580,12 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 				tournamentCardsWon: this.tournamentCardsWon,
 				trophies: this.trophies,
 				wins: this.wins,
+			};
+		else if (this.isRiverRaceParticipant())
+			data = {
+				name: this.name,
+				tag: this.tag,
+				decksUsedToday: this.warDecksUsedToday,
 			};
 		else throw new Error("Unknown player type");
 

@@ -10,6 +10,8 @@ export * from "./PlayerCard";
 export * from "./FetchableStructure";
 export * from "./Location";
 export * from "./RiverRace";
+export * from "./RiverRaceParticipant";
+export * from "./RiverRaceStanding";
 export * from "./Structure";
 export * from "./UnpatchableStructure";
 

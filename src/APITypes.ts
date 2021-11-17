@@ -32,6 +32,9 @@ export type APICard = {
 
 export type APIClan = {
 	badgeId: number;
+	clanChestLevel: 1;
+	clanChestMaxLevel: 0;
+	clanChestStatus: "inactive";
 	clanScore: number;
 	clanWarTrophies: number;
 	description: string;
@@ -69,7 +72,7 @@ export type APIClanStanding = {
 	fame: number;
 	finishTime: APIDate;
 	name: string;
-	participants: APIRiverRaceLogParticipant[];
+	participants: APIRiverRaceParticipant[];
 	periodPoints: 0;
 	repairPoints: 0;
 	tag: APITag;
@@ -102,6 +105,7 @@ export type APILocation = {
 
 export type APIMember = {
 	arena: APIArena;
+	clanChestPoints: 0;
 	clanRank: number;
 	donations: number;
 	donationsReceived: number;
@@ -182,20 +186,20 @@ export type APIRiverRaceLogEntry = {
 	createdDate: APIDate;
 	seasonId: number;
 	sectionIndex: number;
-	standings: APIRiverRaceLogStanding[];
+	standings: APIRiverRaceStanding[];
 };
 
-export type APIRiverRaceLogParticipant = {
+export type APIRiverRaceParticipant = {
 	boatAttacks: number;
 	decksUsed: number;
-	decksUsedToday: 0;
+	decksUsedToday: number;
 	fame: number;
 	name: string;
 	repairPoints: 0;
 	tag: APITag;
 };
 
-export type APIRiverRaceLogStanding = {
+export type APIRiverRaceStanding = {
 	clan: APIClanStanding;
 	rank: number;
 	trophyChange: number;

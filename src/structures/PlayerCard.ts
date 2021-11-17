@@ -84,3 +84,5 @@ export class PlayerCard extends Card {
 		};
 	}
 }
+
+export default PlayerCard;

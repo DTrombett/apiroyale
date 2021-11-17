@@ -1,14 +1,13 @@
 import type ClientRoyale from "..";
 import type { APIMember, APITag, Clan, FetchOptions } from "..";
-import { Player } from "../structures";
+import PlayerManager from "./PlayerManager";
 import type { Path } from "../util";
 import Constants from "../util";
-import Manager from "./Manager";
 
 /**
  * A manager for clan members
  */
-export class ClanMemberManager extends Manager<typeof Player> {
+export class ClanMemberManager extends PlayerManager {
 	/**
 	 * The route to fetch the members from
 	 */
@@ -25,9 +24,10 @@ export class ClanMemberManager extends Manager<typeof Player> {
 	 * @param data - The data to initialize this manager with
 	 */
 	constructor(client: ClientRoyale, clan: Clan, data?: APIMember[]) {
-		super(client, Player, data);
+		super(client);
 
 		this.clan = clan;
+		if (data) for (const member of data) this.add(member);
 	}
 
 	/**
@@ -40,11 +40,21 @@ export class ClanMemberManager extends Manager<typeof Player> {
 	}
 
 	/**
-	 * Fetches the members of this clan.
+	 * * **Note:** This method is only available on a PlayerManager.
+	 * * Use {@link ClanMemberManager#fetchMembers} to fetch the clan members and {@link PlayerManager#fetch} to fetch a player.
+	 */
+	fetch(): never {
+		throw new Error(
+			"This method is only available on a PlayerManager. Use fetchMembers to fetch the clan members and PlayerManager#fetch to fetch a player."
+		);
+	}
+
+	/**
+	 * Fetches the members of the clan.
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched members
 	 */
-	async fetch({
+	async fetchMembers({
 		force = false,
 		maxAge = Constants.defaultMaxAge,
 	}: FetchOptions = {}): Promise<this> {
