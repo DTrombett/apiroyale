@@ -546,6 +546,7 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 				previousClanRank: this.previousClanRank,
 				role: ClanMemberRole[this.role] as APIRole,
 				trophies: this.trophies,
+				clanChestPoints: 0,
 			};
 		else if (this.isPlayer())
 			data = {
