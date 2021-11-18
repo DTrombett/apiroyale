@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIRiverRaceStanding, Clan, RiverRace } from "..";
+import type { APIRiverRaceWeekStanding, Clan, RiverRace } from "..";
 import { RiverRaceParticipantManager } from "../managers";
 import { APIDateToObject, dateObjectToAPIDate } from "../util";
 import Structure from "./Structure";
@@ -7,7 +7,7 @@ import Structure from "./Structure";
 /**
  * A river race standing
  */
-export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
+export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	static id = "rank" as const;
 
 	/**
@@ -21,12 +21,12 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 	trophyChange: number;
 
 	/**
-	 * The clan war trophies before this war ends
+	 * The clan war trophies BEFORE this war ends
 	 */
-	oldClanScore: number;
+	clanScore: number;
 
 	/**
-	 * Points accumuled by the clan in this race
+	 * Points accumuled by the clan in this race until now
 	 */
 	points: number;
 
@@ -47,6 +47,11 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 	clan: Clan;
 
 	/**
+	 * The number of medals this clan has accumulated in the current day
+	 */
+	medals: number;
+
+	/**
 	 * The race this standing is for
 	 */
 	readonly race: RiverRace;
@@ -58,7 +63,7 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 	 */
 	constructor(
 		client: ClientRoyale,
-		data: APIRiverRaceStanding,
+		data: APIRiverRaceWeekStanding,
 		race: RiverRace
 	) {
 		super(client, data);
@@ -68,7 +73,8 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 		this.clan = this.client.clans.add<Clan>(data.clan);
 		this.rank = data.rank;
 		this.trophyChange = data.trophyChange;
-		this.oldClanScore = data.clan.clanScore;
+		this.clanScore = data.clan.clanScore;
+		this.medals = data.clan.periodPoints;
 		this.points = data.clan.fame;
 		this.finishedAt = finishedAt.getTime() <= 0 ? null : finishedAt;
 		this.participants = new RiverRaceParticipantManager(
@@ -88,22 +94,32 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 	}
 
 	/**
+	 * The number of medals this clan is missing to reach the next clan, or null if the clan is the first
+	 */
+	get medalsToOvertake() {
+		const other = this.race.leaderboard.get((this.rank - 1).toString())?.medals;
+
+		return other != null ? other - this.medals : null;
+	}
+
+	/**
 	 * Clone this standing.
 	 */
-	clone<T extends RiverRaceStanding>(): T;
-	clone(): RiverRaceStanding {
-		return new RiverRaceStanding(this.client, this.toJson(), this.race);
+	clone<T extends RiverRaceWeekStanding>(): T;
+	clone(): RiverRaceWeekStanding {
+		return new RiverRaceWeekStanding(this.client, this.toJson(), this.race);
 	}
 
 	/**
 	 * Checks whether this standing is equal to another, comparing all properties.
 	 * @param standing - The standing to compare to
 	 */
-	equals(standing: RiverRaceStanding): boolean {
+	equals(standing: RiverRaceWeekStanding): boolean {
 		return (
 			this.rank === standing.rank &&
 			this.trophyChange === standing.trophyChange &&
-			this.oldClanScore === standing.oldClanScore &&
+			this.clanScore === standing.clanScore &&
+			this.medals === standing.medals &&
 			this.points === standing.points &&
 			this.finishedAt?.getTime() === standing.finishedAt?.getTime() &&
 			this.participants
@@ -118,13 +134,14 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 	 * @param data - The data to patch
 	 * @returns The patched standing
 	 */
-	patch(data: Partial<APIRiverRaceStanding>): this {
+	patch(data: Partial<APIRiverRaceWeekStanding>): this {
 		const old = this.clone();
 		super.patch(data);
 
 		if (data.rank != null) this.rank = data.rank;
 		if (data.trophyChange != null) this.trophyChange = data.trophyChange;
-		if (data.clan?.clanScore != null) this.oldClanScore = data.clan.clanScore;
+		if (data.clan?.clanScore != null) this.clanScore = data.clan.clanScore;
+		if (data.clan?.periodPoints != null) this.medals = data.clan.periodPoints;
 		if (data.clan?.fame != null) this.points = data.clan.fame;
 		if (data.clan?.finishTime != null) {
 			const finishedAt = APIDateToObject(data.clan.finishTime);
@@ -144,17 +161,17 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 	/**
 	 * Gets a JSON representation of this standing.
 	 */
-	toJson<R extends APIRiverRaceStanding = APIRiverRaceStanding>(): R;
-	toJson(): APIRiverRaceStanding {
+	toJson<R extends APIRiverRaceWeekStanding = APIRiverRaceWeekStanding>(): R;
+	toJson(): APIRiverRaceWeekStanding {
 		return {
 			rank: this.rank,
 			trophyChange: this.trophyChange,
 			clan: {
-				clanScore: this.oldClanScore,
+				clanScore: this.clanScore,
 				fame: this.points,
 				finishTime: dateObjectToAPIDate(this.finishedAt),
 				participants: this.participants.map((p) => p.toJson()),
-				periodPoints: 0,
+				periodPoints: this.medals,
 				repairPoints: 0,
 				...this.clan.toJson(),
 			},
@@ -169,4 +186,4 @@ export class RiverRaceStanding extends Structure<APIRiverRaceStanding> {
 	}
 }
 
-export default RiverRaceStanding;
+export default RiverRaceWeekStanding;

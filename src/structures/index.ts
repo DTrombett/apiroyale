@@ -11,7 +11,7 @@ export * from "./FetchableStructure";
 export * from "./Location";
 export * from "./RiverRace";
 export * from "./RiverRaceParticipant";
-export * from "./RiverRaceStanding";
+export * from "./RiverRaceWeekStanding";
 export * from "./Structure";
 export * from "./UnpatchableStructure";
 

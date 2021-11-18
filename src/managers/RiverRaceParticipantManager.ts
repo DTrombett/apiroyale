@@ -1,4 +1,4 @@
-import type { APIRiverRaceParticipant, RiverRaceStanding } from "..";
+import type { APIRiverRaceParticipant, RiverRaceWeekStanding } from "..";
 import type ClientRoyale from "..";
 import Manager from "./Manager";
 import { RiverRaceParticipant } from "../structures";
@@ -12,7 +12,7 @@ export class RiverRaceParticipantManager extends Manager<
 	/**
 	 * The standing that this manager belongs to
 	 */
-	standing: RiverRaceStanding;
+	standing: RiverRaceWeekStanding;
 
 	/**
 	 * @param client - The client that instantiated this manager
@@ -20,7 +20,7 @@ export class RiverRaceParticipantManager extends Manager<
 	 */
 	constructor(
 		client: ClientRoyale,
-		standing: RiverRaceStanding,
+		standing: RiverRaceWeekStanding,
 		data?: APIRiverRaceParticipant[]
 	) {
 		super(client, RiverRaceParticipant, data);

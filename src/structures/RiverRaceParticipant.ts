@@ -1,4 +1,4 @@
-import type { Player, RiverRace, RiverRaceStanding } from ".";
+import type { Player, RiverRace, RiverRaceWeekStanding } from ".";
 import type { APIRiverRaceParticipant, APITag, ClientRoyale } from "..";
 import Structure from "./Structure";
 
@@ -11,7 +11,7 @@ export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
 	/**
 	 * The clan standing in the race related to this participant
 	 */
-	readonly standing: RiverRaceStanding;
+	readonly standing: RiverRaceWeekStanding;
 
 	/**
 	 * The number of boat attacks this player has made
@@ -57,7 +57,7 @@ export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
 	constructor(
 		client: ClientRoyale,
 		data: APIRiverRaceParticipant,
-		standing: RiverRaceStanding
+		standing: RiverRaceWeekStanding
 	) {
 		super(client, data);
 

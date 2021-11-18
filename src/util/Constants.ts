@@ -14,7 +14,7 @@ import type {
 	PlayerBadge,
 	PlayerAchievement,
 	Card,
-	RiverRaceStanding,
+	RiverRaceWeekStanding,
 	RiverRaceParticipant,
 } from "..";
 
@@ -99,8 +99,8 @@ export type ClientEvents = {
 	];
 	cardUpdate: [oldCard: Card, newCard: Card];
 	riverRaceStandingUpdate: [
-		oldStanding: RiverRaceStanding,
-		newStanding: RiverRaceStanding
+		oldStanding: RiverRaceWeekStanding,
+		newStanding: RiverRaceWeekStanding
 	];
 	riverRaceParticipantUpdate: [
 		oldParticipant: RiverRaceParticipant,

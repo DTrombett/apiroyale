@@ -48,6 +48,10 @@ export type APIClan = {
 	type: APIClanType;
 };
 
+export type APIClanCurrentStanding = Omit<APIClanWeekStanding, "finishTime">;
+
+export type APIClanPeriodStanding = Pick<APIClan, "tag">;
+
 export type APIClanPreview = Pick<APIClan, "badgeId" | "name" | "tag">;
 
 export type APIClanResultPreview = Pick<
@@ -66,7 +70,9 @@ export type APIClanResultPreview = Pick<
 
 export type APIClanSearchResults = APIList<APIClanResultPreview>;
 
-export type APIClanStanding = {
+export type APIClanType = "closed" | "inviteOnly" | "open";
+
+export type APIClanWeekStanding = {
 	badgeId: number;
 	clanScore: number;
 	fame: number;
@@ -77,8 +83,6 @@ export type APIClanStanding = {
 	repairPoints: 0;
 	tag: APITag;
 };
-
-export type APIClanType = "closed" | "inviteOnly" | "open";
 
 export type APICurrentSeason = APISeason & {
 	bestTrophies: number;
@@ -180,13 +184,23 @@ export type APIList<T> = {
 	paging: APIPaging;
 };
 
+export type APIRiverRace = {
+	clan: APIClanCurrentStanding;
+	clans: APIClanCurrentStanding[];
+	state: APIRiverRaceState;
+	sectionIndex: number;
+	periodIndex: number;
+	periodType: APIRiverRacePeriodType;
+	periodLogs: APIRiverRacePeriod[];
+};
+
 export type APIRiverRaceLog = APIList<APIRiverRaceLogEntry>;
 
 export type APIRiverRaceLogEntry = {
 	createdDate: APIDate;
 	seasonId: number;
 	sectionIndex: number;
-	standings: APIRiverRaceStanding[];
+	standings: APIRiverRaceWeekStanding[];
 };
 
 export type APIRiverRaceParticipant = {
@@ -199,8 +213,28 @@ export type APIRiverRaceParticipant = {
 	tag: APITag;
 };
 
-export type APIRiverRaceStanding = {
-	clan: APIClanStanding;
+export type APIRiverRacePeriod = {
+	periodIndex: number;
+	items: APIRiverRacePeriodStanding[];
+};
+
+export type APIRiverRacePeriodStanding = {
+	clan: APIClanPeriodStanding;
+	pointsEarned: number;
+	progressStartOfDay: number;
+	progressEndOfDay: number;
+	endOfDayRank: number;
+	progressEarned: number;
+	numOfDefensesRemaining: number;
+	progressEarnedFromDefenses: number;
+};
+
+export type APIRiverRacePeriodType = "training" | "warDay";
+
+export type APIRiverRaceState = "full";
+
+export type APIRiverRaceWeekStanding = {
+	clan: APIClanWeekStanding;
 	rank: number;
 	trophyChange: number;
 };

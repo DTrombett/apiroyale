@@ -1,12 +1,12 @@
-import { RiverRaceStanding } from "../structures";
-import type { APIRiverRaceStanding, ClientRoyale, RiverRace } from "..";
+import { RiverRaceWeekStanding } from "../structures";
+import type { APIRiverRaceWeekStanding, ClientRoyale, RiverRace } from "..";
 import Manager from "./Manager";
 
 /**
  * A manager for river race standings
  */
 export class RiverRaceStandingManager extends Manager<
-	typeof RiverRaceStanding
+	typeof RiverRaceWeekStanding
 > {
 	/**
 	 * The race this manager belongs to
@@ -20,9 +20,9 @@ export class RiverRaceStandingManager extends Manager<
 	constructor(
 		client: ClientRoyale,
 		race: RiverRace,
-		data?: APIRiverRaceStanding[]
+		data?: APIRiverRaceWeekStanding[]
 	) {
-		super(client, RiverRaceStanding, data);
+		super(client, RiverRaceWeekStanding, data);
 
 		this.race = race;
 	}
@@ -32,14 +32,14 @@ export class RiverRaceStandingManager extends Manager<
 	 * @param data - The data of the structure to add
 	 * @returns The added structure
 	 */
-	add<S extends RiverRaceStanding = RiverRaceStanding>(
-		data: APIRiverRaceStanding
+	add<S extends RiverRaceWeekStanding = RiverRaceWeekStanding>(
+		data: APIRiverRaceWeekStanding
 	): S {
-		const existing = this.get(data[RiverRaceStanding.id].toString()) as
+		const existing = this.get(data[RiverRaceWeekStanding.id].toString()) as
 			| S
 			| undefined;
 		if (existing != null) return existing.patch(data);
-		const achievement = new RiverRaceStanding(
+		const achievement = new RiverRaceWeekStanding(
 			this.client,
 			data,
 			this.race
@@ -54,7 +54,7 @@ export class RiverRaceStandingManager extends Manager<
 	 * @param rank - The rank of the standing to remove
 	 * @returns The removed standing, if it exists
 	 */
-	remove(rank: string): RiverRaceStanding | undefined {
+	remove(rank: string): RiverRaceWeekStanding | undefined {
 		return super.remove(rank);
 	}
 }
