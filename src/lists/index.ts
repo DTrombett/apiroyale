@@ -2,5 +2,5 @@ import List from "./List";
 
 export * from "./List";
 export * from "./ClanSearchResults";
-export * from "./RiverRaceLog";
+export * from "./RiverRaceLogResults";
 export default List;

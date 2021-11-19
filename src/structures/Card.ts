@@ -1,57 +1,62 @@
-import type { APICard } from "..";
 import type ClientRoyale from "..";
+import type { APICard, StringId } from "..";
+import { isEqual } from "../util";
 import Structure from "./Structure";
 
 /**
  * A card
  */
-export class Card extends Structure<APICard> {
+export class Card<T extends APICard = APICard> extends Structure<T> {
 	static id = "id" as const;
-
-	/**
-	 * The name of the card
-	 */
-	name: string;
 
 	/**
 	 * The icon urls of the card
 	 */
-	iconUrls: APICard["iconUrls"];
+	iconUrls!: APICard["iconUrls"];
+
+	/**
+	 * The id of this arena
+	 */
+	readonly id: StringId;
 
 	/**
 	 * The maximum level of this card
 	 */
-	maxLevel: number;
+	maxLevel!: number;
+
+	/**
+	 * The name of the card
+	 */
+	name!: string;
 
 	/**
 	 * @param client - The client that instantiated this card
 	 * @param data - The data of the card
 	 */
-	constructor(client: ClientRoyale, data: APICard) {
+	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
 
-		this.iconUrls = data.iconUrls;
-		this.id = data.id.toString();
-		this.maxLevel = data.maxLevel;
-		this.name = data.name;
+		this.id = data.id.toString() as StringId;
 	}
 
 	/**
 	 * Clone this card.
+	 * @returns The cloned card
 	 */
-	clone<T extends Card>(): T;
-	clone(): Card {
+	clone(): Card<T> {
 		return new Card(this.client, this.toJson());
 	}
 
 	/**
-	 * Checks whether this card is equal to another, comparing all properties.
+	 * Checks whether this card is equal to another.
 	 * @param card - The card to compare to
+	 * @returns Whether the cards are equal
 	 */
-	equals(card: Card): boolean {
+	equals(card: Card<T>): boolean {
 		return (
+			super.equals(card) &&
 			this.name === card.name &&
-			this.iconUrls.medium === card.iconUrls.medium &&
+			isEqual(this.iconUrls, card.iconUrls) &&
 			this.maxLevel === card.maxLevel &&
 			this.id === card.id
 		);
@@ -62,14 +67,14 @@ export class Card extends Structure<APICard> {
 	 * @param data - The data to patch
 	 * @returns The patched card
 	 */
-	patch(data: Partial<APICard>): this {
+	patch(data: Partial<T>): this {
 		const old = this.clone();
 		super.patch(data);
 
-		if (data.name != null) this.name = data.name;
-		if (data.iconUrls != null) this.iconUrls = data.iconUrls;
-		if (data.maxLevel != null) this.maxLevel = data.maxLevel;
-		if (data.name != null) this.name = data.name;
+		if (data.name !== undefined) this.name = data.name;
+		if (data.iconUrls !== undefined) this.iconUrls = data.iconUrls;
+		if (data.maxLevel !== undefined) this.maxLevel = data.maxLevel;
+		if (data.name !== undefined) this.name = data.name;
 
 		if (!this.equals(old)) this.client.emit("cardUpdate", old, this);
 		return this;
@@ -77,8 +82,8 @@ export class Card extends Structure<APICard> {
 
 	/**
 	 * Gets a JSON representation of this card.
+	 * @returns The card's data
 	 */
-	toJson<R extends APICard = APICard>(): R;
 	toJson(): APICard {
 		return {
 			name: this.name,

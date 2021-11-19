@@ -1,73 +1,22 @@
-import Collection from "@discordjs/collection";
-import { URLSearchParams } from "url";
+import { URLSearchParams } from "node:url";
 import type {
 	APIClan,
-	APIClanPreview,
-	APIClanResultPreview,
-	APITag,
-	Player,
-	ClientRoyale,
-	FetchOptions,
-	Path,
-	NonNullableProperties,
-	APIClanType,
 	APIRiverRaceLog,
-	RiverRace,
+	ClientRoyale,
+	FetchRiverRaceLogOptions,
 } from "..";
-import { RiverRaceLog } from "../lists";
-import { ClanMemberManager } from "../managers";
-import type { FetchRiverRaceLogOptions } from "../util";
-import { ClanType } from "../util";
-import FetchableStructure from "./FetchableStructure";
-import Location from "./Location";
-
-export type ClanConstructor = APIClan | APIClanPreview | APIClanResultPreview;
-
-export type ClanResultPreview<C extends Clan = Clan> = NonNullableProperties<
-	C,
-	| "donationsPerWeek"
-	| "location"
-	| "memberCount"
-	| "requiredTrophies"
-	| "score"
-	| "type"
-	| "warTrophies"
->;
-export type NonPartialClan<C extends Clan = Clan> = NonNullableProperties<
-	C,
-	keyof C
->;
+import { RiverRaceLogResults } from "../lists";
+import { ClanMemberManager, RiverRaceManager } from "../managers";
+import ClanResultPreview from "./ClanResultPreview";
 
 /**
- * A class representing a clan
+ * A clan
  */
-export class Clan extends FetchableStructure<ClanConstructor> {
-	static route: Path = "/clans/:id";
-
-	/**
-	 * The badge ID of the clan
-	 */
-	badge: number;
-
+export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	/**
 	 * The description of the clan
 	 */
-	description?: string;
-
-	/**
-	 * The clan's donations per week
-	 */
-	donationsPerWeek?: number;
-
-	/**
-	 * The location of the clan
-	 */
-	location?: Location;
-
-	/**
-	 * The clan's member count
-	 */
-	memberCount?: number;
+	description!: string;
 
 	/**
 	 * The members of the clan
@@ -75,153 +24,40 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	members: ClanMemberManager;
 
 	/**
-	 * The name of the clan
-	 */
-	name: string;
-
-	/**
-	 * The required trophies to join the clan
-	 */
-	requiredTrophies?: number;
-
-	/**
 	 * The river race log of this clan
 	 */
-	riverRaceLog = new Collection<number, RiverRace>();
-
-	/**
-	 * The clan's score
-	 */
-	score?: number;
-
-	/**
-	 * The tag of the clan
-	 */
-	readonly tag: APITag;
-
-	/**
-	 * The type of the clan
-	 */
-	type?: ClanType;
-
-	/**
-	 * The clan's trophies in the war
-	 */
-	warTrophies?: number;
+	riverRaceLog: RiverRaceManager;
 
 	/**
 	 * @param client - The client that instantiated this clan
 	 * @param data - The data of the clan
 	 */
-	constructor(client: ClientRoyale, data: ClanConstructor) {
+	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-
-		this.tag = data.tag;
-		this.name = data.name;
-		if ("type" in data) this.type = ClanType[data.type];
-		if ("description" in data) this.description = data.description;
-		this.badge = data.badgeId;
-		if ("clanScore" in data) this.score = data.clanScore;
-		if ("clanWarTrophies" in data) this.warTrophies = data.clanWarTrophies;
-		if ("location" in data) this.location = new Location(client, data.location);
-		if ("requiredTrophies" in data)
-			this.requiredTrophies = data.requiredTrophies;
-		if ("donationsPerWeek" in data)
-			this.donationsPerWeek = data.donationsPerWeek;
-		this.members = new ClanMemberManager(
-			client,
-			this,
-			"memberList" in data ? data.memberList : undefined
-		);
-		if ("members" in data) this.memberCount = data.members;
-	}
-
-	/**
-	 * The location name of this clan
-	 */
-	get locationName() {
-		return this.location?.name;
+		this.members = new ClanMemberManager(client, this);
+		this.riverRaceLog = new RiverRaceManager(client);
+		this.patch(data);
 	}
 
 	/**
 	 * Clone this clan.
+	 * @returns A clone of this clan
 	 */
-	clone(): Clan {
+	clone(): Clan<T> {
 		return new Clan(this.client, this.toJson());
 	}
 
 	/**
-	 * Checks whether this clan is equal to another clan, comparing all properties.
+	 * Checks whether this clan is equal to another clan.
 	 * @param other - The clan to compare to
 	 * @returns Whether the clans are equal
 	 */
-	equals(other: Clan): boolean {
-		const mapMembers = (member: Player): APITag => member.tag;
-
+	equals(other: Clan<T>): boolean {
 		return (
 			super.equals(other) &&
-			this.name === other.name &&
-			this.type === other.type &&
 			this.description === other.description &&
-			this.badge === other.badge &&
-			this.score === other.score &&
-			this.warTrophies === other.warTrophies &&
-			((this.location &&
-				other.location &&
-				this.location.equals(other.location)) ||
-				(!this.location && !other.location)) &&
-			this.requiredTrophies === other.requiredTrophies &&
-			this.donationsPerWeek === other.donationsPerWeek &&
-			this.members
-				.mapValues(mapMembers)
-				.equals(other.members.mapValues(mapMembers))
+			this.members.every((member) => other.members.has(member.tag))
 		);
-	}
-
-	/**
-	 * Checks if this clan is from a search result.
-	 * Note that this is meant to be a typeguard so will return `false` ONLY if the clan is not from a user clan preview.
-	 */
-	isSearchResult(): this is ClanResultPreview<this> {
-		return this.score !== undefined;
-	}
-
-	/**
-	 * Checks if this clan has all properties returned by the API.
-	 */
-	isNotPartial(): this is NonPartialClan<this> {
-		return this.description !== undefined;
-	}
-
-	/**
-	 * Patches this clan.
-	 * @param data - The data to update this clan with
-	 * @returns The updated clan
-	 */
-	patch(data: APIClan): NonPartialClan<this> & this;
-	patch(data: APIClanResultPreview): ClanResultPreview<this> & this;
-	patch(data: Partial<APIClan>): this;
-	patch(data: Partial<APIClan>): this {
-		const old = this.clone();
-		super.patch(data);
-
-		if (data.name !== undefined) this.name = data.name;
-		if (data.type) this.type = ClanType[data.type];
-		if (data.description !== undefined) this.description = data.description;
-		if (data.badgeId !== undefined) this.badge = data.badgeId;
-		if (data.clanScore !== undefined) this.score = data.clanScore;
-		if (data.clanWarTrophies !== undefined)
-			this.warTrophies = data.clanWarTrophies;
-		if (data.location) this.location = new Location(this.client, data.location);
-		if (data.requiredTrophies !== undefined)
-			this.requiredTrophies = data.requiredTrophies;
-		if (data.donationsPerWeek !== undefined)
-			this.donationsPerWeek = data.donationsPerWeek;
-		if (data.memberList)
-			for (const member of data.memberList) this.members.add(member);
-
-		if (!this.equals(old)) this.client.emit("clanUpdate", old, this);
-		return this;
 	}
 
 	/**
@@ -229,7 +65,9 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 	 * @param options - Options for fetching the river race log
 	 * @returns The river race log for this clan
 	 */
-	fetchRiverRaceLog(options?: FetchRiverRaceLogOptions) {
+	async fetchRiverRaceLog(
+		options?: FetchRiverRaceLogOptions
+	): Promise<RiverRaceLogResults> {
 		const query = new URLSearchParams();
 
 		if (options?.limit !== undefined)
@@ -237,74 +75,44 @@ export class Clan extends FetchableStructure<ClanConstructor> {
 		if (options?.after !== undefined) query.append("after", options.after);
 		if (options?.before !== undefined) query.append("before", options.before);
 
-		return this.client.api
-			.get<APIRiverRaceLog>(`/clans/${this.tag}/riverracelog`, { query })
-			.then((results) => new RiverRaceLog(this, options, results))
-			.then((log) => {
-				for (const [key, value] of log) this.riverRaceLog.set(key, value);
-				return log;
-			});
+		const results = await this.client.api.get<APIRiverRaceLog>(
+			`/clans/${this.tag}/riverracelog`,
+			{ query }
+		);
+		for (const race of results.items) this.riverRaceLog.add(race);
+		return new RiverRaceLogResults(this, options, results);
+	}
+
+	/**
+	 * Patches this clan.
+	 * @param data - The data to update this clan with
+	 * @returns The updated clan
+	 */
+	patch(data: Partial<T>): this {
+		const old = this.clone();
+		super.patch(data);
+
+		if (data.description !== undefined) this.description = data.description;
+		if (data.memberList !== undefined)
+			for (const member of data.memberList) this.members.add(member);
+
+		if (!this.equals(old)) this.client.emit("clanUpdate", old, this);
+		return this;
 	}
 
 	/**
 	 * Gets a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
-	toJson(): ClanConstructor {
-		let result: ClanConstructor;
-
-		if (this.isSearchResult())
-			result = {
-				tag: this.tag,
-				badgeId: this.badge,
-				name: this.name,
-				clanScore: this.score,
-				clanWarTrophies: this.warTrophies,
-				donationsPerWeek: this.donationsPerWeek,
-				location: this.location.toJson(),
-				requiredTrophies: this.requiredTrophies,
-				type: ClanType[this.type] as APIClanType,
-			};
-		else if (this.isNotPartial())
-			result = {
-				badgeId: this.badge,
-				clanScore: this.score!,
-				clanWarTrophies: this.warTrophies!,
-				description: this.description!,
-				donationsPerWeek: this.donationsPerWeek!,
-				location: this.location!.toJson(),
-				name: this.name,
-				requiredTrophies: this.requiredTrophies!,
-				tag: this.tag,
-				type: ClanType[this.type!] as APIClanType,
-				memberList: this.members.map((member) => member.toJson()),
-				members: this.memberCount!,
-			};
-		else
-			result = {
-				tag: this.tag,
-				badgeId: this.badge,
-				name: this.name,
-			};
-
-		return result;
-	}
-
-	/**
-	 * Gets a string representation of this clan.
-	 * @returns The name of this clan
-	 */
-	toString(): string {
-		return this.name;
-	}
-
-	/**
-	 * Fetches this clan.
-	 * @param options - The options for the fetch
-	 * @returns A promise that resolves with the new clan
-	 */
-	fetch(options?: FetchOptions) {
-		return this.client.clans.fetch<this>(this.tag, options);
+	toJson(): APIClan {
+		return {
+			...super.toJson(),
+			description: this.description,
+			memberList: this.members.map((member) => member.toJson()),
+			clanChestLevel: 1,
+			clanChestMaxLevel: 0,
+			clanChestStatus: "inactive",
+		};
 	}
 }
 

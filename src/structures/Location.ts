@@ -1,17 +1,13 @@
 import type ClientRoyale from "..";
-import type {
-	APILocation,
-	FetchOptions,
-	NonNullableProperties,
-	Path,
-	StringId,
-} from "..";
+import type { APILocation, FetchOptions, Path, StringId } from "..";
 import FetchableStructure from "./FetchableStructure";
 
 /**
  * Represents a location
  */
-export class Location extends FetchableStructure<APILocation> {
+export class Location<
+	T extends APILocation = APILocation
+> extends FetchableStructure<T> {
 	static id = "id";
 	static route: Path = "/locations/:id";
 
@@ -28,39 +24,36 @@ export class Location extends FetchableStructure<APILocation> {
 	/**
 	 * The location's name
 	 */
-	name: string;
+	name!: string;
 
 	/**
 	 * If the location is a country
 	 */
-	private _isCountry: boolean;
+	private _isCountry!: boolean;
 
 	/**
 	 * @param client - The client that instantiated this location
 	 * @param data - The data of the location
 	 */
-	constructor(client: ClientRoyale, data: APILocation) {
+	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
 
-		this.name = data.name;
-		this.countryCode = data.countryCode;
 		this.id = data.id.toString() as StringId;
-		this._isCountry = data.isCountry;
 	}
 
 	/**
 	 * Clone this location.
 	 */
-	clone(): Location {
+	clone(): Location<T> {
 		return new Location(this.client, this.toJson());
 	}
 
 	/**
-	 * Checks whether this location is equal to another location, comparing all properties.
+	 * Checks whether this location is equal to another location.
 	 * @param other - The location to compare to
 	 * @returns Whether the locations are equal
 	 */
-	equals(other: Location): boolean {
+	equals(other: Location<T>): boolean {
 		return (
 			super.equals(other) &&
 			this.name === other.name &&
@@ -70,10 +63,19 @@ export class Location extends FetchableStructure<APILocation> {
 	}
 
 	/**
+	 * Fetches this location.
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the new location
+	 */
+	fetch(options: FetchOptions): Promise<this> {
+		return this.client.locations.fetch<this>(this.id, options);
+	}
+
+	/**
 	 * Checks if the location is a country.
 	 * @returns Whether this location is a country
 	 */
-	isCountry(): this is this & { countryCode: string } {
+	isCountry(): this is { countryCode: string } {
 		return this._isCountry;
 	}
 
@@ -82,9 +84,7 @@ export class Location extends FetchableStructure<APILocation> {
 	 * @param data - The data to update this location with
 	 * @returns The updated location
 	 */
-	patch(data: APILocation): NonNullableProperties<this, keyof this>;
-	patch(data: Partial<APILocation>): this;
-	patch(data: Partial<APILocation>): this {
+	patch(data: Partial<T>): this {
 		const old = this.clone();
 		super.patch(data);
 
@@ -114,17 +114,8 @@ export class Location extends FetchableStructure<APILocation> {
 	 * Gets a string representation of this location.
 	 * @returns The name of this location
 	 */
-	toString() {
+	toString(): string {
 		return this.name;
-	}
-
-	/**
-	 * Fetches this location.
-	 * @param options - The options for the fetch
-	 * @returns A promise that resolves with the new location
-	 */
-	fetch(options: FetchOptions) {
-		return this.client.locations.fetch<this>(this.id, options);
 	}
 }
 

@@ -1,209 +1,60 @@
-import type { PlayerCard } from ".";
 import type ClientRoyale from "..";
 import type {
 	APILeagueStatistics,
-	APIMember,
 	APIPlayer,
-	APIRiverRaceParticipant,
 	APIRole,
 	APITag,
 	Arena,
 	Clan,
+	ClanPreview,
+	FetchOptions,
+	Path,
+	PlayerCard,
 } from "..";
 import {
 	PlayerAchievementManager,
 	PlayerBadgeManager,
 	PlayerCardManager,
 } from "../managers";
-import type { FetchOptions, NonNullableProperties, Path } from "../util";
-import { APIDateToObject, ClanMemberRole, dateObjectToAPIDate } from "../util";
+import { ClanMemberRole, isEqual } from "../util";
 import FetchableStructure from "./FetchableStructure";
-
-export type PlayerConstructor =
-	| APIMember
-	| APIPlayer
-	| Pick<APIRiverRaceParticipant, "decksUsedToday" | "name" | "tag">;
-
-export type ClanMember<T extends Player = Player> = NonNullableProperties<
-	T,
-	| "arena"
-	| "clanRank"
-	| "donationsPerWeek"
-	| "donationsReceived"
-	| "expLevel"
-	| "lastSeen"
-	| "previousClanRank"
-	| "role"
-	| "trophies"
->;
-export type OnlyPlayer<T extends Player = Player> = NonNullableProperties<
-	T,
-	| "achievements"
-	| "arena"
-	| "battleCount"
-	| "bestTrophies"
-	| "cards"
-	| "cardsWonInChallenges"
-	| "clan"
-	| "deck"
-	| "donations"
-	| "donationsPerWeek"
-	| "donationsReceived"
-	| "expLevel"
-	| "expPoints"
-	| "favouriteCard"
-	| "leagueStatistics"
-	| "losses"
-	| "maxWinsInChallenge"
-	| "oldClanCardsCollected"
-	| "oldWarDayWins"
-	| "role"
-	| "starPoints"
-	| "threeCrownWins"
-	| "tournamentBattleCount"
-	| "tournamentCardsWon"
-	| "trophies"
-	| "wins"
->;
-export type RiverRaceParticipantData<T extends Player = Player> =
-	NonNullableProperties<T, "warDecksUsedToday">;
 
 /**
  * A class representing a player
  */
-export class Player extends FetchableStructure<PlayerConstructor> {
+export class Player<
+	T extends APIPlayer = APIPlayer
+> extends FetchableStructure<T> {
 	static route: Path = "/players/:id";
 	static id = "tag" as const;
 
 	/**
+	 * The achievements of this player
+	 */
+	achievements: PlayerAchievementManager = new PlayerAchievementManager(
+		this.client,
+		this
+	);
+
+	/**
 	 * The arena this player is currently in
 	 */
-	arena?: Arena;
-
-	/**
-	 * The clan of this player
-	 */
-	clan!: Clan;
-
-	/**
-	 * The number of donations this player has made
-	 */
-	donationsPerWeek?: number;
-
-	/**
-	 * The number of donations this player has received
-	 */
-	donationsReceived?: number;
-
-	/**
-	 * The experience level of this player
-	 */
-	expLevel?: number;
-
-	/**
-	 * The last time this player was online
-	 */
-	lastSeen?: Date;
-
-	/**
-	 * The name of this player
-	 */
-	name: string;
-
-	/**
-	 * The previous rank in the clan of this player
-	 */
-	previousClanRank?: number;
-
-	/**
-	 * The rank of this player in the clan
-	 */
-	clanRank?: number;
-
-	/**
-	 * The role of this player
-	 */
-	role?: ClanMemberRole;
-
-	/**
-	 * The tag of this player
-	 */
-	readonly tag: APITag;
-
-	/**
-	 * The number of trophies this player has
-	 */
-	trophies?: number;
-
-	/**
-	 * The best number of trophies this player has ever achieved
-	 */
-	bestTrophies?: number;
-
-	/**
-	 * The number of matches this player has won
-	 */
-	wins?: number;
-
-	/**
-	 * The number of matches this player has lost
-	 */
-	losses?: number;
-
-	/**
-	 * The number of battle this player has participated in
-	 */
-	battleCount?: number;
-
-	/**
-	 * The number of three crown wins this player has
-	 */
-	threeCrownWins?: number;
-
-	/**
-	 * The number of cards won in challenges
-	 */
-	cardsWonInChallenges?: number;
-
-	/**
-	 * The maximum number of wins in a challenge this player has
-	 */
-	maxWinsInChallenge?: number;
-
-	/**
-	 * The number of matches this player has played in tournaments
-	 */
-	tournamentBattleCount?: number;
-
-	/**
-	 * The total number of donations this player has made
-	 */
-	donations?: number;
-
-	/**
-	 * The number of wins this player had in the old war day
-	 */
-	oldWarDayWins?: number;
-
-	/**
-	 * The number of cards this player had collected in the old war
-	 */
-	oldClanCardsCollected?: number;
-
-	/**
-	 * League statistics of this player
-	 */
-	leagueStatistics?: APILeagueStatistics;
+	arena!: Arena;
 
 	/**
 	 * The badges of this player
 	 */
-	badges = new PlayerBadgeManager(this.client, this);
+	badges: PlayerBadgeManager = new PlayerBadgeManager(this.client, this);
 
 	/**
-	 * The achievements of this player
+	 * The number of battle this player has participated in
 	 */
-	achievements = new PlayerAchievementManager(this.client, this);
+	battleCount!: number;
+
+	/**
+	 * The best number of trophies this player has ever achieved
+	 */
+	bestTrophies!: number;
 
 	/**
 	 * The cards of this player
@@ -211,240 +62,263 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 	cards = new PlayerCardManager(this.client, this);
 
 	/**
+	 * The number of cards won in challenges
+	 */
+	cardsWonInChallenges!: number;
+
+	/**
+	 * The clan of this player
+	 */
+	clan?: Clan | ClanPreview;
+
+	/**
 	 * The deck of this player
 	 */
 	deck = new PlayerCardManager(this.client, this);
 
 	/**
-	 * The most used card of this player
+	 * The number of donations this player has made this week
 	 */
-	favouriteCard?: PlayerCard;
+	donationsPerWeek!: number;
 
 	/**
-	 * The star points of this player
+	 * The number of donations this player has received this week
 	 */
-	starPoints?: number;
+	donationsReceivedPerWeek!: number;
 
 	/**
 	 * The exp points of this player
 	 */
-	expPoints?: number;
+	expPoints!: number;
+
+	/**
+	 * The most used card of this player
+	 */
+	favouriteCard!: PlayerCard;
+
+	/**
+	 * The experience/king level of this player
+	 */
+	kingLevel!: number;
+
+	/**
+	 * League statistics of this player
+	 */
+	leagueStatistics?: APILeagueStatistics;
+
+	/**
+	 * The number of matches this player has lost
+	 */
+	losses!: number;
+
+	/**
+	 * The maximum number of wins in a challenge this player has
+	 */
+	maxWinsInChallenge!: number;
+
+	/**
+	 * The name of this player
+	 */
+	name!: string;
+
+	/**
+	 * The number of cards this player had collected in the old war
+	 */
+	oldClanCardsCollected!: number;
+
+	/**
+	 * The number of wins this player had in the old war day
+	 */
+	oldWarDayWins!: number;
+
+	/**
+	 * The role of this player
+	 */
+	role!: ClanMemberRole;
+
+	/**
+	 * The star points of this player
+	 */
+	starPoints!: number;
+
+	/**
+	 * The tag of this player
+	 */
+	readonly tag: APITag;
+
+	/**
+	 * The number of three crown wins this player has
+	 */
+	threeCrownWins!: number;
+
+	/**
+	 * The total number of donations this player has made
+	 */
+	totalDonations!: number;
+
+	/**
+	 * The number of matches this player has played in tournaments
+	 */
+	tournamentBattleCount!: number;
 
 	/**
 	 * Number of cards won in tournaments
 	 */
-	tournamentCardsWon?: number;
+	tournamentCardsWon!: number;
+
+	/**
+	 * The number of trophies this player has
+	 */
+	trophies!: number;
 
 	/**
 	 * Number of decks used in war today
 	 */
-	warDecksUsedToday?: number;
+	warDecksUsedToday!: number;
+
+	/**
+	 * The number of matches this player has won
+	 */
+	wins!: number;
 
 	/**
 	 * @param client - The client that instantiated this clan player
 	 * @param data - The data of the player
-	 * @param clan - The clan of the player
 	 */
-	constructor(client: ClientRoyale, data: APIMember, clan: Clan);
-	constructor(
-		client: ClientRoyale,
-		data: Exclude<PlayerConstructor, APIMember>,
-		clan?: Clan
-	);
-	constructor(client: ClientRoyale, data: PlayerConstructor, clan?: Clan) {
+	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-
 		this.tag = data.tag;
-		this.name = data.name;
-		if (clan) this.clan = clan;
-
-		if ("lastSeen" in data) {
-			this.arena = this.client.arenas.add(data.arena);
-			this.clanRank = data.clanRank;
-			this.donationsPerWeek = data.donations;
-			this.donationsReceived = data.donationsReceived;
-			this.expLevel = data.expLevel;
-			this.lastSeen = APIDateToObject(data.lastSeen);
-			this.previousClanRank = data.previousClanRank;
-			this.role = ClanMemberRole[data.role];
-			this.trophies = data.trophies;
-		}
-		if ("leagueStatistics" in data) {
-			this.achievements = new PlayerAchievementManager(
-				this.client,
-				this,
-				data.achievements
-			);
-			this.arena = this.client.arenas.add(data.arena);
-			this.badges = new PlayerBadgeManager(this.client, this, data.badges);
-			this.battleCount = data.battleCount;
-			this.bestTrophies = data.bestTrophies;
-			this.cards = new PlayerCardManager(this.client, this, data.cards);
-			this.cardsWonInChallenges = data.challengeCardsWon;
-			this.clan = this.client.clans.add(data.clan);
-			this.clan = this.client.clans.add(data.clan);
-			this.deck = new PlayerCardManager(this.client, this, data.currentDeck);
-			this.donations = data.totalDonations;
-			this.donationsPerWeek = data.donations;
-			this.donationsReceived = data.donationsReceived;
-			this.expLevel = data.expLevel;
-			this.expPoints = data.expPoints;
-			this.favouriteCard = this.cards.get(
-				data.currentFavouriteCard.id.toString()
-			);
-			this.leagueStatistics = data.leagueStatistics;
-			this.losses = data.losses;
-			this.maxWinsInChallenge = data.challengeMaxWins;
-			this.oldClanCardsCollected = data.clanCardsCollected;
-			this.oldWarDayWins = data.warDayWins;
-			this.role = ClanMemberRole[data.role];
-			this.starPoints = data.starPoints;
-			this.threeCrownWins = data.threeCrownWins;
-			this.tournamentBattleCount = data.tournamentBattleCount;
-			this.tournamentCardsWon = data.tournamentCardsWon;
-			this.trophies = data.trophies;
-			this.wins = data.wins;
-		}
-		if ("decksUsedToday" in data) this.warDecksUsedToday = data.decksUsedToday;
-	}
-
-	/**
-	 * The difference between the old and the new rank of this player or null if we don't have enough data
-	 */
-	get rankDifference(): number | null {
-		return this.clanRank != null && this.previousClanRank != null
-			? this.clanRank - this.previousClanRank
-			: null;
+		this.patch(data);
 	}
 
 	/**
 	 * The contribution to the total donations of this player, or null if there's no data for donations
 	 */
-	get donationPercentage(): number | null {
-		return this.clan.donationsPerWeek != null && this.donationsPerWeek != null
-			? (this.donationsPerWeek / this.clan.donationsPerWeek) * 100
-			: null;
+	get donationPercentage(): number | undefined {
+		// TODO: Implement
+		return undefined;
 	}
 
 	/**
-	 * If this player's current trophies are the highest they've ever achieved, or null if there's no data
+	 * The number of matches finished with a draw
 	 */
-	get isBestTrophies(): boolean | null {
-		return this.trophies != null && this.bestTrophies != null
-			? this.trophies >= this.bestTrophies
-			: null;
+	get draws(): number {
+		return this.battleCount - this.wins - this.losses;
 	}
 
 	/**
-	 * The percentual of matches won by this player, or null if there's no data
+	 * If this player's current trophies are the highest they've ever achieved
 	 */
-	get winPercentage(): number | null {
-		return this.battleCount != null && this.wins != null
-			? (this.wins / this.battleCount) * 100
-			: null;
+	get isBestTrophies(): boolean {
+		return this.trophies >= this.bestTrophies;
 	}
 
 	/**
-	 * The number of matches finished with a draw, or null if there's no data
+	 * This player as a clan member
 	 */
-	get draws(): number | null {
-		return this.battleCount != null && this.wins != null && this.losses != null
-			? this.battleCount - this.wins - this.losses
-			: null;
+	get member(): undefined {
+		// TODO: Implement
+		return undefined;
 	}
 
 	/**
-	 * The percentual of three crown wins of this player, or null if there's no data
+	 * The difference between the old and the new rank of this player or null if we don't have enough data
 	 */
-	get threeCrownWinPercentage(): number | null {
-		return this.wins != null && this.threeCrownWins != null
-			? (this.threeCrownWins / this.wins) * 100
-			: null;
+	get rankDifference(): number | undefined {
+		// TODO: Implement
+		return undefined;
+	}
+
+	/**
+	 * The percentual of three crown wins of this player
+	 */
+	get threeCrownWinPercentage(): number {
+		return (this.threeCrownWins / this.wins) * 100;
+	}
+
+	/**
+	 * The percentual of matches won by this player
+	 */
+	get winPercentage(): number {
+		return (this.wins / this.battleCount) * 100;
 	}
 
 	/**
 	 * Clone this player.
+	 * @returns The cloned player
 	 */
-	clone<R extends Player>(): R;
-	clone(): Player {
-		return new Player(this.client, this.toJson(), this.clan);
+	clone(): Player<T> {
+		return new Player(this.client, this.toJson());
 	}
 
 	/**
-	 * Checks whether this player is equal to another player, comparing all properties.
+	 * Checks whether this player is equal to another player.
 	 * @param player - The player to compare to
 	 * @returns Whether the players are equal
 	 */
-	equals(player: Player): boolean {
+	equals(player: Player<T>): boolean {
 		return (
 			super.equals(player) &&
-			((!this.arena && !player.arena) || this.arena?.id === player.arena?.id) &&
-			this.achievements
-				.mapValues((a) => a.name)
-				.equals(player.achievements.mapValues((a) => a.name)) &&
-			this.badges
-				.mapValues((b) => b.name)
-				.equals(player.badges.mapValues((b) => b.name)) &&
-			this.battleCount === player.battleCount &&
-			this.bestTrophies === player.bestTrophies &&
-			this.cards
-				.mapValues((c) => c.id)
-				.equals(player.cards.mapValues((c) => c.id)) &&
-			this.cardsWonInChallenges === player.cardsWonInChallenges &&
-			this.clan.tag === player.clan.tag &&
-			this.clanRank === player.clanRank &&
-			this.deck
-				.mapValues((c) => c.id)
-				.equals(player.deck.mapValues((c) => c.id)) &&
-			this.donations === player.donations &&
+			this.tag === player.tag &&
+			this.arena.id === player.arena.id &&
+			this.clan?.tag === player.clan?.tag &&
 			this.donationsPerWeek === player.donationsPerWeek &&
-			this.donationsReceived === player.donationsReceived &&
-			this.expLevel === player.expLevel &&
-			this.expPoints === player.expPoints &&
-			this.favouriteCard?.id === player.favouriteCard?.id &&
-			this.lastSeen?.getTime() === player.lastSeen?.getTime() &&
-			this.leagueStatistics?.bestSeason.trophies ===
-				player.leagueStatistics?.bestSeason.trophies &&
-			this.leagueStatistics?.currentSeason.trophies ===
-				player.leagueStatistics?.currentSeason.trophies &&
-			this.leagueStatistics?.previousSeason.trophies ===
-				player.leagueStatistics?.previousSeason.trophies &&
-			this.losses === player.losses &&
-			this.maxWinsInChallenge === player.maxWinsInChallenge &&
+			this.donationsReceivedPerWeek === player.donationsReceivedPerWeek &&
+			this.kingLevel === player.kingLevel &&
 			this.name === player.name &&
-			this.oldClanCardsCollected === player.oldClanCardsCollected &&
-			this.oldWarDayWins === player.oldWarDayWins &&
-			this.previousClanRank === player.previousClanRank &&
 			this.role === player.role &&
-			this.starPoints === player.starPoints &&
-			this.threeCrownWins === player.threeCrownWins &&
-			this.tournamentBattleCount === player.tournamentBattleCount &&
-			this.tournamentCardsWon === player.tournamentCardsWon &&
 			this.trophies === player.trophies &&
+			this.bestTrophies === player.bestTrophies &&
 			this.wins === player.wins &&
+			this.losses === player.losses &&
+			this.battleCount === player.battleCount &&
+			this.threeCrownWins === player.threeCrownWins &&
+			this.cardsWonInChallenges === player.cardsWonInChallenges &&
+			this.maxWinsInChallenge === player.maxWinsInChallenge &&
+			this.tournamentBattleCount === player.tournamentBattleCount &&
+			this.totalDonations === player.totalDonations &&
+			this.oldWarDayWins === player.oldWarDayWins &&
+			this.oldClanCardsCollected === player.oldClanCardsCollected &&
+			isEqual(this.leagueStatistics, player.leagueStatistics) &&
+			this.badges.every((badge) => player.badges.has(badge.id)) &&
+			this.achievements.every((achievement) =>
+				player.achievements.has(achievement.id)
+			) &&
+			this.cards.every((card) => player.cards.has(card.id)) &&
+			this.deck.every((card) => player.deck.has(card.id)) &&
+			this.favouriteCard.id === player.favouriteCard.id &&
+			this.starPoints === player.starPoints &&
+			this.expPoints === player.expPoints &&
+			this.tournamentCardsWon === player.tournamentCardsWon &&
 			this.warDecksUsedToday === player.warDecksUsedToday
 		);
 	}
 
 	/**
-	 * Checks if this object has all properties of a member.
+	 * Fetches this player.
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the new player
 	 */
-	isMember(): this is ClanMember<this> {
-		return this.lastSeen !== undefined;
+	fetch(options?: FetchOptions): Promise<this> {
+		return this.client.players.fetch<this>(this.tag, options);
 	}
 
 	/**
-	 * Checks if this object has all properties of a player.
+	 * Checks whether this player is in a clan.
+	 * @returns Whether this player is in a clan
 	 */
-	isPlayer(): this is OnlyPlayer<this> {
+	isInClan(): this is { clan: NonNullable<Player<T>["clan"]> } {
+		return this.clan !== undefined;
+	}
+
+	/**
+	 * Checks whether this player is in a league.
+	 * @returns Whether this player is in a league
+	 */
+	isInLeague(): this is {
+		leagueStatistics: NonNullable<Player<T>["leagueStatistics"]>;
+	} {
 		return this.leagueStatistics !== undefined;
-	}
-
-	/**
-	 * Checks if this object has all properties of a river race participant.
-	 */
-	isRiverRaceParticipant(): this is RiverRaceParticipantData<this> {
-		return this.warDecksUsedToday !== undefined;
 	}
 
 	/**
@@ -452,85 +326,64 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 	 * @param data - The data to update this player with
 	 * @returns The updated player
 	 */
-	patch(data: APIMember): ClanMember<this> & this;
-	patch(data: APIPlayer): OnlyPlayer<this> & this;
-	patch(data: Partial<PlayerConstructor>): this;
-	patch(data: Partial<PlayerConstructor>): this {
+	patch(data: Partial<T>): this {
 		const old = this.clone();
 		super.patch(data);
 
-		if (data.name != null) this.name = data.name;
-
-		if ("lastSeen" in data) {
-			if (data.arena != null) this.arena = this.client.arenas.add(data.arena);
-			if (data.role != null) this.role = ClanMemberRole[data.role];
-			if (data.clanRank != null) this.clanRank = data.clanRank;
-			if (data.donations != null) this.donationsPerWeek = data.donations;
-			if (data.donationsReceived != null)
-				this.donationsReceived = data.donationsReceived;
-			if (data.expLevel != null) this.expLevel = data.expLevel;
-			if (data.lastSeen != null) this.lastSeen = APIDateToObject(data.lastSeen);
-			if (data.previousClanRank != null)
-				this.previousClanRank = data.previousClanRank;
-			if (data.role != null) this.role = ClanMemberRole[data.role];
-			if (data.trophies != null) this.trophies = data.trophies;
+		if (data.name !== undefined) this.name = data.name;
+		if (data.role !== undefined) this.role = ClanMemberRole[data.role];
+		if (data.arena !== undefined)
+			this.arena = this.client.arenas.add(data.arena);
+		if (data.achievements !== undefined) {
+			this.achievements.clear();
+			for (const achievement of data.achievements)
+				this.achievements.add(achievement);
 		}
-		if ("leagueStatistics" in data) {
-			if (data.role != null) this.role = ClanMemberRole[data.role];
-			if (data.arena != null) this.arena = this.client.arenas.add(data.arena);
-			if (data.achievements != null) {
-				this.achievements.clear();
-				for (const achievement of data.achievements)
-					this.achievements.add(achievement);
-			}
-			if (data.badges != null) {
-				this.badges.clear();
-				for (const badge of data.badges) this.badges.add(badge);
-			}
-			if (data.battleCount != null) this.battleCount = data.battleCount;
-			if (data.bestTrophies != null) this.bestTrophies = data.bestTrophies;
-			if (data.cards != null) {
-				this.cards.clear();
-				for (const card of data.cards) this.cards.add(card);
-			}
-			if (data.challengeCardsWon != null)
-				this.cardsWonInChallenges = data.challengeCardsWon;
-			if (data.clan != null) this.clan = this.client.clans.add(data.clan);
-			if (data.currentDeck != null) {
-				this.deck.clear();
-				for (const card of data.currentDeck) this.deck.add(card);
-			}
-			if (data.totalDonations != null) this.donations = data.totalDonations;
-			if (data.donations != null) this.donationsPerWeek = data.donations;
-			if (data.donationsReceived != null)
-				this.donationsReceived = data.donationsReceived;
-			if (data.expLevel != null) this.expLevel = data.expLevel;
-			if (data.expPoints != null) this.expPoints = data.expPoints;
-			if (data.currentFavouriteCard != null)
-				this.favouriteCard = this.cards.get(
-					data.currentFavouriteCard.id.toString()
-				);
-			if (data.leagueStatistics != null)
-				this.leagueStatistics = data.leagueStatistics;
-			if (data.losses != null) this.losses = data.losses;
-			if (data.challengeMaxWins != null)
-				this.maxWinsInChallenge = data.challengeMaxWins;
-			if (data.clanCardsCollected != null)
-				this.oldClanCardsCollected = data.clanCardsCollected;
-			if (data.warDayWins != null) this.oldWarDayWins = data.warDayWins;
-			if (data.starPoints != null) this.starPoints = data.starPoints;
-			if (data.threeCrownWins != null)
-				this.threeCrownWins = data.threeCrownWins;
-			if (data.tournamentBattleCount != null)
-				this.tournamentBattleCount = data.tournamentBattleCount;
-			if (data.tournamentCardsWon != null)
-				this.tournamentCardsWon = data.tournamentCardsWon;
-			if (data.trophies != null) this.trophies = data.trophies;
-			if (data.wins != null) this.wins = data.wins;
+		if (data.badges !== undefined) {
+			this.badges.clear();
+			for (const badge of data.badges) this.badges.add(badge);
 		}
-		if ("decksUsedToday" in data)
-			if (data.decksUsedToday != null)
-				this.warDecksUsedToday = data.decksUsedToday;
+		if (data.battleCount !== undefined) this.battleCount = data.battleCount;
+		if (data.bestTrophies !== undefined) this.bestTrophies = data.bestTrophies;
+		if (data.cards !== undefined) {
+			this.cards.clear();
+			for (const card of data.cards) this.cards.add(card);
+		}
+		if (data.challengeCardsWon !== undefined)
+			this.cardsWonInChallenges = data.challengeCardsWon;
+		if (data.clan !== undefined) this.clan = this.client.clans.add(data.clan);
+		if (data.currentDeck !== undefined) {
+			this.deck.clear();
+			for (const card of data.currentDeck) this.deck.add(card);
+		}
+		if (data.totalDonations !== undefined)
+			this.totalDonations = data.totalDonations;
+		if (data.donations !== undefined) this.donationsPerWeek = data.donations;
+		if (data.donationsReceived !== undefined)
+			this.donationsReceivedPerWeek = data.donationsReceived;
+		if (data.expLevel !== undefined) this.kingLevel = data.expLevel;
+		if (data.expPoints !== undefined) this.expPoints = data.expPoints;
+		if (data.currentFavouriteCard !== undefined)
+			this.favouriteCard = this.cards.get(
+				data.currentFavouriteCard.id.toString()
+			)!;
+		if (data.leagueStatistics !== undefined)
+			this.leagueStatistics = data.leagueStatistics;
+		if (data.losses !== undefined) this.losses = data.losses;
+		if (data.challengeMaxWins !== undefined)
+			this.maxWinsInChallenge = data.challengeMaxWins;
+		if (data.clanCardsCollected !== undefined)
+			this.oldClanCardsCollected = data.clanCardsCollected;
+		if (data.warDayWins !== undefined) this.oldWarDayWins = data.warDayWins;
+		if (data.starPoints !== undefined) this.starPoints = data.starPoints;
+		if (data.threeCrownWins !== undefined)
+			this.threeCrownWins = data.threeCrownWins;
+		if (data.tournamentBattleCount !== undefined)
+			this.tournamentBattleCount = data.tournamentBattleCount;
+		if (data.tournamentCardsWon !== undefined)
+			this.tournamentCardsWon = data.tournamentCardsWon;
+		if (data.trophies !== undefined) this.trophies = data.trophies;
+		if (data.wins !== undefined) this.wins = data.wins;
 
 		if (!this.equals(old)) this.client.emit("playerUpdate", old, this);
 		return this;
@@ -538,69 +391,42 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 
 	/**
 	 * Gets a JSON representation of this player.
+	 * @returns The JSON representation
 	 */
-	toJson<R extends PlayerConstructor = PlayerConstructor>(): R;
-	toJson(): PlayerConstructor {
-		let data: PlayerConstructor;
-
-		if (this.isMember())
-			data = {
-				name: this.name,
-				tag: this.tag,
-				arena: this.arena.toJson(),
-				clanRank: this.clanRank,
-				donations: this.donationsPerWeek,
-				donationsReceived: this.donationsReceived,
-				expLevel: this.expLevel,
-				lastSeen: dateObjectToAPIDate(this.lastSeen),
-				previousClanRank: this.previousClanRank,
-				role: ClanMemberRole[this.role] as APIRole,
-				trophies: this.trophies,
-				clanChestPoints: 0,
-			};
-		else if (this.isPlayer())
-			data = {
-				name: this.name,
-				tag: this.tag,
-				achievements: this.achievements.map((achievement) =>
-					achievement.toJson()
-				),
-				arena: this.arena.toJson(),
-				badges: this.badges.map((badge) => badge.toJson()),
-				battleCount: this.battleCount,
-				bestTrophies: this.bestTrophies,
-				cards: this.cards.map((card) => card.toJson()),
-				challengeCardsWon: this.cardsWonInChallenges,
-				clan: this.clan.toJson(),
-				currentDeck: this.deck.map((card) => card.toJson()),
-				currentFavouriteCard: this.favouriteCard.toJson(),
-				donations: this.donationsPerWeek,
-				donationsReceived: this.donationsReceived,
-				expLevel: this.expLevel,
-				expPoints: this.expPoints,
-				totalDonations: this.donations,
-				leagueStatistics: this.leagueStatistics,
-				losses: this.losses,
-				challengeMaxWins: this.maxWinsInChallenge,
-				clanCardsCollected: this.oldClanCardsCollected,
-				warDayWins: this.oldWarDayWins,
-				role: ClanMemberRole[this.role] as APIRole,
-				starPoints: this.starPoints,
-				threeCrownWins: this.threeCrownWins,
-				tournamentBattleCount: this.tournamentBattleCount,
-				tournamentCardsWon: this.tournamentCardsWon,
-				trophies: this.trophies,
-				wins: this.wins,
-			};
-		else if (this.isRiverRaceParticipant())
-			data = {
-				name: this.name,
-				tag: this.tag,
-				decksUsedToday: this.warDecksUsedToday,
-			};
-		else throw new Error("Unknown player type");
-
-		return data;
+	toJson(): APIPlayer {
+		return {
+			name: this.name,
+			tag: this.tag,
+			achievements: this.achievements.map((achievement) =>
+				achievement.toJson()
+			),
+			arena: this.arena.toJson(),
+			badges: this.badges.map((badge) => badge.toJson()),
+			battleCount: this.battleCount,
+			bestTrophies: this.bestTrophies,
+			cards: this.cards.map((card) => card.toJson()),
+			challengeCardsWon: this.cardsWonInChallenges,
+			clan: this.clan?.toJson(),
+			currentDeck: this.deck.map((card) => card.toJson()),
+			currentFavouriteCard: this.favouriteCard.toJson(),
+			donations: this.donationsPerWeek,
+			donationsReceived: this.donationsReceivedPerWeek,
+			expLevel: this.kingLevel,
+			expPoints: this.expPoints,
+			totalDonations: this.totalDonations,
+			leagueStatistics: this.leagueStatistics,
+			losses: this.losses,
+			challengeMaxWins: this.maxWinsInChallenge,
+			clanCardsCollected: this.oldClanCardsCollected,
+			warDayWins: this.oldWarDayWins,
+			role: ClanMemberRole[this.role] as APIRole,
+			starPoints: this.starPoints,
+			threeCrownWins: this.threeCrownWins,
+			tournamentBattleCount: this.tournamentBattleCount,
+			tournamentCardsWon: this.tournamentCardsWon,
+			trophies: this.trophies,
+			wins: this.wins,
+		};
 	}
 
 	/**
@@ -609,17 +435,6 @@ export class Player extends FetchableStructure<PlayerConstructor> {
 	 */
 	toString(): string {
 		return this.name;
-	}
-
-	/**
-	 * Fetches this player.
-	 * @param options - The options for the fetch
-	 * @returns A promise that resolves with the new player
-	 */
-	fetch(options?: FetchOptions) {
-		return this.client.players.fetch(this.tag, options) as Promise<
-			OnlyPlayer<this>
-		>;
 	}
 }
 

@@ -88,6 +88,16 @@ export type APICurrentSeason = APISeason & {
 	bestTrophies: number;
 };
 
+export type APICurrentRiverRace = {
+	clan: APIClanCurrentStanding;
+	clans: APIClanCurrentStanding[];
+	state: APIRiverRaceState;
+	sectionIndex: number;
+	periodIndex: number;
+	periodType: APIRiverRacePeriodType;
+	periodLogs: APIRiverRacePeriod[];
+};
+
 export type APIImageLink<P extends string = string> =
 	`https://api-assets.clashroyale.com${P}`;
 
@@ -144,7 +154,7 @@ export type APIPlayer = {
 	cards: APIPlayerCard[];
 	challengeCardsWon: number;
 	challengeMaxWins: number;
-	clan: APIClanPreview;
+	clan?: APIClanPreview;
 	clanCardsCollected: number;
 	currentDeck: APIPlayerCard[];
 	currentFavouriteCard: APICard;
@@ -152,7 +162,7 @@ export type APIPlayer = {
 	donationsReceived: number;
 	expLevel: number;
 	expPoints: number;
-	leagueStatistics: APILeagueStatistics;
+	leagueStatistics?: APILeagueStatistics;
 	losses: number;
 	name: string;
 	role: APIRole;
@@ -182,16 +192,6 @@ export type APIRole = "coLeader" | "elder" | "leader" | "member";
 export type APIList<T> = {
 	items: T[];
 	paging: APIPaging;
-};
-
-export type APIRiverRace = {
-	clan: APIClanCurrentStanding;
-	clans: APIClanCurrentStanding[];
-	state: APIRiverRaceState;
-	sectionIndex: number;
-	periodIndex: number;
-	periodType: APIRiverRacePeriodType;
-	periodLogs: APIRiverRacePeriod[];
 };
 
 export type APIRiverRaceLog = APIList<APIRiverRaceLogEntry>;

@@ -5,7 +5,7 @@ import List from "./List";
 /**
  * A class to manage a river race log
  */
-export class RiverRaceLog extends List<number, RiverRace> {
+export class RiverRaceLogResults extends List<number, RiverRace> {
 	/**
 	 * @param clan - The clan for this log
 	 * @param options - The options used to get these results

@@ -1,6 +1,6 @@
-import type { Path, FetchOptions, JsonObject } from "../util";
+import type { FetchOptions, JsonObject, Path } from "../util";
 import Constants from "../util";
-import { Structure } from "./Structure";
+import Structure from "./Structure";
 
 /**
  * A structure that can be fetched
@@ -27,16 +27,17 @@ export class FetchableStructure<
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the new structure
 	 */
-	fetch({
+	async fetch({
 		force = false,
 		maxAge = Constants.defaultMaxAge,
-	}: FetchOptions = {}): Promise<this> {
+	}: FetchOptions = {}): Promise<FetchableStructure> {
 		if (!force && Date.now() - this.lastUpdate.getTime() < maxAge)
 			return Promise.resolve(this);
 
-		return this.client.api
-			.get<T>((this.constructor as typeof FetchableStructure).path(this.id))
-			.then((data) => this.patch(data));
+		const data = await this.client.api.get<T>(
+			(this.constructor as typeof FetchableStructure).path(this.id)
+		);
+		return this.patch(data);
 	}
 }
 

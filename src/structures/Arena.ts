@@ -1,16 +1,11 @@
-import type {
-	APIArena,
-	ClientRoyale,
-	NonNullableProperties,
-	StringId,
-} from "..";
+import type { APIArena, ClientRoyale, StringId } from "..";
 import Structure from "./Structure";
 
 /**
  * A class representing an arena
  */
-export class Arena extends Structure<APIArena> {
-	static id = "id";
+export class Arena<T extends APIArena = APIArena> extends Structure<T> {
+	static id = "id" as const;
 
 	/**
 	 * The id of this arena
@@ -18,25 +13,25 @@ export class Arena extends Structure<APIArena> {
 	readonly id: StringId;
 
 	/**
-	 * The name of the arena
+	 * The name of this arena
 	 */
-	name: string;
+	name!: string;
 
 	/**
 	 * @param client - The client that instantiated this arena
 	 * @param data - The data of the arena
 	 */
-	constructor(client: ClientRoyale, data: APIArena) {
+	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-
 		this.id = data.id.toString() as StringId;
-		this.name = data.name;
+		this.patch(data);
 	}
 
 	/**
 	 * Clone this arena.
+	 * @returns The cloned arena
 	 */
-	clone(): Arena {
+	clone(): Arena<T> {
 		return new Arena(this.client, this.toJson());
 	}
 
@@ -45,8 +40,10 @@ export class Arena extends Structure<APIArena> {
 	 * @param other - The arena to compare to
 	 * @returns Whether the arenas are equal
 	 */
-	equals(other: Arena): boolean {
-		return super.equals(other) && this.name === other.name;
+	equals(other: Arena<T>): boolean {
+		return (
+			super.equals(other) && this.id === other.id && this.name === other.name
+		);
 	}
 
 	/**
@@ -54,13 +51,12 @@ export class Arena extends Structure<APIArena> {
 	 * @param data - The data to update this arena with
 	 * @returns The updated arena
 	 */
-	patch(data: APIArena): NonNullableProperties<this, keyof this>;
-	patch(data: Partial<APIArena>): this;
-	patch(data: Partial<APIArena>): this {
+	patch(data: Partial<T>): this {
 		const old = this.clone();
 		super.patch(data);
 
 		if (data.name !== undefined) this.name = data.name;
+
 		if (!this.equals(old)) this.client.emit("arenaUpdate", old, this);
 		return this;
 	}

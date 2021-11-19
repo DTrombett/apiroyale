@@ -11,6 +11,7 @@ export * from "./PlayerAchievementManager";
 export * from "./PlayerBadgeManager";
 export * from "./PlayerCardManager";
 export * from "./PlayerManager";
+export * from "./RiverRaceManager";
 export * from "./RiverRaceParticipantManager";
 export * from "./RiverRaceStandingManager";
 
