@@ -9,7 +9,7 @@ import type {
 	FetchableStructure,
 	Location,
 	Response,
-	RiverRace,
+	FinishedRiverRace,
 	Structure,
 	PlayerBadge,
 	PlayerAchievement,
@@ -17,6 +17,7 @@ import type {
 	RiverRaceWeekStanding,
 	RiverRaceParticipant,
 	ClanMember,
+	CurrentRiverRace,
 } from "..";
 
 export const enum Constants {
@@ -92,7 +93,10 @@ export type ClientEvents = {
 	clanUpdate: [oldClan: Clan, newClan: Clan];
 	playerUpdate: [oldMember: Player, newMember: Player];
 	locationUpdate: [oldLocation: Location, newLocation: Location];
-	riverRaceUpdate: [oldRiverRace: RiverRace, newRiverRace: RiverRace];
+	riverRaceUpdate: [
+		oldRiverRace: FinishedRiverRace,
+		newRiverRace: FinishedRiverRace
+	];
 	playerBadgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
 	playerAchievementUpdate: [
 		oldAchievement: PlayerAchievement,
@@ -108,6 +112,10 @@ export type ClientEvents = {
 		newParticipant: RiverRaceParticipant
 	];
 	clanMemberUpdate: [oldMember: ClanMember, newMember: ClanMember];
+	currentRiverRaceUpdate: [
+		oldCurrentRiverRace: CurrentRiverRace,
+		newCurrentRiverRace: CurrentRiverRace
+	];
 };
 
 /**
@@ -362,6 +370,31 @@ export enum ClanType {
 	 * The clan is open
 	 */
 	open,
+}
+
+/**
+ * The state of a river race
+ */
+export enum RiverRaceState {
+	/**
+	 * The race is full
+	 */
+	full,
+}
+
+/**
+ * The type of a war day
+ */
+export enum RiverRacePeriodType {
+	/**
+	 * A training day
+	 */
+	training,
+
+	/**
+	 * A war day
+	 */
+	warDay,
 }
 
 export default Constants;

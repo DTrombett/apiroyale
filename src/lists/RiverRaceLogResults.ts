@@ -1,11 +1,11 @@
 import type { APIRiverRaceLog, Clan, FetchRiverRaceLogOptions } from "..";
-import { RiverRace } from "../structures";
+import { FinishedRiverRace } from "../structures";
 import List from "./List";
 
 /**
  * A class to manage a river race log
  */
-export class RiverRaceLogResults extends List<number, RiverRace> {
+export class RiverRaceLogResults extends List<number, FinishedRiverRace> {
 	/**
 	 * @param clan - The clan for this log
 	 * @param options - The options used to get these results
@@ -22,7 +22,7 @@ export class RiverRaceLogResults extends List<number, RiverRace> {
 			options ?? {},
 			data.items.map((value) => [
 				value.seasonId,
-				new RiverRace(clan.client, value),
+				new FinishedRiverRace(clan.client, value),
 			]),
 			data.paging
 		);

@@ -1,17 +1,17 @@
 import type { APIRiverRaceLogEntry } from "..";
 import type ClientRoyale from "..";
-import { RiverRace } from "../structures";
+import { FinishedRiverRace } from "../structures";
 import Manager from "./Manager";
 
 /**
  * A manager for river races
  */
-export class RiverRaceManager extends Manager<typeof RiverRace> {
+export class RiverRaceManager extends Manager<typeof FinishedRiverRace> {
 	/**
 	 * @param client - The client that instantiated this manager
 	 * @param data - The data to initialize this manager with
 	 */
 	constructor(client: ClientRoyale, data?: APIRiverRaceLogEntry[]) {
-		super(client, RiverRace, data);
+		super(client, FinishedRiverRace, data);
 	}
 }

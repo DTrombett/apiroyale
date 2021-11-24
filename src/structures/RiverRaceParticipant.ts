@@ -2,7 +2,7 @@ import type {
 	APIRiverRaceParticipant,
 	ClientRoyale,
 	Player,
-	RiverRace,
+	FinishedRiverRace,
 	RiverRaceWeekStanding,
 } from "..";
 import BasePlayer from "./BasePlayer";
@@ -47,7 +47,7 @@ export class RiverRaceParticipant<
 	/**
 	 * The race this participants belong to
 	 */
-	race: RiverRace;
+	race: FinishedRiverRace;
 
 	/**
 	 * @param client - The client that instantiated this

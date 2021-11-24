@@ -4,9 +4,9 @@ import { RiverRaceStandingManager } from "../managers";
 import { APIDateToObject, dateObjectToAPIDate } from "../util";
 
 /**
- * Represents a river race
+ * A finished river race
  */
-export class RiverRace<
+export class FinishedRiverRace<
 	T extends APIRiverRaceLogEntry = APIRiverRaceLogEntry
 > extends Structure<T> {
 	static id = "seasonId" as const;
@@ -48,8 +48,8 @@ export class RiverRace<
 	/**
 	 * Clone this race.
 	 */
-	clone(): RiverRace {
-		return new RiverRace(this.client, this.toJson());
+	clone(): FinishedRiverRace {
+		return new FinishedRiverRace(this.client, this.toJson());
 	}
 
 	/**
@@ -57,15 +57,15 @@ export class RiverRace<
 	 * @param other - The race to compare to
 	 * @returns Whether the races are equal
 	 */
-	equals(other: RiverRace): boolean {
+	equals(other: FinishedRiverRace): boolean {
 		return (
 			super.equals(other) &&
 			this.seasonId === other.seasonId &&
 			this.weekNumber === other.weekNumber &&
 			this.finishTime.getTime() === other.finishTime.getTime() &&
 			this.leaderboard
-				.mapValues((standing) => standing.rank)
-				.equals(other.leaderboard.mapValues((standing) => standing.rank))
+				.mapValues((standing) => standing.clan.tag)
+				.equals(other.leaderboard.mapValues((standing) => standing.clan.tag))
 		);
 	}
 
@@ -82,6 +82,7 @@ export class RiverRace<
 		if (data.createdDate != null)
 			this.finishTime = APIDateToObject(data.createdDate);
 		if (data.standings != null) {
+			// TODO: This is a bit of a hack, but it works for now
 			this.leaderboard.clear();
 			for (const standing of data.standings) this.leaderboard.add(standing);
 		}
@@ -106,11 +107,11 @@ export class RiverRace<
 
 	/**
 	 * Gets a string representation of this race.
-	 * @returns The name of this race
+	 * @returns The week day of this race
 	 */
 	toString() {
 		return `Week ${this.weekNumber}`;
 	}
 }
 
-export default RiverRace;
+export default FinishedRiverRace;

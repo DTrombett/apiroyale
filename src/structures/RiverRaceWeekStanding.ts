@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIRiverRaceWeekStanding, Clan, RiverRace } from "..";
+import type { APIRiverRaceWeekStanding, Clan, FinishedRiverRace } from "..";
 import { RiverRaceParticipantManager } from "../managers";
 import { APIDateToObject, dateObjectToAPIDate } from "../util";
 import Structure from "./Structure";
@@ -54,7 +54,7 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	/**
 	 * The race this standing is for
 	 */
-	readonly race: RiverRace;
+	readonly race: FinishedRiverRace;
 
 	/**
 	 * @param client - The client that instantiated this
@@ -64,7 +64,7 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	constructor(
 		client: ClientRoyale,
 		data: APIRiverRaceWeekStanding,
-		race: RiverRace
+		race: FinishedRiverRace
 	) {
 		super(client, data);
 		const finishedAt = APIDateToObject(data.clan.finishTime);
