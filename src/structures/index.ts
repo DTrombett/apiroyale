@@ -3,6 +3,7 @@ import Structure from "./Structure";
 export * from "./Arena";
 export * from "./Card";
 export * from "./Clan";
+export * from "./ClanMember";
 export * from "./ClanPreview";
 export * from "./ClanResultPreview";
 export * from "./FetchableStructure";

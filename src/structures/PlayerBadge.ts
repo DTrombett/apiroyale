@@ -8,38 +8,28 @@ import type ClientRoyale from "..";
 import Structure from "./Structure";
 
 export type PlayerMultipleLevelsBadge<T extends PlayerBadge = PlayerBadge> =
-	NonNullableProperties<T, "level" | "levels" | "target">;
+	NonNullableProperties<T, "target">;
 
 /**
  * A player's badge
  */
-export class PlayerBadge extends Structure<APIBadge> {
+export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	static id = "name" as const;
 
 	/**
-	 * The name of the badge
+	 * The current level of the badge
 	 */
-	name: string;
-
-	/**
-	 * The progress of the badge
-	 */
-	progress: number;
+	level = 1;
 
 	/**
 	 * The number of levels of the badge
 	 */
-	levels?: number;
+	levels = 1;
 
 	/**
-	 * The level of the badge
+	 * The name of the badge
 	 */
-	level?: number;
-
-	/**
-	 * The target of the badge
-	 */
-	target?: number;
+	name!: string;
 
 	/**
 	 * The player that owns this badge
@@ -47,30 +37,31 @@ export class PlayerBadge extends Structure<APIBadge> {
 	player: Player;
 
 	/**
+	 * The progress of the badge
+	 */
+	progress!: number;
+
+	/**
+	 * The target of the badge
+	 */
+	target?: number;
+
+	/**
 	 * @param client - The client that instantiated this badge
 	 * @param data - The data of the badge
+	 * @param player - The player that owns this badge
 	 */
-	constructor(client: ClientRoyale, data: APIBadge, player: Player) {
+	constructor(client: ClientRoyale, data: T, player: Player) {
 		super(client, data);
-
 		this.player = player;
-		this.name = data.name;
-		this.progress = data.progress;
-
-		if ("maxLevel" in data) {
-			this.levels = data.maxLevel;
-			this.level = data.level;
-			this.target = data.target;
-		}
+		this.patch(data);
 	}
 
 	/**
-	 * The number of levels missing to reach the maximum, or null if there is no data
+	 * The number of levels missing to reach the maximum
 	 */
-	get missingLevels(): number | null {
-		return this.levels != null && this.level != null
-			? this.levels - this.level
-			: null;
+	get missingLevels(): number {
+		return this.levels - this.level;
 	}
 
 	/**
@@ -90,7 +81,6 @@ export class PlayerBadge extends Structure<APIBadge> {
 	/**
 	 * Clone this badge.
 	 */
-	clone<T extends PlayerBadge>(): T;
 	clone(): PlayerBadge {
 		return new PlayerBadge(this.client, this.toJson(), this.player);
 	}
@@ -113,7 +103,7 @@ export class PlayerBadge extends Structure<APIBadge> {
 	 * Checks if this badge has multiple levels.
 	 */
 	isMultipleLevels(): this is PlayerMultipleLevelsBadge<this> {
-		return this.levels != null;
+		return this.levels > 1;
 	}
 
 	/**
@@ -121,19 +111,20 @@ export class PlayerBadge extends Structure<APIBadge> {
 	 * @param data - The data to patch
 	 * @returns The patched badge
 	 */
-	patch(data: APIMultipleLevelsBadge): PlayerMultipleLevelsBadge<this> & this;
-	patch(data: Partial<APIBadge>): this;
-	patch(data: Partial<APIBadge>): this {
+	patch(data: Partial<T>): this {
 		const old = this.clone();
 		super.patch(data);
 
-		if (data.name != null) this.name = data.name;
-		if (data.progress != null) this.progress = data.progress;
+		if (data.name !== undefined) this.name = data.name;
+		if (data.progress !== undefined) this.progress = data.progress;
 
 		if ("maxLevel" in data) {
-			if (data.maxLevel != null) this.levels = data.maxLevel;
-			if (data.level != null) this.level = data.level;
-			if (data.target != null) this.target = data.target;
+			if ((data as Partial<APIMultipleLevelsBadge>).maxLevel !== undefined)
+				this.levels = (data as unknown as APIMultipleLevelsBadge).maxLevel;
+			if ((data as Partial<APIMultipleLevelsBadge>).level !== undefined)
+				this.level = (data as unknown as APIMultipleLevelsBadge).level;
+			if ((data as Partial<APIMultipleLevelsBadge>).target !== undefined)
+				this.target = (data as unknown as APIMultipleLevelsBadge).target;
 		}
 
 		if (!this.equals(old)) this.client.emit("playerBadgeUpdate", old, this);
@@ -143,7 +134,6 @@ export class PlayerBadge extends Structure<APIBadge> {
 	/**
 	 * Gets a JSON representation of this badge.
 	 */
-	toJson<R extends APIBadge = APIBadge>(): R;
 	toJson(): APIBadge {
 		return {
 			name: this.name,

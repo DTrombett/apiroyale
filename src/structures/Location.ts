@@ -39,6 +39,7 @@ export class Location<
 		super(client, data);
 
 		this.id = data.id.toString() as StringId;
+		this.patch(data);
 	}
 
 	/**

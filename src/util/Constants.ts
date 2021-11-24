@@ -16,6 +16,7 @@ import type {
 	Card,
 	RiverRaceWeekStanding,
 	RiverRaceParticipant,
+	ClanMember,
 } from "..";
 
 export const enum Constants {
@@ -106,6 +107,7 @@ export type ClientEvents = {
 		oldParticipant: RiverRaceParticipant,
 		newParticipant: RiverRaceParticipant
 	];
+	clanMemberUpdate: [oldMember: ClanMember, newMember: ClanMember];
 };
 
 /**

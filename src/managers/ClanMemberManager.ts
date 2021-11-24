@@ -1,18 +1,17 @@
 import type ClientRoyale from "..";
-import { Player } from "../structures";
-import type { APIMember, APITag, Clan, FetchOptions } from "..";
-import PlayerManager from "./PlayerManager";
-import type { Path } from "../util";
+import type { APIMember, APITag, Clan, FetchOptions, Path } from "..";
+import { Manager } from "..";
+import { ClanMember } from "../structures";
 import Constants from "../util";
 
 /**
  * A manager for clan members
  */
-export class ClanMemberManager extends PlayerManager {
+export class ClanMemberManager extends Manager<typeof ClanMember> {
 	/**
 	 * The route to fetch the members from
 	 */
-	static route: Path = `/clans/:id/members`;
+	static route = `/clans/:id/members` as const;
 
 	/**
 	 * The clan this manager is for
@@ -25,10 +24,9 @@ export class ClanMemberManager extends PlayerManager {
 	 * @param data - The data to initialize this manager with
 	 */
 	constructor(client: ClientRoyale, clan: Clan, data?: APIMember[]) {
-		super(client);
+		super(client, ClanMember, data);
 
 		this.clan = clan;
-		if (data) for (const member of data) this.add(member);
 	}
 
 	/**
@@ -45,23 +43,13 @@ export class ClanMemberManager extends PlayerManager {
 	 * @param data - The data of the structure to add
 	 * @returns The added structure
 	 */
-	add<S extends Player = Player>(data: APIMember): S {
-		const existing = this.get(data[Player.id]) as S | undefined;
+	add<S extends ClanMember = ClanMember>(data: APIMember): S {
+		const existing = this.get(data[ClanMember.id]) as S | undefined;
 		if (existing != null) return existing.patch(data);
-		const player = new Player(this.client, data, this.clan) as S;
-		this.set(player.id, player);
-		this.client.emit("structureAdd", player);
-		return player;
-	}
-
-	/**
-	 * * **Note:** This method is only available on a PlayerManager.
-	 * * Use {@link ClanMemberManager#fetchMembers} to fetch the clan members and {@link PlayerManager#fetch} to fetch a player.
-	 */
-	fetch(): never {
-		throw new Error(
-			"This method is only available on a PlayerManager. Use fetchMembers to fetch the clan members and PlayerManager#fetch to fetch a player."
-		);
+		const member = new ClanMember(this.client, data, this.clan) as S;
+		this.set(member.id, member);
+		this.client.emit("structureAdd", member);
+		return member;
 	}
 
 	/**
@@ -69,7 +57,7 @@ export class ClanMemberManager extends PlayerManager {
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched members
 	 */
-	async fetchMembers({
+	async fetch({
 		force = false,
 		maxAge = Constants.defaultMaxAge,
 	}: FetchOptions = {}): Promise<this> {

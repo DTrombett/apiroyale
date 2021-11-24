@@ -167,13 +167,13 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 			rank: this.rank,
 			trophyChange: this.trophyChange,
 			clan: {
+				...this.clan.toJson(),
 				clanScore: this.clanScore,
 				fame: this.points,
 				finishTime: dateObjectToAPIDate(this.finishedAt),
 				participants: this.participants.map((p) => p.toJson()),
 				periodPoints: this.medals,
 				repairPoints: 0,
-				...this.clan.toJson(),
 			},
 		};
 	}

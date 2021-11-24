@@ -6,18 +6,15 @@ import { APIDateToObject, dateObjectToAPIDate } from "../util";
 /**
  * Represents a river race
  */
-export class RiverRace extends Structure<APIRiverRaceLogEntry> {
+export class RiverRace<
+	T extends APIRiverRaceLogEntry = APIRiverRaceLogEntry
+> extends Structure<T> {
 	static id = "seasonId" as const;
-
-	/**
-	 * The season id of this race
-	 */
-	seasonId: number;
 
 	/**
 	 * When this race has ended
 	 */
-	finishTime: Date;
+	finishTime!: Date;
 
 	/**
 	 * A leaderboard of clans in this race
@@ -25,31 +22,33 @@ export class RiverRace extends Structure<APIRiverRaceLogEntry> {
 	leaderboard: RiverRaceStandingManager;
 
 	/**
+	 * The season id of this race
+	 */
+	seasonId!: number;
+
+	/**
 	 * The number of the week of this race
 	 */
-	weekNumber: number;
+	weekNumber!: number;
 
 	/**
 	 * @param client - The client that instantiated this
 	 * @param data - The data of the river race
 	 */
-	constructor(client: ClientRoyale, data: APIRiverRaceLogEntry) {
+	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-
-		this.seasonId = data.seasonId;
-		this.weekNumber = data.sectionIndex + 1;
-		this.finishTime = APIDateToObject(data.createdDate);
 		this.leaderboard = new RiverRaceStandingManager(
 			this.client,
 			this,
 			data.standings
 		);
+		this.patch(data);
 	}
 
 	/**
 	 * Clone this race.
 	 */
-	clone() {
+	clone(): RiverRace {
 		return new RiverRace(this.client, this.toJson());
 	}
 
@@ -71,17 +70,10 @@ export class RiverRace extends Structure<APIRiverRaceLogEntry> {
 	}
 
 	/**
-	 * Checks whether this race is the last of the month and is played in the arena
-	 */
-	isArena(): boolean {
-		return this.weekNumber === 4;
-	}
-
-	/**
 	 * Patch this race.
 	 * @returns The patched race
 	 */
-	patch(data: Partial<APIRiverRaceLogEntry>) {
+	patch(data: Partial<T>): this {
 		const old = this.clone();
 		super.patch(data);
 
@@ -102,7 +94,6 @@ export class RiverRace extends Structure<APIRiverRaceLogEntry> {
 	 * Gets a JSON representation of this race.
 	 * @returns The JSON representation of this race
 	 */
-	toJson<T extends APIRiverRaceLogEntry = APIRiverRaceLogEntry>(): T;
 	toJson(): APIRiverRaceLogEntry {
 		return {
 			...super.toJson(),
@@ -114,11 +105,11 @@ export class RiverRace extends Structure<APIRiverRaceLogEntry> {
 	}
 
 	/**
-	 * Gets a string representation of this location.
-	 * @returns The name of this location
+	 * Gets a string representation of this race.
+	 * @returns The name of this race
 	 */
 	toString() {
-		return this.isArena() ? "Arena della guerra tra clan" : `Gara sul fiume`;
+		return `Week ${this.weekNumber}`;
 	}
 }
 

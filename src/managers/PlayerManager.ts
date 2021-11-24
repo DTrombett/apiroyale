@@ -1,5 +1,4 @@
 import type { APIPlayer, APITag, ClientRoyale } from "..";
-import type { OnlyPlayer } from "../structures";
 import { Player } from "../structures";
 import FetchableManager from "./FetchableManager";
 
@@ -20,8 +19,8 @@ export class PlayerManager extends FetchableManager<typeof Player> {
 	 * @param tag - The tag of the player to remove
 	 * @returns The removed player, if it exists
 	 */
-	remove(tag: APITag): OnlyPlayer | undefined {
-		return super.remove(tag) as OnlyPlayer | undefined;
+	remove(tag: APITag): Player | undefined {
+		return super.remove(tag) as Player | undefined;
 	}
 }
 

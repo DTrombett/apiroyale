@@ -3,13 +3,11 @@ import type {
 	APILeagueStatistics,
 	APIPlayer,
 	APIRole,
-	APITag,
 	Arena,
 	Clan,
-	ClanPreview,
 	FetchOptions,
-	Path,
 	PlayerCard,
+	ClanMember,
 } from "..";
 import {
 	PlayerAchievementManager,
@@ -17,24 +15,16 @@ import {
 	PlayerCardManager,
 } from "../managers";
 import { ClanMemberRole, isEqual } from "../util";
-import FetchableStructure from "./FetchableStructure";
+import BasePlayer from "./BasePlayer";
 
 /**
- * A class representing a player
+ * A player
  */
-export class Player<
-	T extends APIPlayer = APIPlayer
-> extends FetchableStructure<T> {
-	static route: Path = "/players/:id";
-	static id = "tag" as const;
-
+export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The achievements of this player
 	 */
-	achievements: PlayerAchievementManager = new PlayerAchievementManager(
-		this.client,
-		this
-	);
+	achievements: PlayerAchievementManager;
 
 	/**
 	 * The arena this player is currently in
@@ -44,7 +34,7 @@ export class Player<
 	/**
 	 * The badges of this player
 	 */
-	badges: PlayerBadgeManager = new PlayerBadgeManager(this.client, this);
+	badges: PlayerBadgeManager;
 
 	/**
 	 * The number of battle this player has participated in
@@ -59,7 +49,7 @@ export class Player<
 	/**
 	 * The cards of this player
 	 */
-	cards = new PlayerCardManager(this.client, this);
+	cards: PlayerCardManager;
 
 	/**
 	 * The number of cards won in challenges
@@ -69,12 +59,12 @@ export class Player<
 	/**
 	 * The clan of this player
 	 */
-	clan?: Clan | ClanPreview;
+	clan?: Clan;
 
 	/**
 	 * The deck of this player
 	 */
-	deck = new PlayerCardManager(this.client, this);
+	deck: PlayerCardManager;
 
 	/**
 	 * The number of donations this player has made this week
@@ -117,11 +107,6 @@ export class Player<
 	maxWinsInChallenge!: number;
 
 	/**
-	 * The name of this player
-	 */
-	name!: string;
-
-	/**
 	 * The number of cards this player had collected in the old war
 	 */
 	oldClanCardsCollected!: number;
@@ -140,11 +125,6 @@ export class Player<
 	 * The star points of this player
 	 */
 	starPoints!: number;
-
-	/**
-	 * The tag of this player
-	 */
-	readonly tag: APITag;
 
 	/**
 	 * The number of three crown wins this player has
@@ -182,21 +162,26 @@ export class Player<
 	wins!: number;
 
 	/**
-	 * @param client - The client that instantiated this clan player
+	 * @param client - The client that instantiated this player
 	 * @param data - The data of the player
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-		this.tag = data.tag;
-		this.patch(data);
-	}
-
-	/**
-	 * The contribution to the total donations of this player, or null if there's no data for donations
-	 */
-	get donationPercentage(): number | undefined {
-		// TODO: Implement
-		return undefined;
+		this.badges = new PlayerBadgeManager(this.client, this, data.badges);
+		this.achievements = new PlayerAchievementManager(
+			this.client,
+			this,
+			data.achievements
+		);
+		this.cards = new PlayerCardManager(this.client, this, data.cards);
+		this.deck = new PlayerCardManager(this.client, this, data.currentDeck);
+		this.patch({
+			...data,
+			badges: undefined,
+			achievements: undefined,
+			cards: undefined,
+			currentDeck: undefined,
+		});
 	}
 
 	/**
@@ -216,17 +201,8 @@ export class Player<
 	/**
 	 * This player as a clan member
 	 */
-	get member(): undefined {
-		// TODO: Implement
-		return undefined;
-	}
-
-	/**
-	 * The difference between the old and the new rank of this player or null if we don't have enough data
-	 */
-	get rankDifference(): number | undefined {
-		// TODO: Implement
-		return undefined;
+	get member(): ClanMember | null {
+		return this.clan?.members.get(this.tag) ?? null;
 	}
 
 	/**
@@ -259,13 +235,11 @@ export class Player<
 	equals(player: Player<T>): boolean {
 		return (
 			super.equals(player) &&
-			this.tag === player.tag &&
 			this.arena.id === player.arena.id &&
 			this.clan?.tag === player.clan?.tag &&
 			this.donationsPerWeek === player.donationsPerWeek &&
 			this.donationsReceivedPerWeek === player.donationsReceivedPerWeek &&
 			this.kingLevel === player.kingLevel &&
-			this.name === player.name &&
 			this.role === player.role &&
 			this.trophies === player.trophies &&
 			this.bestTrophies === player.bestTrophies &&
@@ -300,7 +274,7 @@ export class Player<
 	 * @returns A promise that resolves with the new player
 	 */
 	fetch(options?: FetchOptions): Promise<this> {
-		return this.client.players.fetch<this>(this.tag, options);
+		return super.fetch(options) as Promise<this>;
 	}
 
 	/**
@@ -330,7 +304,6 @@ export class Player<
 		const old = this.clone();
 		super.patch(data);
 
-		if (data.name !== undefined) this.name = data.name;
 		if (data.role !== undefined) this.role = ClanMemberRole[data.role];
 		if (data.arena !== undefined)
 			this.arena = this.client.arenas.add(data.arena);
@@ -366,7 +339,7 @@ export class Player<
 		if (data.currentFavouriteCard !== undefined)
 			this.favouriteCard = this.cards.get(
 				data.currentFavouriteCard.id.toString()
-			)!;
+			) as PlayerCard;
 		if (data.leagueStatistics !== undefined)
 			this.leagueStatistics = data.leagueStatistics;
 		if (data.losses !== undefined) this.losses = data.losses;
@@ -395,8 +368,7 @@ export class Player<
 	 */
 	toJson(): APIPlayer {
 		return {
-			name: this.name,
-			tag: this.tag,
+			...super.toJson(),
 			achievements: this.achievements.map((achievement) =>
 				achievement.toJson()
 			),

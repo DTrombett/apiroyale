@@ -4,13 +4,13 @@ import type {
 	ClanManager,
 	SearchClanOptions,
 } from "..";
-import { Clan } from "../structures";
+import { ClanResultPreview } from "../structures";
 import List from "./List";
 
 /**
  * A class to manage clan search results
  */
-export class ClanSearchResults extends List<APITag, Clan> {
+export class ClanSearchResults extends List<APITag, ClanResultPreview> {
 	/**
 	 * @param manager - The clan manager for this search
 	 * @param options - The options used to get these results
@@ -27,7 +27,7 @@ export class ClanSearchResults extends List<APITag, Clan> {
 			options,
 			data.items.map((result) => [
 				result.tag,
-				new Clan(manager.client, result),
+				new ClanResultPreview(manager.client, result),
 			]),
 			data.paging
 		);

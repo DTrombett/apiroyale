@@ -1,25 +1,22 @@
-import type { APICard, APIPlayerCard, Player } from "..";
+import type { APIPlayerCard, Player } from "..";
 import type ClientRoyale from "..";
 import { Card } from "./Card";
 
 /**
  * A player card
  */
-export class PlayerCard extends Card {
+export class PlayerCard<
+	T extends APIPlayerCard = APIPlayerCard
+> extends Card<T> {
 	/**
 	 * The amount of cards in the player card
 	 */
-	count: number;
+	count!: number;
 
 	/**
 	 * The level of the card
 	 */
-	level: number;
-
-	/**
-	 * The star level of the card
-	 */
-	starLevel: number | undefined;
+	level!: number;
 
 	/**
 	 * The player that owns this card
@@ -27,22 +24,24 @@ export class PlayerCard extends Card {
 	player: Player;
 
 	/**
+	 * The star level of the card
+	 */
+	starLevel?: number;
+
+	/**
 	 * @param client - The client that instantiated this card
 	 * @param data - The data of the card
+	 * @param player - The player that owns this card
 	 */
-	constructor(client: ClientRoyale, data: APIPlayerCard, player: Player) {
+	constructor(client: ClientRoyale, data: T, player: Player) {
 		super(client, data);
-
 		this.player = player;
-		this.count = data.count;
-		this.level = data.level;
-		this.starLevel = data.starLevel;
+		super.patch(data);
 	}
 
 	/**
 	 * Clone this card.
 	 */
-	clone<T extends Card>(): T;
 	clone(): PlayerCard {
 		return new PlayerCard(this.client, this.toJson(), this.player);
 	}
@@ -65,8 +64,8 @@ export class PlayerCard extends Card {
 	 * @param data - The data to patch
 	 * @returns The patched card
 	 */
-	patch(data: Partial<APIPlayerCard>): this {
-		const old = this.clone<PlayerCard>();
+	patch(data: Partial<T>): this {
+		const old = this.clone();
 		super.patch(data);
 
 		if (data.count != null) this.count = data.count;
@@ -80,7 +79,6 @@ export class PlayerCard extends Card {
 	/**
 	 * Gets a JSON representation of this card.
 	 */
-	toJson<R extends APICard = APIPlayerCard>(): R;
 	toJson(): APIPlayerCard {
 		return {
 			...super.toJson(),

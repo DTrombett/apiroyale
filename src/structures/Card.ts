@@ -37,6 +37,7 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 		super(client, data);
 
 		this.id = data.id.toString() as StringId;
+		this.patch(data);
 	}
 
 	/**

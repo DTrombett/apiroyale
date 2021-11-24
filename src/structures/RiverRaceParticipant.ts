@@ -1,13 +1,18 @@
-import type { Player, RiverRace, RiverRaceWeekStanding } from ".";
-import type { APIRiverRaceParticipant, APITag, ClientRoyale } from "..";
-import Structure from "./Structure";
+import type {
+	APIRiverRaceParticipant,
+	ClientRoyale,
+	Player,
+	RiverRace,
+	RiverRaceWeekStanding,
+} from "..";
+import BasePlayer from "./BasePlayer";
 
 /**
  * A river race participant
  */
-export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
-	static id = "tag" as const;
-
+export class RiverRaceParticipant<
+	T extends APIRiverRaceParticipant = APIRiverRaceParticipant
+> extends BasePlayer<T> {
 	/**
 	 * The clan standing in the race related to this participant
 	 */
@@ -16,23 +21,23 @@ export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
 	/**
 	 * The number of boat attacks this player has made
 	 */
-	boatAttacks: number;
+	boatAttacks!: number;
 
 	/**
 	 * The number of decks this player has used in the race
 	 */
-	decksUsed: number;
+	decksUsed!: number;
 
 	/**
 	 * The number of decks this player has used today
 	 * * Note: This is always 0 for river race logs
 	 */
-	decksUsedToday: number;
+	decksUsedToday!: number;
 
 	/**
 	 * The number of points this player has accumulated
 	 */
-	points: number;
+	points!: number;
 
 	/**
 	 * The player that refers to this participant
@@ -45,43 +50,23 @@ export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
 	race: RiverRace;
 
 	/**
-	 * The tag of this participant
-	 */
-	tag: APITag;
-
-	/**
 	 * @param client - The client that instantiated this
 	 * @param data - The data for this participant
 	 * @param standing - The clan standing in the race related to this participant
 	 */
-	constructor(
-		client: ClientRoyale,
-		data: APIRiverRaceParticipant,
-		standing: RiverRaceWeekStanding
-	) {
+	constructor(client: ClientRoyale, data: T, standing: RiverRaceWeekStanding) {
 		super(client, data);
 
 		this.standing = standing;
 		this.race = standing.race;
-		this.boatAttacks = data.boatAttacks;
-		this.decksUsed = data.decksUsed;
-		this.decksUsedToday = data.decksUsedToday;
-		this.points = data.fame;
 		this.player = this.client.players.add<Player>(data);
-		this.tag = data.tag;
-	}
 
-	/**
-	 * The name of this participant
-	 */
-	get name(): string {
-		return this.player.name;
+		this.patch(data);
 	}
 
 	/**
 	 * Clone this participant.
 	 */
-	clone<T extends RiverRaceParticipant>(): T;
 	clone(): RiverRaceParticipant {
 		return new RiverRaceParticipant(this.client, this.toJson(), this.standing);
 	}
@@ -105,14 +90,14 @@ export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
 	 * @param data - The data to patch
 	 * @returns The patched participant
 	 */
-	patch(data: Partial<RiverRaceParticipant>): this {
+	patch(data: Partial<T>): this {
 		const old = this.clone();
 		super.patch(data);
 
 		if (data.boatAttacks != null) this.boatAttacks = data.boatAttacks;
 		if (data.decksUsed != null) this.decksUsed = data.decksUsed;
 		if (data.decksUsedToday != null) this.decksUsedToday = data.decksUsedToday;
-		if (data.points != null) this.points = data.points;
+		if (data.fame != null) this.points = data.fame;
 
 		if (!this.equals(old))
 			this.client.emit("riverRaceParticipantUpdate", old, this);
@@ -122,7 +107,6 @@ export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
 	/**
 	 * Gets a JSON representation of this participant.
 	 */
-	toJson<R extends APIRiverRaceParticipant = APIRiverRaceParticipant>(): R;
 	toJson(): APIRiverRaceParticipant {
 		return {
 			boatAttacks: this.boatAttacks,
@@ -133,12 +117,5 @@ export class RiverRaceParticipant extends Structure<APIRiverRaceParticipant> {
 			repairPoints: 0,
 			name: this.name,
 		};
-	}
-
-	/**
-	 * Gets a string representation of this standing.
-	 */
-	toString(): string {
-		return this.name;
 	}
 }
