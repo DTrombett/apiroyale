@@ -1,14 +1,9 @@
 import { URLSearchParams } from "node:url";
 import type ClientRoyale from "..";
-import type {
-	APIClan,
-	APIClanSearchResults,
-	APITag,
-	SearchClanOptions,
-} from "..";
-import { Errors, Constants } from "../util";
+import type { APIClan, APIClanSearchResults, SearchClanOptions } from "..";
 import { ClanSearchResults } from "../lists";
 import { Clan } from "../structures";
+import Constants, { Errors } from "../util";
 import FetchableManager from "./FetchableManager";
 
 /**
@@ -20,24 +15,25 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 	 * @param data - The data to initialize this manager with
 	 */
 	constructor(client: ClientRoyale, data?: APIClan[]) {
-		super(client, Clan, data);
-	}
-
-	/**
-	 * Removes a clan from this manager.
-	 * @param id - The id of the clan to remove
-	 * @returns The removed clan, if it exists
-	 */
-	remove(tag: APITag): Clan | undefined {
-		return super.remove(tag);
+		super(client, Clan, {
+			addEvent: "newClan",
+			data,
+			removeEvent: "clanRemoved",
+		});
 	}
 
 	/**
 	 * Searches for a clan by name, location, members or score.
 	 * @param options - The options for the search
 	 * @returns The search results
+	 * @throws {@link Errors.clanNameSearchTooShort} - If the clan name is too short
+	 * @throws {@link Errors.clanMinMembersNotPositive} - If the the minimum number of members is not positive
+	 * @throws {@link Errors.clanMaxMembersTooLow} - If the maximum number of members is less than the minimum
+	 * @throws {@link Errors.clanMaxMembersNotPositive} - If the maximum number of members is not positive
+	 * @throws {@link Errors.clanMinScoreNotPositive} - If the minimum score is not positive
+	 * @throws {@link Errors.missingQuery} - If the query is missing
 	 */
-	async search(options: SearchClanOptions) {
+	async search(options: SearchClanOptions): Promise<ClanSearchResults> {
 		const query = new URLSearchParams();
 
 		if (options.name !== undefined) {

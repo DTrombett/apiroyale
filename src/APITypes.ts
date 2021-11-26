@@ -40,7 +40,7 @@ export type APIClan = {
 	description: string;
 	donationsPerWeek: number;
 	location: APILocation;
-	memberList: APIMember[];
+	memberList: APIClanMember[];
 	members: number;
 	name: string;
 	requiredTrophies: number;
@@ -49,6 +49,21 @@ export type APIClan = {
 };
 
 export type APIClanCurrentStanding = Omit<APIClanWeekStanding, "finishTime">;
+
+export type APIClanMember = {
+	arena: APIArena;
+	clanChestPoints: 0;
+	clanRank: number;
+	donations: number;
+	donationsReceived: number;
+	expLevel: number;
+	lastSeen: APIDate;
+	name: string;
+	previousClanRank: number;
+	role: APIRole;
+	tag: APITag;
+	trophies: number;
+};
 
 export type APIClanPeriodStanding = Pick<APIClan, "tag">;
 
@@ -117,32 +132,10 @@ export type APILocation = {
 	name: string;
 };
 
-export type APIMember = {
-	arena: APIArena;
-	clanChestPoints: 0;
-	clanRank: number;
-	donations: number;
-	donationsReceived: number;
-	expLevel: number;
-	lastSeen: APIDate;
-	name: string;
-	previousClanRank: number;
-	role: APIRole;
-	tag: APITag;
-	trophies: number;
-};
-
 export type APIMultipleLevelsBadge = APIBaseBadge & {
 	level: number;
 	maxLevel: number;
 	target: number;
-};
-
-export type APIPaging = {
-	cursors: {
-		after?: string;
-		before?: string;
-	};
 };
 
 export type APIPlayer = {
@@ -192,6 +185,13 @@ export type APIRole = "coLeader" | "elder" | "leader" | "member";
 export type APIList<T> = {
 	items: T[];
 	paging: APIPaging;
+};
+
+export type APIPaging = {
+	cursors: {
+		after?: string;
+		before?: string;
+	};
 };
 
 export type APIRiverRaceLog = APIList<APIRiverRaceLogEntry>;

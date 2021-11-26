@@ -1,12 +1,14 @@
 import type ClientRoyale from "..";
-import type { APIMember, APIRole, Arena, Clan, Player } from "..";
+import type { APIClanMember, APIRole, Arena, Clan, Player } from "..";
 import { APIDateToObject, ClanMemberRole, dateObjectToAPIDate } from "../util";
 import BasePlayer from "./BasePlayer";
 
 /**
  * A clan member
  */
-export class ClanMember<T extends APIMember = APIMember> extends BasePlayer<T> {
+export class ClanMember<
+	T extends APIClanMember = APIClanMember
+> extends BasePlayer<T> {
 	/**
 	 * The arena this member is currently in
 	 */
@@ -149,7 +151,7 @@ export class ClanMember<T extends APIMember = APIMember> extends BasePlayer<T> {
 	 * Gets a JSON representation of this member.
 	 * @returns The JSON representation
 	 */
-	toJson(): APIMember {
+	toJson(): APIClanMember {
 		return {
 			...super.toJson(),
 			arena: this.arena.toJson(),

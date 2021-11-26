@@ -338,7 +338,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 		if (data.expPoints !== undefined) this.expPoints = data.expPoints;
 		if (data.currentFavouriteCard !== undefined)
 			this.favouriteCard = this.cards.get(
-				data.currentFavouriteCard.id.toString()
+				`${data.currentFavouriteCard.id}`
 			) as PlayerCard;
 		if (data.leagueStatistics !== undefined)
 			this.leagueStatistics = data.leagueStatistics;

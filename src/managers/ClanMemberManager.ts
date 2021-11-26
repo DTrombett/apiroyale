@@ -1,6 +1,6 @@
 import type ClientRoyale from "..";
-import type { APIMember, APITag, Clan, FetchOptions, Path } from "..";
-import { Manager } from "..";
+import type { APIClanMember, Clan, FetchOptions, Path } from "..";
+import Manager from "../managers";
 import { ClanMember } from "../structures";
 import Constants from "../util";
 
@@ -16,40 +16,33 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	/**
 	 * The clan this manager is for
 	 */
-	clan: Clan;
+	readonly clan: Clan;
 
 	/**
 	 * @param client - The client that instantiated this manager
 	 * @param clan - The clan this manager is for
 	 * @param data - The data to initialize this manager with
 	 */
-	constructor(client: ClientRoyale, clan: Clan, data?: APIMember[]) {
-		super(client, ClanMember, data);
+	constructor(client: ClientRoyale, clan: Clan, data?: APIClanMember[]) {
+		super(
+			client,
+			ClanMember,
+			{
+				addEvent: "newClanMember",
+				data,
+				removeEvent: "clanMemberRemoved",
+			},
+			clan
+		);
 
 		this.clan = clan;
 	}
 
 	/**
-	 * Gets the path to fetch the members from
-	 * @param tag - The tag of the clan
-	 * @returns The path to fetch the members from
+	 * The path to fetch the members from
 	 */
-	static path(tag: APITag): Path {
-		return this.route.replace(":id", tag) as Path;
-	}
-
-	/**
-	 * Adds a structure to this manager.
-	 * @param data - The data of the structure to add
-	 * @returns The added structure
-	 */
-	add<S extends ClanMember = ClanMember>(data: APIMember): S {
-		const existing = this.get(data[ClanMember.id]) as S | undefined;
-		if (existing != null) return existing.patch(data);
-		const member = new ClanMember(this.client, data, this.clan) as S;
-		this.set(member.id, member);
-		this.client.emit("structureAdd", member);
-		return member;
+	get path(): Path {
+		return ClanMemberManager.route.replace(":id", this.clan.tag) as Path;
 	}
 
 	/**
@@ -64,7 +57,7 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 		if (!force && Date.now() - this.clan.lastUpdate.getTime() < maxAge)
 			return Promise.resolve(this);
 		return this.client.api
-			.get<APIMember[]>(ClanMemberManager.path(this.clan.tag))
+			.get<APIClanMember[]>(this.path)
 			.then((memberList) => this.clan.patch({ memberList }))
 			.then(() => this);
 	}

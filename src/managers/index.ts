@@ -6,15 +6,16 @@ export * from "./ClanCurrentStandingManager";
 export * from "./ClanManager";
 export * from "./ClanMemberManager";
 export * from "./FetchableManager";
+export * from "./FinishedRiverRaceManager";
 export * from "./LocationManager";
 export * from "./Manager";
 export * from "./PlayerAchievementManager";
 export * from "./PlayerBadgeManager";
 export * from "./PlayerCardManager";
 export * from "./PlayerManager";
-export * from "./RiverRaceManager";
 export * from "./RiverRaceParticipantManager";
-export * from "./RiverRaceStandingManager";
 export * from "./RiverRacePeriodManager";
+export * from "./RiverRacePeriodStandingManager";
+export * from "./RiverRaceWeekStandingManager";
 
 export default Manager;

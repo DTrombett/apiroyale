@@ -1,10 +1,10 @@
 import type ClientRoyale from "..";
 import type { APIRiverRacePeriod, CurrentRiverRace } from "..";
-import { Manager } from "..";
-import RiverRacePeriod from "../structures/RiverRacePeriod";
+import { RiverRacePeriod } from "../structures";
+import Manager from "./Manager";
 
 /**
- * A manager for clans current standings
+ * A manager for clans river race periods
  */
 export class RiverRacePeriodManager extends Manager<typeof RiverRacePeriod> {
 	/**
@@ -22,36 +22,18 @@ export class RiverRacePeriodManager extends Manager<typeof RiverRacePeriod> {
 		race: CurrentRiverRace,
 		data?: APIRiverRacePeriod[]
 	) {
-		super(client, RiverRacePeriod, data);
+		super(
+			client,
+			RiverRacePeriod,
+			{
+				addEvent: "newRiverRacePeriod",
+				data,
+				removeEvent: "riverRacePeriodRemoved",
+			},
+			race
+		);
 
 		this.race = race;
-	}
-
-	/**
-	 * Adds a structure to this manager.
-	 * @param data - The data of the structure to add
-	 * @returns The added structure
-	 */
-	add<S extends RiverRacePeriod = RiverRacePeriod>(
-		data: APIRiverRacePeriod
-	): S {
-		const existing = this.get(data[RiverRacePeriod.id].toString()) as
-			| S
-			| undefined;
-		if (existing != null) return existing.patch(data);
-		const period = new RiverRacePeriod(this.client, data, this.race) as S;
-		this.set(period.id, period);
-		this.client.emit("structureAdd", period);
-		return period;
-	}
-
-	/**
-	 * Removes a clan from the manager.
-	 * @param tag - The tag of the clan to remove
-	 * @returns The removed clan, if it exists
-	 */
-	remove(tag: string): RiverRacePeriod | undefined {
-		return super.remove(tag);
 	}
 }
 

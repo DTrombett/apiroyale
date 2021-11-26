@@ -1,6 +1,6 @@
 import type { APIRiverRaceLogEntry, ClientRoyale } from "..";
 import Structure from "./Structure";
-import { RiverRaceStandingManager } from "../managers";
+import { RiverRaceWeekStandingManager } from "../managers";
 import { APIDateToObject, dateObjectToAPIDate } from "../util";
 
 /**
@@ -19,7 +19,7 @@ export class FinishedRiverRace<
 	/**
 	 * A leaderboard of clans in this race
 	 */
-	leaderboard: RiverRaceStandingManager;
+	leaderboard: RiverRaceWeekStandingManager;
 
 	/**
 	 * The season id of this race
@@ -37,7 +37,7 @@ export class FinishedRiverRace<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-		this.leaderboard = new RiverRaceStandingManager(
+		this.leaderboard = new RiverRaceWeekStandingManager(
 			this.client,
 			this,
 			data.standings

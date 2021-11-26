@@ -7,6 +7,7 @@ export * from "./Clan";
 export * from "./ClanMember";
 export * from "./ClanPreview";
 export * from "./ClanResultPreview";
+export * from "./ClanCurrentStanding";
 export * from "./ClanWeekStanding";
 export * from "./CurrentRiverRace";
 export * from "./FetchableStructure";

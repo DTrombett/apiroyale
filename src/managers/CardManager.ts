@@ -1,19 +1,13 @@
 import type ClientRoyale from "..";
-import type { FetchOptions } from "..";
+import type { APICard, FetchOptions, Path } from "..";
 import { Card } from "../structures";
-import type { Path, StructureType } from "../util";
-import Constants, { average } from "../util";
+import Constants from "../util";
 import Manager from "./Manager";
 
 /**
  * A manager for cards
  */
-export class CardManager<
-	T extends Omit<typeof Card, "constructor"> & {
-		prototype: Card;
-		new (client: ClientRoyale, ...args: any[]): Card;
-	} = typeof Card
-> extends Manager<T> {
+export class CardManager extends Manager<typeof Card> {
 	/**
 	 * The route to fetch the cards from
 	 */
@@ -23,16 +17,12 @@ export class CardManager<
 	 * @param client - The client that instantiated this manager
 	 * @param data - The data to initialize this manager with
 	 */
-	constructor(client: ClientRoyale, structure?: T, data?: StructureType<T>[]) {
-		super(client, (structure ?? Card) as T, data);
-	}
-
-	/**
-	 * Gets the path to fetch the cards from
-	 * @returns The path to fetch the cards from
-	 */
-	static path(): Path {
-		return this.route;
+	constructor(client: ClientRoyale, data?: APICard[]) {
+		super(client, Card, {
+			addEvent: "newCard",
+			data,
+			removeEvent: "cardRemoved",
+		});
 	}
 
 	/**
@@ -46,17 +36,15 @@ export class CardManager<
 	}: FetchOptions = {}): Promise<this> {
 		if (
 			!force &&
-			Date.now() - average(this.map((card) => card.lastUpdate.getTime())) <
+			Date.now() - Math.max(...this.map((card) => card.lastUpdate.getTime())) <
 				maxAge
 		)
 			return Promise.resolve(this);
-		return this.client.api
-			.get<StructureType<T>[]>(CardManager.path())
-			.then((cards) => {
-				this.clear();
-				for (const card of cards) this.add(card);
-			})
-			.then(() => this);
+
+		const cards = await this.client.api.get<APICard[]>(CardManager.route);
+		this.clear();
+		for (const card of cards) this.add(card);
+		return this;
 	}
 }
 

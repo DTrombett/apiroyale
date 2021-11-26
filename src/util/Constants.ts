@@ -19,7 +19,11 @@ import type {
 	ClanMember,
 	CurrentRiverRace,
 	RiverRacePeriodStanding,
+	ClanCurrentStanding,
+	PlayerCard,
+	RiverRacePeriod,
 } from "..";
+import List from "../lists";
 
 export const enum Constants {
 	/**
@@ -53,6 +57,11 @@ export const enum Constants {
 	minClanNameLength = 3,
 }
 
+export type ListMethod<K extends number | string, V> = (
+	options: { [k: string]: any; after?: string; before?: string },
+	...args: any[]
+) => Promise<List<K, V>>;
+
 /**
  * Error messages
  */
@@ -70,7 +79,7 @@ export const Errors = {
 	missingBefore: () => "The previous page isn't available" as const,
 	missingQuery: () => "You didn't provide any query" as const,
 	clanNameSearchTooShort: () =>
-		"The clan name must be at least 3 characters long" as const,
+		`The clan name must be at least ${Constants.minClanNameLength} characters long` as const,
 	clanMaxMembersTooLow: () =>
 		"The maximum number of members must be greater than or equal to the minimum" as const,
 	clanMaxMembersNotPositive: () =>
@@ -85,8 +94,6 @@ export const Errors = {
  * Events that can be emitted by the client
  */
 export type ClientEvents = {
-	structureAdd: [structure: Structure];
-	structureRemove: [structure: Structure];
 	requestStart: [request: APIRequest];
 	chunk: [chunk: string];
 	requestEnd: [request: Response];
@@ -121,7 +128,52 @@ export type ClientEvents = {
 		oldStanding: RiverRacePeriodStanding,
 		newStanding: RiverRacePeriodStanding
 	];
+	newCard: [card: Card];
+	cardRemoved: [card: Card];
+	newClanCurrentStanding: [clan: ClanCurrentStanding];
+	clanCurrentStandingRemoved: [clan: ClanCurrentStanding];
+	newClan: [clan: Clan];
+	clanRemoved: [clan: Clan];
+	newArena: [arena: Arena];
+	arenaRemoved: [arena: Arena];
+	newClanMember: [member: ClanMember];
+	clanMemberRemoved: [member: ClanMember];
+	newLocation: [location: Location];
+	locationRemoved: [location: Location];
+	newAchievement: [achievement: PlayerAchievement];
+	achievementRemoved: [achievement: PlayerAchievement];
+	newBadge: [badge: PlayerBadge];
+	badgeRemoved: [badge: PlayerBadge];
+	newPlayerCard: [card: PlayerCard];
+	playerCardRemoved: [card: PlayerCard];
+	newPlayer: [player: Player];
+	playerRemoved: [player: Player];
+	newFinishedRiverRace: [riverRace: FinishedRiverRace];
+	finishedRiverRaceRemoved: [riverRace: FinishedRiverRace];
+	newRiverRaceParticipant: [participant: RiverRaceParticipant];
+	riverRaceParticipantRemoved: [participant: RiverRaceParticipant];
+	newRiverRacePeriod: [period: RiverRacePeriod];
+	riverRacePeriodRemoved: [period: RiverRacePeriod];
+	newRiverRacePeriodStanding: [standing: RiverRacePeriodStanding];
+	riverRacePeriodStandingRemoved: [standing: RiverRacePeriodStanding];
+	newRiverRaceWeekStanding: [standing: RiverRaceWeekStanding];
+	riverRaceWeekStandingRemoved: [standing: RiverRaceWeekStanding];
 };
+
+export type StructureEvents<T extends ConstructableStructure> = ValueOf<{
+	[K in keyof ClientEvents]: T["prototype"] extends ClientEvents[K][0]
+		? ClientEvents[K][0] extends T["prototype"]
+			? K
+			: never
+		: never;
+}>;
+
+export type EventsOptions<T extends ConstructableStructure> = {
+	add?: StructureEvents<T>;
+	remove?: StructureEvents<T>;
+};
+
+export type ValueOf<T> = T[keyof T];
 
 /**
  * Any JSON data
@@ -324,10 +376,21 @@ export type StringId = `${number}`;
 /**
  * The class of a structure
  */
-export type ConstructableStructure = Omit<typeof Structure, "constructor"> & {
-	prototype: Structure;
-	new (client: ClientRoyale, ...args: any[]): Structure;
+export type ConstructableStructure<
+	S extends Omit<typeof Structure, "constructor"> = typeof Structure
+> = Omit<S, "constructor"> & {
+	prototype: S["prototype"];
+	new (client: ClientRoyale, data: any, ...args: any[]): S["prototype"];
 };
+
+export type ConstructorExtras<T extends ConstructableStructure> =
+	T extends new (
+		client: ClientRoyale,
+		data: StructureType<T>,
+		...args: infer R
+	) => Structure
+		? R
+		: never;
 
 /**
  * The API type of a structure

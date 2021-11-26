@@ -8,13 +8,13 @@ import { ClanResultPreview } from "../structures";
 import List from "./List";
 
 /**
- * A class to manage clan search results
+ * Manage clan search results
  */
 export class ClanSearchResults extends List<APITag, ClanResultPreview> {
 	/**
-	 * @param manager - The clan manager for this search
+	 * @param manager - The clan manager that instantiated the search
 	 * @param options - The options used to get these results
-	 * @param data - The data to create the results from
+	 * @param data - The results provided by the API
 	 */
 	constructor(
 		manager: ClanManager,
@@ -25,11 +25,11 @@ export class ClanSearchResults extends List<APITag, ClanResultPreview> {
 			manager.client,
 			manager.search.bind(manager),
 			options,
+			data.paging,
 			data.items.map((result) => [
 				result.tag,
 				new ClanResultPreview(manager.client, result),
-			]),
-			data.paging
+			])
 		);
 	}
 }

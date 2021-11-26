@@ -3,28 +3,28 @@ import { FinishedRiverRace } from "../structures";
 import List from "./List";
 
 /**
- * A class to manage a river race log
+ * Manage a river race log
  */
 export class RiverRaceLogResults extends List<number, FinishedRiverRace> {
 	/**
-	 * @param clan - The clan for this log
+	 * @param clan - The clan that instantiated this log
 	 * @param options - The options used to get these results
-	 * @param data - The data to create the results from
+	 * @param data - The results provided by the API
 	 */
 	constructor(
 		clan: Clan,
-		options: FetchRiverRaceLogOptions | undefined,
+		options: FetchRiverRaceLogOptions,
 		data: APIRiverRaceLog
 	) {
 		super(
 			clan.client,
 			clan.fetchRiverRaceLog.bind(clan),
-			options ?? {},
+			options,
+			data.paging,
 			data.items.map((value) => [
 				value.seasonId,
 				new FinishedRiverRace(clan.client, value),
-			]),
-			data.paging
+			])
 		);
 	}
 }

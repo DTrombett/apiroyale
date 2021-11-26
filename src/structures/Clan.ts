@@ -8,7 +8,7 @@ import type {
 	FetchRiverRaceLogOptions,
 } from "..";
 import { RiverRaceLogResults } from "../lists";
-import { ClanMemberManager, RiverRaceManager } from "../managers";
+import { ClanMemberManager, FinishedRiverRaceManager } from "../managers";
 import ClanResultPreview from "./ClanResultPreview";
 
 /**
@@ -33,7 +33,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	/**
 	 * The river race log of this clan
 	 */
-	riverRaceLog: RiverRaceManager;
+	riverRaceLog: FinishedRiverRaceManager;
 
 	/**
 	 * @param client - The client that instantiated this clan
@@ -42,7 +42,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
 		this.members = new ClanMemberManager(client, this);
-		this.riverRaceLog = new RiverRaceManager(client);
+		this.riverRaceLog = new FinishedRiverRaceManager(client);
 		this.patch(data);
 	}
 
@@ -101,7 +101,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 			{ query }
 		);
 		for (const race of results.items) this.riverRaceLog.add(race);
-		return new RiverRaceLogResults(this, options, results);
+		return new RiverRaceLogResults(this, options ?? {}, results);
 	}
 
 	/**
