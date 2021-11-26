@@ -21,6 +21,5 @@ export * from "./RiverRaceWeekStanding";
 export * from "./RiverRacePeriod";
 export * from "./RiverRacePeriodStanding";
 export * from "./Structure";
-export * from "./UnpatchableStructure";
 
 export default Structure;

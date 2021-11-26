@@ -1,4 +1,5 @@
 import { URLSearchParams } from "node:url";
+import { CurrentRiverRace } from "..";
 import type {
 	APIClan,
 	APICurrentRiverRace,
@@ -17,7 +18,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	/**
 	 * The current river race of this clan
 	 */
-	currentRiverRace?: APICurrentRiverRace;
+	currentRiverRace?: CurrentRiverRace;
 
 	/**
 	 * The description of the clan
@@ -70,11 +71,14 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	 * Fetch the current river race for this clan.
 	 * @returns The current river race of this clan
 	 */
-	async fetchCurrentRiverRace(): Promise<APICurrentRiverRace> {
+	async fetchCurrentRiverRace(): Promise<CurrentRiverRace> {
 		const riverRace = await this.client.api.get<APICurrentRiverRace>(
 			`/clans/${this.tag}/currentriverrace`
 		);
-		return (this.currentRiverRace = riverRace);
+		return (this.currentRiverRace = new CurrentRiverRace(
+			this.client,
+			riverRace
+		));
 	}
 
 	/**
