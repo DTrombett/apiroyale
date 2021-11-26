@@ -1,10 +1,5 @@
-import type {
-	APIRiverRaceParticipant,
-	ClientRoyale,
-	Player,
-	FinishedRiverRace,
-	RiverRaceWeekStanding,
-} from "..";
+import type { BaseClanStanding } from ".";
+import type { APIRiverRaceParticipant, ClientRoyale, Player } from "..";
 import BasePlayer from "./BasePlayer";
 
 /**
@@ -16,7 +11,7 @@ export class RiverRaceParticipant<
 	/**
 	 * The clan standing in the race related to this participant
 	 */
-	readonly standing: RiverRaceWeekStanding;
+	readonly clan: BaseClanStanding;
 
 	/**
 	 * The number of boat attacks this player has made
@@ -45,20 +40,14 @@ export class RiverRaceParticipant<
 	player: Player;
 
 	/**
-	 * The race this participants belong to
-	 */
-	race: FinishedRiverRace;
-
-	/**
 	 * @param client - The client that instantiated this
 	 * @param data - The data for this participant
-	 * @param standing - The clan standing in the race related to this participant
+	 * @param clan - The clan standing in the race related to this participant
 	 */
-	constructor(client: ClientRoyale, data: T, standing: RiverRaceWeekStanding) {
+	constructor(client: ClientRoyale, data: T, clan: BaseClanStanding) {
 		super(client, data);
 
-		this.standing = standing;
-		this.race = standing.race;
+		this.clan = clan;
 		this.player = this.client.players.add<Player>(data);
 
 		this.patch(data);
@@ -68,7 +57,7 @@ export class RiverRaceParticipant<
 	 * Clone this participant.
 	 */
 	clone(): RiverRaceParticipant {
-		return new RiverRaceParticipant(this.client, this.toJson(), this.standing);
+		return new RiverRaceParticipant(this.client, this.toJson(), this.clan);
 	}
 
 	/**

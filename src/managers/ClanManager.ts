@@ -37,7 +37,7 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 	 * @param options - The options for the search
 	 * @returns The search results
 	 */
-	search(options: SearchClanOptions) {
+	async search(options: SearchClanOptions) {
 		const query = new URLSearchParams();
 
 		if (options.name !== undefined) {
@@ -82,9 +82,10 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 		if (options.after !== undefined) query.append("after", options.after);
 		if (options.before !== undefined) query.append("before", options.before);
 
-		return this.client.api
-			.get<APIClanSearchResults>("/clans", { query })
-			.then((results) => new ClanSearchResults(this, options, results));
+		const results = await this.client.api.get<APIClanSearchResults>("/clans", {
+			query,
+		});
+		return new ClanSearchResults(this, options, results);
 	}
 }
 

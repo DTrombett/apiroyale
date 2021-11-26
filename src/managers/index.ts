@@ -2,6 +2,7 @@ import Manager from "./Manager";
 
 export * from "./ArenaManager";
 export * from "./CardManager";
+export * from "./ClanCurrentStandingManager";
 export * from "./ClanManager";
 export * from "./ClanMemberManager";
 export * from "./FetchableManager";
@@ -14,5 +15,6 @@ export * from "./PlayerManager";
 export * from "./RiverRaceManager";
 export * from "./RiverRaceParticipantManager";
 export * from "./RiverRaceStandingManager";
+export * from "./RiverRacePeriodManager";
 
 export default Manager;

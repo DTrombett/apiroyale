@@ -1,4 +1,4 @@
-import type { APIRiverRaceParticipant, RiverRaceWeekStanding } from "..";
+import type { APIRiverRaceParticipant, BaseClanStanding } from "..";
 import type ClientRoyale from "..";
 import Manager from "./Manager";
 import { RiverRaceParticipant } from "../structures";
@@ -12,7 +12,7 @@ export class RiverRaceParticipantManager extends Manager<
 	/**
 	 * The standing that this manager belongs to
 	 */
-	standing: RiverRaceWeekStanding;
+	standing: BaseClanStanding;
 
 	/**
 	 * @param client - The client that instantiated this manager
@@ -20,12 +20,12 @@ export class RiverRaceParticipantManager extends Manager<
 	 */
 	constructor(
 		client: ClientRoyale,
-		standing: RiverRaceWeekStanding,
+		clan: BaseClanStanding,
 		data?: APIRiverRaceParticipant[]
 	) {
 		super(client, RiverRaceParticipant, data);
 
-		this.standing = standing;
+		this.standing = clan;
 	}
 
 	/**
@@ -38,14 +38,14 @@ export class RiverRaceParticipantManager extends Manager<
 	): S {
 		const existing = this.get(data[RiverRaceParticipant.id]) as S | undefined;
 		if (existing != null) return existing.patch(data);
-		const achievement = new RiverRaceParticipant(
+		const participant = new RiverRaceParticipant(
 			this.client,
 			data,
 			this.standing
 		) as S;
-		this.set(achievement.id, achievement);
-		this.client.emit("structureAdd", achievement);
-		return achievement;
+		this.set(participant.id, participant);
+		this.client.emit("structureAdd", participant);
+		return participant;
 	}
 
 	/**
