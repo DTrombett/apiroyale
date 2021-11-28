@@ -1,5 +1,5 @@
 import { AsyncQueue } from "@sapphire/async-queue";
-import type { ClientRoyale, Json, Path, RequestOptions } from "..";
+import type { ClientRoyale, Path, RequestOptions } from "..";
 import { Errors } from "../util";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
@@ -42,7 +42,8 @@ export class Rest {
 	 * @template T The return type that should be used by the function
 	 * @returns The JSON data received from the API or null if no data was received
 	 */
-	async get<T extends Json | null = Json | null>(
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	async get<T extends {} | null = {} | null>(
 		path: Path,
 		options?: RequestOptions & { retry?: boolean; force?: boolean }
 	): Promise<T> {

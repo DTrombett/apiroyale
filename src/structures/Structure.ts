@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import type ClientRoyale from "..";
-import type { JsonObject } from "..";
 
 /**
  * Base class for all other structures
  */
-export class Structure<T extends JsonObject = JsonObject> {
+export class Structure<T extends {} = {}> {
 	/**
 	 * The client that instantiated this structure
 	 */
@@ -62,7 +62,7 @@ export class Structure<T extends JsonObject = JsonObject> {
 	 * Get a JSON representation of this structure.
 	 * @returns The JSON representation of this structure
 	 */
-	toJson(): JsonObject {
+	toJson(): {} {
 		return {};
 	}
 }

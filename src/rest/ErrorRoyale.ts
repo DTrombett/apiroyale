@@ -1,5 +1,5 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import type { APIRequest, ClashRoyaleError, Path, Response } from "..";
+import type { APIRequest, APIError, Path, Response } from "..";
 
 /**
  * A class representing an error received from the API
@@ -38,8 +38,7 @@ export class ErrorRoyale extends Error {
 		let error: string | undefined;
 		const query = request.query.toString();
 
-		if (res.data != null)
-			error = (JSON.parse(res.data) as ClashRoyaleError).message;
+		if (res.data != null) error = (JSON.parse(res.data) as APIError).message;
 		if (error == null) error = res.status;
 		super(error);
 

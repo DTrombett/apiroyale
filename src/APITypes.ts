@@ -1,36 +1,36 @@
-export type APIAchievement = {
+export interface APIAchievement {
 	completionInfo: null;
 	info: string;
 	name: string;
 	stars: number;
 	target: number;
 	value: number;
-};
+}
 
-export type APIArena = {
+export interface APIArena {
 	id: number;
 	name: string;
-};
+}
 
 export type APIBadge = APIBaseBadge | APIMultipleLevelsBadge;
 
-export type APIBaseBadge = {
+export interface APIBaseBadge {
 	name: string;
 	progress: number;
-};
+}
 
 export type APIBestSeason = APISeason & {
 	id: APISeasonId;
 };
 
-export type APICard = {
+export interface APICard {
 	iconUrls: { medium: APIImageLink<`/cards/${number}/${string}.png`> };
 	id: number;
 	maxLevel: number;
 	name: string;
-};
+}
 
-export type APIClan = {
+export interface APIClan {
 	badgeId: number;
 	clanChestLevel: 1;
 	clanChestMaxLevel: 0;
@@ -46,11 +46,11 @@ export type APIClan = {
 	requiredTrophies: number;
 	tag: APITag;
 	type: APIClanType;
-};
+}
 
 export type APIClanCurrentStanding = Omit<APIClanWeekStanding, "finishTime">;
 
-export type APIClanMember = {
+export interface APIClanMember {
 	arena: APIArena;
 	clanChestPoints: 0;
 	clanRank: number;
@@ -63,7 +63,7 @@ export type APIClanMember = {
 	role: APIRole;
 	tag: APITag;
 	trophies: number;
-};
+}
 
 export type APIClanPeriodStanding = Pick<APIClan, "tag">;
 
@@ -87,7 +87,7 @@ export type APIClanSearchResults = APIList<APIClanResultPreview>;
 
 export type APIClanType = "closed" | "inviteOnly" | "open";
 
-export type APIClanWeekStanding = {
+export interface APIClanWeekStanding {
 	badgeId: number;
 	clanScore: number;
 	fame: number;
@@ -97,13 +97,13 @@ export type APIClanWeekStanding = {
 	periodPoints: number;
 	repairPoints: 0;
 	tag: APITag;
-};
+}
 
 export type APICurrentSeason = APISeason & {
 	bestTrophies: number;
 };
 
-export type APICurrentRiverRace = {
+export interface APICurrentRiverRace {
 	clan: APIClanCurrentStanding;
 	clans: APIClanCurrentStanding[];
 	state: APIRiverRaceState;
@@ -111,7 +111,7 @@ export type APICurrentRiverRace = {
 	periodIndex: number;
 	periodType: APIRiverRacePeriodType;
 	periodLogs: APIRiverRacePeriod[];
-};
+}
 
 export type APIImageLink<P extends string = string> =
 	`https://api-assets.clashroyale.com${P}`;
@@ -119,18 +119,25 @@ export type APIImageLink<P extends string = string> =
 export type APIDate =
 	`${number}${number}${number}${number}${number}${number}${number}${number}T${number}${number}${number}${number}${number}${number}.000Z`;
 
-export type APILeagueStatistics = {
+export interface APIError {
+	detail?: Record<string, unknown>;
+	message?: string;
+	reason: string;
+	type?: string;
+}
+
+export interface APILeagueStatistics {
 	bestSeason: APIBestSeason;
 	currentSeason: APICurrentSeason;
 	previousSeason: APIPreviousSeason;
-};
+}
 
-export type APILocation = {
+export interface APILocation {
 	countryCode?: string;
 	id: number;
 	isCountry: boolean;
 	name: string;
-};
+}
 
 export type APIMultipleLevelsBadge = APIBaseBadge & {
 	level: number;
@@ -138,7 +145,7 @@ export type APIMultipleLevelsBadge = APIBaseBadge & {
 	target: number;
 };
 
-export type APIPlayer = {
+export interface APIPlayer {
 	achievements: APIAchievement[];
 	arena: APIArena;
 	badges: APIBadge[];
@@ -168,7 +175,7 @@ export type APIPlayer = {
 	trophies: number;
 	warDayWins: number;
 	wins: number;
-};
+}
 
 export type APIPlayerCard = APICard & {
 	count: number;
@@ -182,28 +189,28 @@ export type APIPreviousSeason = APICurrentSeason & {
 
 export type APIRole = "coLeader" | "elder" | "leader" | "member";
 
-export type APIList<T> = {
+export interface APIList<T> {
 	items: T[];
 	paging: APIPaging;
-};
+}
 
-export type APIPaging = {
+export interface APIPaging {
 	cursors: {
 		after?: string;
 		before?: string;
 	};
-};
+}
 
 export type APIRiverRaceLog = APIList<APIRiverRaceLogEntry>;
 
-export type APIRiverRaceLogEntry = {
+export interface APIRiverRaceLogEntry {
 	createdDate: APIDate;
 	seasonId: number;
 	sectionIndex: number;
 	standings: APIRiverRaceWeekStanding[];
-};
+}
 
-export type APIRiverRaceParticipant = {
+export interface APIRiverRaceParticipant {
 	boatAttacks: number;
 	decksUsed: number;
 	decksUsedToday: number;
@@ -211,14 +218,14 @@ export type APIRiverRaceParticipant = {
 	name: string;
 	repairPoints: 0;
 	tag: APITag;
-};
+}
 
-export type APIRiverRacePeriod = {
+export interface APIRiverRacePeriod {
 	periodIndex: number;
 	items: APIRiverRacePeriodStanding[];
-};
+}
 
-export type APIRiverRacePeriodStanding = {
+export interface APIRiverRacePeriodStanding {
 	clan: APIClanPeriodStanding;
 	pointsEarned: number;
 	progressStartOfDay: number;
@@ -227,21 +234,21 @@ export type APIRiverRacePeriodStanding = {
 	progressEarned: number;
 	numOfDefensesRemaining: number;
 	progressEarnedFromDefenses: number;
-};
+}
 
 export type APIRiverRacePeriodType = "training" | "warDay";
 
 export type APIRiverRaceState = "full";
 
-export type APIRiverRaceWeekStanding = {
+export interface APIRiverRaceWeekStanding {
 	clan: APIClanWeekStanding;
 	rank: number;
 	trophyChange: number;
-};
+}
 
-export type APISeason = {
+export interface APISeason {
 	trophies: number;
-};
+}
 
 export type APISeasonId =
 	`${number}${number}${number}${number}-${number}${number}`;

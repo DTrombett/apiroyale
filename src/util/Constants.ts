@@ -3,28 +3,179 @@ import type { URL, URLSearchParams } from "node:url";
 import type ClientRoyale from "..";
 import type {
 	APIRequest,
-	Arena,
-	Clan,
-	Player,
-	Location,
-	Response,
-	FinishedRiverRace,
-	Structure,
-	PlayerBadge,
-	PlayerAchievement,
-	Card,
-	RiverRaceWeekStanding,
-	RiverRaceParticipant,
-	ClanMember,
-	CurrentRiverRace,
-	RiverRacePeriodStanding,
-	ClanCurrentStanding,
-	PlayerCard,
-	RiverRacePeriod,
 	APITag,
+	Arena,
+	Card,
+	Clan,
+	ClanCurrentStanding,
+	ClanMember,
 	ClanPreview,
+	CurrentRiverRace,
+	FinishedRiverRace,
+	List,
+	Location,
+	Player,
+	PlayerAchievement,
+	PlayerBadge,
+	PlayerCard,
+	Response,
+	RiverRaceParticipant,
+	RiverRacePeriod,
+	RiverRacePeriodStanding,
+	RiverRaceWeekStanding,
+	Structure,
 } from "..";
-import type List from "../lists";
+
+/**
+ * The role of a clan member
+ */
+export enum ClanMemberRole {
+	/**
+	 * The member is a member of the clan
+	 */
+	member,
+
+	/**
+	 * The member is an elder of the clan
+	 */
+	elder,
+
+	/**
+	 * The member is a co-leader of the clan
+	 */
+	coLeader,
+
+	/**
+	 * The member is the leader of the clan
+	 */
+	leader,
+}
+
+/**
+ * Represents the type of a clan
+ */
+export enum ClanType {
+	/**
+	 * Clan is closed
+	 */
+	closed,
+
+	/**
+	 * The clan is invite only
+	 */
+	inviteOnly,
+
+	/**
+	 * The clan is open
+	 */
+	open,
+}
+
+/**
+ * Events that can be emitted by the client
+ */
+export interface ClientEvents {
+	achievementRemove: [achievement: PlayerAchievement];
+	achievementUpdate: [
+		oldAchievement: PlayerAchievement,
+		newAchievement: PlayerAchievement
+	];
+	arenaRemove: [arena: Arena];
+	arenaUpdate: [oldArena: Arena, newArena: Arena];
+	badgeRemove: [badge: PlayerBadge];
+	badgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
+	cardRemove: [card: Card];
+	cardUpdate: [oldCard: Card, newCard: Card];
+	chunk: [chunk: string];
+	clanCurrentStandingRemove: [clan: ClanCurrentStanding];
+	clanCurrentStandingUpdate: [
+		oldStanding: ClanCurrentStanding,
+		newStanding: ClanCurrentStanding
+	];
+	clanMemberRemove: [member: ClanMember];
+	clanMemberUpdate: [oldMember: ClanMember, newMember: ClanMember];
+	clanPreviewRemove: [clan: ClanPreview];
+	clanPreviewUpdate: [oldClan: ClanPreview, newClan: ClanPreview];
+	clanRemove: [clan: Clan];
+	clanUpdate: [oldClan: Clan, newClan: Clan];
+	currentRiverRaceUpdate: [
+		oldCurrentRiverRace: CurrentRiverRace,
+		newCurrentRiverRace: CurrentRiverRace
+	];
+	finishedRiverRaceRemove: [riverRace: FinishedRiverRace];
+	finishedRiverRaceUpdate: [
+		oldRiverRace: FinishedRiverRace,
+		newRiverRace: FinishedRiverRace
+	];
+	locationRemove: [location: Location];
+	locationUpdate: [oldLocation: Location, newLocation: Location];
+	newAchievement: [achievement: PlayerAchievement];
+	newArena: [arena: Arena];
+	newBadge: [badge: PlayerBadge];
+	newCard: [card: Card];
+	newClan: [clan: Clan];
+	newClanCurrentStanding: [clan: ClanCurrentStanding];
+	newClanMember: [member: ClanMember];
+	newClanPreview: [clan: ClanPreview];
+	newFinishedRiverRace: [riverRace: FinishedRiverRace];
+	newLocation: [location: Location];
+	newPlayer: [player: Player];
+	newPlayerCard: [card: PlayerCard];
+	newRiverRaceParticipant: [participant: RiverRaceParticipant];
+	newRiverRacePeriod: [period: RiverRacePeriod];
+	newRiverRacePeriodStanding: [standing: RiverRacePeriodStanding];
+	newRiverRaceWeekStanding: [standing: RiverRaceWeekStanding];
+	playerAchievementUpdate: [
+		oldAchievement: PlayerAchievement,
+		newAchievement: PlayerAchievement
+	];
+	playerBadgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
+	playerCardRemove: [card: PlayerCard];
+	playerCardUpdate: [oldCard: PlayerCard, newCard: PlayerCard];
+	playerRemove: [player: Player];
+	playerUpdate: [oldMember: Player, newMember: Player];
+	requestEnd: [request: Response];
+	requestStart: [request: APIRequest];
+	riverRaceParticipantRemove: [participant: RiverRaceParticipant];
+	riverRaceParticipantUpdate: [
+		oldParticipant: RiverRaceParticipant,
+		newParticipant: RiverRaceParticipant
+	];
+	riverRacePeriodRemove: [period: RiverRacePeriod];
+	riverRacePeriodStandingRemove: [standing: RiverRacePeriodStanding];
+	riverRacePeriodStandingUpdate: [
+		oldStanding: RiverRacePeriodStanding,
+		newStanding: RiverRacePeriodStanding
+	];
+	riverRacePeriodUpdate: [
+		oldPeriod: RiverRacePeriod,
+		newPeriod: RiverRacePeriod
+	];
+	riverRaceStandingUpdate: [
+		oldStanding: RiverRaceWeekStanding,
+		newStanding: RiverRaceWeekStanding
+	];
+	riverRaceUpdate: [
+		oldRiverRace: FinishedRiverRace,
+		newRiverRace: FinishedRiverRace
+	];
+	riverRaceWeekStandingRemove: [standing: RiverRaceWeekStanding];
+	riverRaceWeekStandingUpdate: [
+		oldStanding: RiverRaceWeekStanding,
+		newStanding: RiverRaceWeekStanding
+	];
+}
+
+/**
+ * Options to instantiate a client
+ */
+export interface ClientOptions {
+	/**
+	 * The token of this client
+	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
+	 */
+	token?: Token;
+}
 
 export const enum Constants {
 	/**
@@ -58,16 +209,35 @@ export const enum Constants {
 	minClanNameLength = 3,
 }
 
-export type ListMethod<K extends number | string, V> = (
-	options: { [k: string]: any; after?: string; before?: string },
-	...args: any[]
-) => Promise<List<K, V>>;
+/**
+ * The class of a structure
+ */
+export type ConstructableStructure<
+	S extends Omit<typeof Structure, "constructor"> = typeof Structure
+> = Omit<S, "constructor"> & {
+	prototype: S["prototype"];
+	new (client: ClientRoyale, data: any, ...args: any[]): S["prototype"];
+};
+
+/**
+ * Other parameters required by a structure constructor
+ */
+export type ConstructorExtras<T extends ConstructableStructure> =
+	T extends new (
+		client: ClientRoyale,
+		data: StructureType<T>,
+		...args: infer R
+	) => Structure
+		? R
+		: never;
 
 /**
  * Error messages
  */
 export const Errors = {
-	tokenMissing: () => "No token provided for the client" as const,
+	missingAfter: () => "The next page isn't available" as const,
+	missingBefore: () => "The previous page isn't available" as const,
+	missingQuery: () => "You didn't provide any query" as const,
 	requestAborted: (path: Path) =>
 		`Request to path ${path} took more than ${
 			Constants.defaultAbortTimeout / 1_000
@@ -76,142 +246,58 @@ export const Errors = {
 		`Request to ${url.href} failed with reason: ${error.message}` as const,
 	restRateLimited: () =>
 		"The rest is ratelimited so no other requests are allowed until you set the force option to true" as const,
-	missingAfter: () => "The next page isn't available" as const,
-	missingBefore: () => "The previous page isn't available" as const,
-	missingQuery: () => "You didn't provide any query" as const,
-	clanNameSearchTooShort: () =>
-		`The clan name must be at least ${Constants.minClanNameLength} characters long` as const,
-	clanMaxMembersTooLow: () =>
-		"The maximum number of members must be greater than or equal to the minimum" as const,
+	tokenMissing: () => "No token provided for the client" as const,
 	clanMaxMembersNotPositive: () =>
 		"The maximum number of members must be a positive number" as const,
+	clanMaxMembersTooLow: () =>
+		"The maximum number of members must be greater than or equal to the minimum" as const,
 	clanMinMembersNotPositive: () =>
 		"The minimum number of members must be a positive number" as const,
 	clanMinScoreNotPositive: () =>
 		"The minimum score must be a positive number" as const,
-} as const;
-
-export const Routes = {
-	Cards: () => "/cards" as const,
-	Clans: () => "/clans" as const,
-	ClanMembers: (tag: APITag) => `/clans/${tag}/members` as const,
-	Player: (tag: APITag) => `/players/${tag}` as const,
-	CurrentRiverRace: (tag: APITag) => `/clans/${tag}/currentriverrace` as const,
-	RiverRaceLog: (tag: APITag) => `/clans/${tag}/riverracelog` as const,
-	Location: (id: StringId) => `/locations/${id}` as const,
-	Clan: (tag: APITag) => `/clans/${tag}` as const,
+	clanNameSearchTooShort: () =>
+		`The clan name must be at least ${Constants.minClanNameLength} characters long` as const,
 } as const;
 
 /**
- * Events that can be emitted by the client
+ * Options with events to emit when a structure is updated
  */
-export type ClientEvents = {
-	requestStart: [request: APIRequest];
-	chunk: [chunk: string];
-	requestEnd: [request: Response];
-	arenaUpdate: [oldArena: Arena, newArena: Arena];
-	clanUpdate: [oldClan: Clan, newClan: Clan];
-	playerUpdate: [oldMember: Player, newMember: Player];
-	locationUpdate: [oldLocation: Location, newLocation: Location];
-	riverRaceUpdate: [
-		oldRiverRace: FinishedRiverRace,
-		newRiverRace: FinishedRiverRace
-	];
-	playerBadgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
-	playerAchievementUpdate: [
-		oldAchievement: PlayerAchievement,
-		newAchievement: PlayerAchievement
-	];
-	cardUpdate: [oldCard: Card, newCard: Card];
-	riverRaceStandingUpdate: [
-		oldStanding: RiverRaceWeekStanding,
-		newStanding: RiverRaceWeekStanding
-	];
-	riverRaceParticipantUpdate: [
-		oldParticipant: RiverRaceParticipant,
-		newParticipant: RiverRaceParticipant
-	];
-	clanMemberUpdate: [oldMember: ClanMember, newMember: ClanMember];
-	currentRiverRaceUpdate: [
-		oldCurrentRiverRace: CurrentRiverRace,
-		newCurrentRiverRace: CurrentRiverRace
-	];
-	riverRacePeriodStandingUpdate: [
-		oldStanding: RiverRacePeriodStanding,
-		newStanding: RiverRacePeriodStanding
-	];
-	newCard: [card: Card];
-	cardRemove: [card: Card];
-	newClanCurrentStanding: [clan: ClanCurrentStanding];
-	clanCurrentStandingRemove: [clan: ClanCurrentStanding];
-	newClan: [clan: Clan];
-	clanRemove: [clan: Clan];
-	newArena: [arena: Arena];
-	arenaRemove: [arena: Arena];
-	newClanMember: [member: ClanMember];
-	clanMemberRemove: [member: ClanMember];
-	newLocation: [location: Location];
-	locationRemove: [location: Location];
-	newAchievement: [achievement: PlayerAchievement];
-	achievementRemove: [achievement: PlayerAchievement];
-	newBadge: [badge: PlayerBadge];
-	badgeRemove: [badge: PlayerBadge];
-	newPlayerCard: [card: PlayerCard];
-	playerCardRemove: [card: PlayerCard];
-	newPlayer: [player: Player];
-	playerRemove: [player: Player];
-	newFinishedRiverRace: [riverRace: FinishedRiverRace];
-	finishedRiverRaceRemove: [riverRace: FinishedRiverRace];
-	newRiverRaceParticipant: [participant: RiverRaceParticipant];
-	riverRaceParticipantRemove: [participant: RiverRaceParticipant];
-	newRiverRacePeriod: [period: RiverRacePeriod];
-	riverRacePeriodRemove: [period: RiverRacePeriod];
-	newRiverRacePeriodStanding: [standing: RiverRacePeriodStanding];
-	riverRacePeriodStandingRemove: [standing: RiverRacePeriodStanding];
-	newRiverRaceWeekStanding: [standing: RiverRaceWeekStanding];
-	riverRaceWeekStandingRemove: [standing: RiverRaceWeekStanding];
-	clanCurrentStandingUpdate: [
-		oldStanding: ClanCurrentStanding,
-		newStanding: ClanCurrentStanding
-	];
-	finishedRiverRaceUpdate: [
-		oldRiverRace: FinishedRiverRace,
-		newRiverRace: FinishedRiverRace
-	];
-	achievementUpdate: [
-		oldAchievement: PlayerAchievement,
-		newAchievement: PlayerAchievement
-	];
-	badgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
-	playerCardUpdate: [oldCard: PlayerCard, newCard: PlayerCard];
-	riverRacePeriodUpdate: [
-		oldPeriod: RiverRacePeriod,
-		newPeriod: RiverRacePeriod
-	];
-	riverRaceWeekStandingUpdate: [
-		oldStanding: RiverRaceWeekStanding,
-		newStanding: RiverRaceWeekStanding
-	];
-	newClanPreview: [clan: ClanPreview];
-	clanPreviewRemove: [clan: ClanPreview];
-	clanPreviewUpdate: [oldClan: ClanPreview, newClan: ClanPreview];
-};
-
-export type StructureEvents<T extends ConstructableStructure> = ValueOf<{
-	[K in keyof ClientEvents]: T["prototype"] extends ClientEvents[K][0]
-		? ClientEvents[K][0] extends T["prototype"]
-			? K
-			: never
-		: never;
-}>;
-
-export type EventsOptions<T extends ConstructableStructure> = {
+export interface EventsOptions<T extends ConstructableStructure> {
+	/**
+	 * The event to emit when a new structure is added
+	 */
 	add: StructureEvents<T>;
-	remove: StructureEvents<T>;
-	update: StructureEvents<T>;
-};
 
-export type ValueOf<T> = T[keyof T];
+	/**
+	 * The event to emit when a structure is removed
+	 */
+	remove: StructureEvents<T>;
+
+	/**
+	 * The event to emit when a structure is updated
+	 */
+	update: StructureEvents<T>;
+}
+
+/**
+ * Options to fetch a structure
+ */
+export interface FetchOptions {
+	/**
+	 * Whether to skip the cache and fetch from the API
+	 */
+	force?: boolean;
+
+	/**
+	 * Maximum time (in milliseconds) passed after the structure was last fetched before fetching again
+	 */
+	maxAge?: number;
+}
+
+/**
+ * Options for fetching a river race log
+ */
+export type FetchRiverRaceLogOptions = ListOptions;
 
 /**
  * Any JSON data
@@ -225,55 +311,17 @@ export type Json =
 	| null;
 
 /**
- * A JSON object
+ * A function to fetch a list of objects from the API
  */
-export type JsonObject = {
-	[property: string]: Json;
-};
-
-/**
- * Options for searching a clan
- */
-export type SearchClanOptions = ListOptions & {
-	/**
-	 * The name of the clan.
-	 * It needs to be at least three characters long.
-	 * Name search parameter is interpreted as wild card search, so it may appear anywhere in the clan name
-	 */
-	name?: string;
-
-	/**
-	 * Clan location identifier
-	 */
-	location?: Location | Location["id"];
-
-	/**
-	 * Minimum number of clan members
-	 */
-	minMembers?: number;
-
-	/**
-	 * Maximum number of clan members
-	 */
-	maxMembers?: number;
-
-	/**
-	 * Minimum amount of clan score
-	 */
-	minScore?: number;
-};
-
-export type FetchRiverRaceLogOptions = ListOptions;
+export type ListMethod<K extends number | string, V> = (
+	options: { [k: string]: any; after?: string; before?: string },
+	...args: any[]
+) => Promise<List<K, V>>;
 
 /**
  * Base options for fetching a list
  */
-export type ListOptions = {
-	/**
-	 * Limit the number of items returned in the response
-	 */
-	limit?: number;
-
+export interface ListOptions {
 	/**
 	 * Return only items that occur after this marker.
 	 * This marker can be found in the search results, inside the 'paging' property.
@@ -287,27 +335,29 @@ export type ListOptions = {
 	 * Note that only after or before can be specified for a request, not both
 	 */
 	before?: string;
+
+	/**
+	 * Limit the number of items returned in the response
+	 */
+	limit?: number;
+}
+
+/**
+ * Makes some properties of a structure non-nullable
+ */
+export type NonNullableProperties<T, K extends keyof T> = {
+	[P in keyof T]-?: P extends K ? NonNullable<T[P]> : T[P];
 };
 
 /**
- * Options to fetch a structure
+ * The path for a request to the API
  */
-export type FetchOptions = {
-	/**
-	 * Whether to skip the cache and fetch from the API
-	 */
-	force?: boolean;
-
-	/**
-	 * Maximum time (in milliseconds) passed after the structure was last fetched before fetching again
-	 */
-	maxAge?: number;
-};
+export type Path = ReturnType<typeof Routes[keyof typeof Routes]>;
 
 /**
  * The options for a request
  */
-export type RequestOptions = {
+export interface RequestOptions {
 	/**
 	 * Headers to be sent for this request
 	 */
@@ -322,7 +372,7 @@ export type RequestOptions = {
 	 * The base url for this request
 	 */
 	url?: string;
-};
+}
 
 /**
  * The status of a request to the API
@@ -350,134 +400,6 @@ export enum RequestStatus {
 }
 
 /**
- * The path for a request to the API
- */
-export type Path = `/${string}`;
-
-/**
- * Options to instantiate a client
- */
-export type ClientOptions = {
-	/**
-	 * The token of this client
-	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
-	 */
-	token?: Token;
-};
-
-/**
- * A valid token for the API
- */
-export type Token = `${string}.${string}.${string}`;
-
-/**
- * The role of a clan member
- */
-export enum ClanMemberRole {
-	/**
-	 * The member is a member of the clan
-	 */
-	member,
-
-	/**
-	 * The member is an elder of the clan
-	 */
-	elder,
-
-	/**
-	 * The member is a co-leader of the clan
-	 */
-	coLeader,
-
-	/**
-	 * The member is the leader of the clan
-	 */
-	leader,
-}
-
-/**
- * A stringified id from the API
- */
-export type StringId = `${number}`;
-
-/**
- * The class of a structure
- */
-export type ConstructableStructure<
-	S extends Omit<typeof Structure, "constructor"> = typeof Structure
-> = Omit<S, "constructor"> & {
-	prototype: S["prototype"];
-	new (client: ClientRoyale, data: any, ...args: any[]): S["prototype"];
-};
-
-export type ConstructorExtras<T extends ConstructableStructure> =
-	T extends new (
-		client: ClientRoyale,
-		data: StructureType<T>,
-		...args: infer R
-	) => Structure
-		? R
-		: never;
-
-/**
- * The API type of a structure
- */
-export type StructureType<T extends ConstructableStructure> = T extends new (
-	client: ClientRoyale,
-	data: infer R,
-	...args: any[]
-) => Structure
-	? R
-	: never;
-
-/**
- * Makes some properties of a structure non-nullable
- */
-export type NonNullableProperties<T, K extends keyof T> = {
-	[P in keyof T]-?: P extends K ? NonNullable<T[P]> : T[P];
-};
-
-/**
- * A JSON error received from the API
- */
-export type ClashRoyaleError = {
-	reason: string;
-	message?: string;
-	type?: string;
-	detail?: Record<string, unknown>;
-};
-
-/**
- * Represents the type of a clan
- */
-export enum ClanType {
-	/**
-	 * Clan is closed
-	 */
-	closed,
-
-	/**
-	 * The clan is invite only
-	 */
-	inviteOnly,
-
-	/**
-	 * The clan is open
-	 */
-	open,
-}
-
-/**
- * The state of a river race
- */
-export enum RiverRaceState {
-	/**
-	 * The race is full
-	 */
-	full,
-}
-
-/**
  * The type of a war day
  */
 export enum RiverRacePeriodType {
@@ -491,5 +413,100 @@ export enum RiverRacePeriodType {
 	 */
 	warDay,
 }
+
+/**
+ * The state of a river race
+ */
+export enum RiverRaceState {
+	/**
+	 * The race is full
+	 */
+	full,
+}
+
+/**
+ * A list of API routes
+ */
+export const Routes = {
+	Cards: () => "/cards" as const,
+	Clan: (tag: APITag) => `/clans/${tag}` as const,
+	ClanMembers: (tag: APITag) => `/clans/${tag}/members` as const,
+	Clans: () => "/clans" as const,
+	CurrentRiverRace: (tag: APITag) => `/clans/${tag}/currentriverrace` as const,
+	Location: (id: StringId) => `/locations/${id}` as const,
+	Player: (tag: APITag) => `/players/${tag}` as const,
+	RiverRaceLog: (tag: APITag) => `/clans/${tag}/riverracelog` as const,
+} as const;
+
+/**
+ * Options for searching a clan
+ */
+export type SearchClanOptions = ListOptions & {
+	/**
+	 * Clan location identifier
+	 */
+	location?: Location | Location["id"];
+
+	/**
+	 * Maximum number of clan members
+	 */
+	maxMembers?: number;
+
+	/**
+	 * Minimum number of clan members
+	 */
+	minMembers?: number;
+
+	/**
+	 * Minimum amount of clan score
+	 */
+	minScore?: number;
+
+	/**
+	 * The name of the clan.
+	 * It needs to be at least three characters long.
+	 * Name search parameter is interpreted as wild card search, so it may appear anywhere in the clan name
+	 */
+	name?: string;
+};
+
+/**
+ * A stringified id from the API
+ */
+export type StringId = `${number}`;
+
+/**
+ * Client events for a structure
+ */
+export type StructureEvents<T extends ConstructableStructure> = ValueOf<{
+	[K in keyof ClientEvents]: T["prototype"] extends ClientEvents[K][0]
+		? ClientEvents[K][0] extends T["prototype"]
+			? K
+			: never
+		: never;
+}>;
+
+/**
+ * The API type of a structure
+ */
+export type StructureType<T extends ConstructableStructure> = T extends new (
+	client: ClientRoyale,
+	data: infer R,
+	...args: any[]
+) => Structure
+	? R
+	: never;
+
+/**
+ * A valid token for the API
+ */
+export type Token = `${string}.${string}.${string}`;
+
+/**
+ * Values of an object
+ */
+export type ValueOf<T> = T extends (infer R)[] | Map<any, infer R>
+	? R
+	: T[keyof T];
 
 export default Constants;
