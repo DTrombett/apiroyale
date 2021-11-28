@@ -1,18 +1,13 @@
 import type ClientRoyale from "..";
 import type { APIClanMember, Clan, FetchOptions, Path } from "..";
-import Manager from "../managers";
 import { ClanMember } from "../structures";
-import Constants from "../util";
+import Constants, { Routes } from "../util";
+import Manager from "./Manager";
 
 /**
  * A manager for clan members
  */
 export class ClanMemberManager extends Manager<typeof ClanMember> {
-	/**
-	 * The route to fetch the members from
-	 */
-	static route = `/clans/:id/members` as const;
-
 	/**
 	 * The clan this manager is for
 	 */
@@ -30,7 +25,8 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 			{
 				addEvent: "newClanMember",
 				data,
-				removeEvent: "clanMemberRemoved",
+				removeEvent: "clanMemberRemove",
+				updateEvent: "clanMemberUpdate",
 			},
 			clan
 		);
@@ -42,11 +38,11 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	 * The path to fetch the members from
 	 */
 	get path(): Path {
-		return ClanMemberManager.route.replace(":id", this.clan.tag) as Path;
+		return Routes.ClanMembers(this.clan.tag) as Path;
 	}
 
 	/**
-	 * Fetches the members of the clan.
+	 * Fetch the members of the clan.
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched members
 	 */

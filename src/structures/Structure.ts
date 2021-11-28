@@ -2,14 +2,9 @@ import type ClientRoyale from "..";
 import type { JsonObject } from "..";
 
 /**
- * Base class for all structures
+ * Base class for all other structures
  */
 export class Structure<T extends JsonObject = JsonObject> {
-	/**
-	 * The id's key of the structure
-	 */
-	static id = "tag";
-
 	/**
 	 * The client that instantiated this structure
 	 */
@@ -18,7 +13,7 @@ export class Structure<T extends JsonObject = JsonObject> {
 	/**
 	 * An unique identifier for this structure
 	 */
-	id: string;
+	readonly id: string;
 
 	/**
 	 * When this structure was last updated
@@ -27,38 +22,35 @@ export class Structure<T extends JsonObject = JsonObject> {
 
 	/**
 	 * @param client - The client that instantiated this structure
-	 * @param data - The data of the structure
+	 * @param _data - The data of the structure
+	 * @param id - The id of the structure
 	 */
-	constructor(client: ClientRoyale, data: T) {
-		const id = data[(this.constructor as typeof Structure).id]?.toString();
-
+	constructor(client: ClientRoyale, _data: T, id: string) {
 		this.client = client;
-
-		if (id == null) throw new Error(`${this.constructor.name} id is null`);
-
 		this.id = id;
 	}
 
 	/**
 	 * Clone this structure.
+	 * @returns The cloned structure
 	 */
-	clone() {
-		return new Structure(this.client, this.toJson());
+	clone(): Structure {
+		return new Structure(this.client, this.toJson(), this.id);
 	}
 
 	/**
-	 * Checks whether this structure is equal to another structure, comparing all properties.
-	 * @param other - The structure to compare to
+	 * Check whether this structure is equal to another structure.
+	 * @param structure - The structure to compare to
 	 * @returns Whether the structures are equal
 	 */
-	equals(other: Structure): boolean {
-		return this.id === other.id;
+	equals(structure: Structure): structure is this {
+		return this.id === structure.id;
 	}
 
 	/**
-	 * Patches this structure.
-	 * @param _data - The data to update this structure with
-	 * @returns The updated structure
+	 * Patch this structure.
+	 * @param _data - The data to patch this structure with
+	 * @returns The patched structure
 	 */
 	patch(_data: Partial<T>): this {
 		this.lastUpdate = new Date();
@@ -67,19 +59,11 @@ export class Structure<T extends JsonObject = JsonObject> {
 	}
 
 	/**
-	 * Gets a JSON representation of this structure.
+	 * Get a JSON representation of this structure.
 	 * @returns The JSON representation of this structure
 	 */
-	toJson() {
+	toJson(): JsonObject {
 		return {};
-	}
-
-	/**
-	 * Gets a string representation of this structure.
-	 * @returns The stringified JSON representation of this structure
-	 */
-	toString(): string {
-		return JSON.stringify(this);
 	}
 }
 

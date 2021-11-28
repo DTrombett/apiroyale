@@ -5,6 +5,7 @@ export * from "./CardManager";
 export * from "./ClanCurrentStandingManager";
 export * from "./ClanManager";
 export * from "./ClanMemberManager";
+export * from "./ClanPreviewManager";
 export * from "./FetchableManager";
 export * from "./FinishedRiverRaceManager";
 export * from "./LocationManager";

@@ -1,7 +1,7 @@
-import type { APIRiverRaceLogEntry, ClientRoyale } from "..";
-import Structure from "./Structure";
+import type { APIRiverRaceLogEntry, ClientRoyale, StringId } from "..";
 import { RiverRaceWeekStandingManager } from "../managers";
 import { APIDateToObject, dateObjectToAPIDate } from "../util";
+import Structure from "./Structure";
 
 /**
  * A finished river race
@@ -9,17 +9,17 @@ import { APIDateToObject, dateObjectToAPIDate } from "../util";
 export class FinishedRiverRace<
 	T extends APIRiverRaceLogEntry = APIRiverRaceLogEntry
 > extends Structure<T> {
-	static id = "seasonId" as const;
-
 	/**
 	 * When this race has ended
 	 */
 	finishTime!: Date;
 
+	readonly id!: StringId;
+
 	/**
 	 * A leaderboard of clans in this race
 	 */
-	leaderboard: RiverRaceWeekStandingManager;
+	readonly leaderboard: RiverRaceWeekStandingManager;
 
 	/**
 	 * The season id of this race
@@ -36,7 +36,7 @@ export class FinishedRiverRace<
 	 * @param data - The data of the river race
 	 */
 	constructor(client: ClientRoyale, data: T) {
-		super(client, data);
+		super(client, data, `${data.seasonId}`);
 		this.leaderboard = new RiverRaceWeekStandingManager(
 			this.client,
 			this,
@@ -53,19 +53,17 @@ export class FinishedRiverRace<
 	}
 
 	/**
-	 * Checks whether this race is equal to another race, comparing all properties.
-	 * @param other - The race to compare to
+	 * Check whether this race is equal to another race.
+	 * @param race - The race to compare to
 	 * @returns Whether the races are equal
 	 */
-	equals(other: FinishedRiverRace): boolean {
+	equals(race: FinishedRiverRace): race is this {
 		return (
-			super.equals(other) &&
-			this.seasonId === other.seasonId &&
-			this.weekNumber === other.weekNumber &&
-			this.finishTime.getTime() === other.finishTime.getTime() &&
-			this.leaderboard
-				.mapValues((standing) => standing.clan.tag)
-				.equals(other.leaderboard.mapValues((standing) => standing.clan.tag))
+			super.equals(race) &&
+			this.finishTime.getTime() === race.finishTime.getTime() &&
+			this.leaderboard.equals(race.leaderboard) &&
+			this.seasonId === race.seasonId &&
+			this.weekNumber === race.weekNumber
 		);
 	}
 
@@ -74,25 +72,17 @@ export class FinishedRiverRace<
 	 * @returns The patched race
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
 		if (data.seasonId != null) this.seasonId = data.seasonId;
 		if (data.sectionIndex != null) this.weekNumber = data.sectionIndex + 1;
 		if (data.createdDate != null)
 			this.finishTime = APIDateToObject(data.createdDate);
-		if (data.standings != null) {
-			// TODO: This is a bit of a hack, but it works for now
-			this.leaderboard.clear();
-			for (const standing of data.standings) this.leaderboard.add(standing);
-		}
+		if (data.standings != null) this.leaderboard.overrideItems(data.standings);
 
-		if (!this.equals(old)) this.client.emit("riverRaceUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this race.
+	 * Get a JSON representation of this race.
 	 * @returns The JSON representation of this race
 	 */
 	toJson(): APIRiverRaceLogEntry {
@@ -101,16 +91,8 @@ export class FinishedRiverRace<
 			createdDate: dateObjectToAPIDate(this.finishTime),
 			seasonId: this.seasonId,
 			sectionIndex: this.weekNumber - 1,
-			standings: this.leaderboard.map((standing) => standing.toJson()),
+			standings: this.leaderboard.toJson(),
 		};
-	}
-
-	/**
-	 * Gets a string representation of this race.
-	 * @returns The week day of this race
-	 */
-	toString() {
-		return `Week ${this.weekNumber}`;
 	}
 }
 

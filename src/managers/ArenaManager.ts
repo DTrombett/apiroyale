@@ -15,7 +15,8 @@ export class ArenaManager extends Manager<typeof Arena> {
 		super(client, Arena, {
 			addEvent: "newArena",
 			data,
-			removeEvent: "arenaRemoved",
+			removeEvent: "arenaRemove",
+			updateEvent: "arenaUpdate",
 		});
 	}
 }

@@ -6,7 +6,6 @@ import type {
 	Arena,
 	Clan,
 	Player,
-	FetchableStructure,
 	Location,
 	Response,
 	FinishedRiverRace,
@@ -22,8 +21,10 @@ import type {
 	ClanCurrentStanding,
 	PlayerCard,
 	RiverRacePeriod,
+	APITag,
+	ClanPreview,
 } from "..";
-import List from "../lists";
+import type List from "../lists";
 
 export const enum Constants {
 	/**
@@ -90,6 +91,17 @@ export const Errors = {
 		"The minimum score must be a positive number" as const,
 } as const;
 
+export const Routes = {
+	Cards: () => "/cards" as const,
+	Clans: () => "/clans" as const,
+	ClanMembers: (tag: APITag) => `/clans/${tag}/members` as const,
+	Player: (tag: APITag) => `/players/${tag}` as const,
+	CurrentRiverRace: (tag: APITag) => `/clans/${tag}/currentriverrace` as const,
+	RiverRaceLog: (tag: APITag) => `/clans/${tag}/riverracelog` as const,
+	Location: (id: StringId) => `/locations/${id}` as const,
+	Clan: (tag: APITag) => `/clans/${tag}` as const,
+} as const;
+
 /**
  * Events that can be emitted by the client
  */
@@ -129,35 +141,60 @@ export type ClientEvents = {
 		newStanding: RiverRacePeriodStanding
 	];
 	newCard: [card: Card];
-	cardRemoved: [card: Card];
+	cardRemove: [card: Card];
 	newClanCurrentStanding: [clan: ClanCurrentStanding];
-	clanCurrentStandingRemoved: [clan: ClanCurrentStanding];
+	clanCurrentStandingRemove: [clan: ClanCurrentStanding];
 	newClan: [clan: Clan];
-	clanRemoved: [clan: Clan];
+	clanRemove: [clan: Clan];
 	newArena: [arena: Arena];
-	arenaRemoved: [arena: Arena];
+	arenaRemove: [arena: Arena];
 	newClanMember: [member: ClanMember];
-	clanMemberRemoved: [member: ClanMember];
+	clanMemberRemove: [member: ClanMember];
 	newLocation: [location: Location];
-	locationRemoved: [location: Location];
+	locationRemove: [location: Location];
 	newAchievement: [achievement: PlayerAchievement];
-	achievementRemoved: [achievement: PlayerAchievement];
+	achievementRemove: [achievement: PlayerAchievement];
 	newBadge: [badge: PlayerBadge];
-	badgeRemoved: [badge: PlayerBadge];
+	badgeRemove: [badge: PlayerBadge];
 	newPlayerCard: [card: PlayerCard];
-	playerCardRemoved: [card: PlayerCard];
+	playerCardRemove: [card: PlayerCard];
 	newPlayer: [player: Player];
-	playerRemoved: [player: Player];
+	playerRemove: [player: Player];
 	newFinishedRiverRace: [riverRace: FinishedRiverRace];
-	finishedRiverRaceRemoved: [riverRace: FinishedRiverRace];
+	finishedRiverRaceRemove: [riverRace: FinishedRiverRace];
 	newRiverRaceParticipant: [participant: RiverRaceParticipant];
-	riverRaceParticipantRemoved: [participant: RiverRaceParticipant];
+	riverRaceParticipantRemove: [participant: RiverRaceParticipant];
 	newRiverRacePeriod: [period: RiverRacePeriod];
-	riverRacePeriodRemoved: [period: RiverRacePeriod];
+	riverRacePeriodRemove: [period: RiverRacePeriod];
 	newRiverRacePeriodStanding: [standing: RiverRacePeriodStanding];
-	riverRacePeriodStandingRemoved: [standing: RiverRacePeriodStanding];
+	riverRacePeriodStandingRemove: [standing: RiverRacePeriodStanding];
 	newRiverRaceWeekStanding: [standing: RiverRaceWeekStanding];
-	riverRaceWeekStandingRemoved: [standing: RiverRaceWeekStanding];
+	riverRaceWeekStandingRemove: [standing: RiverRaceWeekStanding];
+	clanCurrentStandingUpdate: [
+		oldStanding: ClanCurrentStanding,
+		newStanding: ClanCurrentStanding
+	];
+	finishedRiverRaceUpdate: [
+		oldRiverRace: FinishedRiverRace,
+		newRiverRace: FinishedRiverRace
+	];
+	achievementUpdate: [
+		oldAchievement: PlayerAchievement,
+		newAchievement: PlayerAchievement
+	];
+	badgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
+	playerCardUpdate: [oldCard: PlayerCard, newCard: PlayerCard];
+	riverRacePeriodUpdate: [
+		oldPeriod: RiverRacePeriod,
+		newPeriod: RiverRacePeriod
+	];
+	riverRaceWeekStandingUpdate: [
+		oldStanding: RiverRaceWeekStanding,
+		newStanding: RiverRaceWeekStanding
+	];
+	newClanPreview: [clan: ClanPreview];
+	clanPreviewRemove: [clan: ClanPreview];
+	clanPreviewUpdate: [oldClan: ClanPreview, newClan: ClanPreview];
 };
 
 export type StructureEvents<T extends ConstructableStructure> = ValueOf<{
@@ -169,8 +206,9 @@ export type StructureEvents<T extends ConstructableStructure> = ValueOf<{
 }>;
 
 export type EventsOptions<T extends ConstructableStructure> = {
-	add?: StructureEvents<T>;
-	remove?: StructureEvents<T>;
+	add: StructureEvents<T>;
+	remove: StructureEvents<T>;
+	update: StructureEvents<T>;
 };
 
 export type ValueOf<T> = T[keyof T];
@@ -264,17 +302,6 @@ export type FetchOptions = {
 	 * Maximum time (in milliseconds) passed after the structure was last fetched before fetching again
 	 */
 	maxAge?: number;
-};
-
-/**
- * The class of a fetchable structure
- */
-export type ConstructableFetchableStructure = Omit<
-	typeof FetchableStructure,
-	"constructor"
-> & {
-	prototype: FetchableStructure;
-	new (client: ClientRoyale, data: any, ...args: any[]): FetchableStructure;
 };
 
 /**

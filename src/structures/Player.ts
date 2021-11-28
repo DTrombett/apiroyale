@@ -24,17 +24,17 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The achievements of this player
 	 */
-	achievements: PlayerAchievementManager;
+	readonly achievements: PlayerAchievementManager;
 
 	/**
 	 * The arena this player is currently in
 	 */
-	arena!: Arena;
+	readonly arena: Arena;
 
 	/**
 	 * The badges of this player
 	 */
-	badges: PlayerBadgeManager;
+	readonly badges: PlayerBadgeManager;
 
 	/**
 	 * The number of battle this player has participated in
@@ -49,7 +49,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The cards of this player
 	 */
-	cards: PlayerCardManager;
+	readonly cards: PlayerCardManager;
 
 	/**
 	 * The number of cards won in challenges
@@ -64,7 +64,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The deck of this player
 	 */
-	deck: PlayerCardManager;
+	readonly deck: PlayerCardManager;
 
 	/**
 	 * The number of donations this player has made this week
@@ -152,11 +152,6 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	trophies!: number;
 
 	/**
-	 * Number of decks used in war today
-	 */
-	warDecksUsedToday!: number;
-
-	/**
 	 * The number of matches this player has won
 	 */
 	wins!: number;
@@ -167,18 +162,20 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-		this.badges = new PlayerBadgeManager(this.client, this, data.badges);
 		this.achievements = new PlayerAchievementManager(
 			this.client,
 			this,
 			data.achievements
 		);
+		this.arena = this.client.arenas.add(data.arena);
+		this.badges = new PlayerBadgeManager(this.client, this, data.badges);
 		this.cards = new PlayerCardManager(this.client, this, data.cards);
 		this.deck = new PlayerCardManager(this.client, this, data.currentDeck);
 		this.patch({
 			...data,
-			badges: undefined,
 			achievements: undefined,
+			arena: undefined,
+			badges: undefined,
 			cards: undefined,
 			currentDeck: undefined,
 		});
@@ -228,48 +225,45 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	}
 
 	/**
-	 * Checks whether this player is equal to another player.
+	 * Check whether this player is equal to another player.
 	 * @param player - The player to compare to
 	 * @returns Whether the players are equal
 	 */
-	equals(player: Player<T>): boolean {
+	equals(player: Player<T>): player is this {
 		return (
 			super.equals(player) &&
+			this.achievements.equals(player.achievements) &&
 			this.arena.id === player.arena.id &&
+			this.badges.equals(player.badges) &&
+			this.battleCount === player.battleCount &&
+			this.bestTrophies === player.bestTrophies &&
+			this.cards.equals(player.cards) &&
+			this.cardsWonInChallenges === player.cardsWonInChallenges &&
 			this.clan?.tag === player.clan?.tag &&
+			this.deck.equals(player.deck) &&
 			this.donationsPerWeek === player.donationsPerWeek &&
 			this.donationsReceivedPerWeek === player.donationsReceivedPerWeek &&
-			this.kingLevel === player.kingLevel &&
-			this.role === player.role &&
-			this.trophies === player.trophies &&
-			this.bestTrophies === player.bestTrophies &&
-			this.wins === player.wins &&
-			this.losses === player.losses &&
-			this.battleCount === player.battleCount &&
-			this.threeCrownWins === player.threeCrownWins &&
-			this.cardsWonInChallenges === player.cardsWonInChallenges &&
-			this.maxWinsInChallenge === player.maxWinsInChallenge &&
-			this.tournamentBattleCount === player.tournamentBattleCount &&
-			this.totalDonations === player.totalDonations &&
-			this.oldWarDayWins === player.oldWarDayWins &&
-			this.oldClanCardsCollected === player.oldClanCardsCollected &&
-			isEqual(this.leagueStatistics, player.leagueStatistics) &&
-			this.badges.every((badge) => player.badges.has(badge.id)) &&
-			this.achievements.every((achievement) =>
-				player.achievements.has(achievement.id)
-			) &&
-			this.cards.every((card) => player.cards.has(card.id)) &&
-			this.deck.every((card) => player.deck.has(card.id)) &&
-			this.favouriteCard.id === player.favouriteCard.id &&
-			this.starPoints === player.starPoints &&
 			this.expPoints === player.expPoints &&
+			this.favouriteCard.id === player.favouriteCard.id &&
+			this.kingLevel === player.kingLevel &&
+			isEqual(this.leagueStatistics, player.leagueStatistics) &&
+			this.losses === player.losses &&
+			this.maxWinsInChallenge === player.maxWinsInChallenge &&
+			this.oldClanCardsCollected === player.oldClanCardsCollected &&
+			this.oldWarDayWins === player.oldWarDayWins &&
+			this.role === player.role &&
+			this.starPoints === player.starPoints &&
+			this.threeCrownWins === player.threeCrownWins &&
+			this.totalDonations === player.totalDonations &&
+			this.tournamentBattleCount === player.tournamentBattleCount &&
 			this.tournamentCardsWon === player.tournamentCardsWon &&
-			this.warDecksUsedToday === player.warDecksUsedToday
+			this.trophies === player.trophies &&
+			this.wins === player.wins
 		);
 	}
 
 	/**
-	 * Fetches this player.
+	 * Fetch this player.
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the new player
 	 */
@@ -278,7 +272,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	}
 
 	/**
-	 * Checks whether this player is in a clan.
+	 * Check whether this player is in a clan.
 	 * @returns Whether this player is in a clan
 	 */
 	isInClan(): this is { clan: NonNullable<Player<T>["clan"]> } {
@@ -286,85 +280,60 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	}
 
 	/**
-	 * Checks whether this player is in a league.
-	 * @returns Whether this player is in a league
-	 */
-	isInLeague(): this is {
-		leagueStatistics: NonNullable<Player<T>["leagueStatistics"]>;
-	} {
-		return this.leagueStatistics !== undefined;
-	}
-
-	/**
-	 * Patches this player.
-	 * @param data - The data to update this player with
-	 * @returns The updated player
+	 * Patch this player.
+	 * @param data - The data to patch this player with
+	 * @returns The patched player
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
-		if (data.role !== undefined) this.role = ClanMemberRole[data.role];
-		if (data.arena !== undefined)
-			this.arena = this.client.arenas.add(data.arena);
-		if (data.achievements !== undefined) {
-			this.achievements.clear();
-			for (const achievement of data.achievements)
-				this.achievements.add(achievement);
-		}
-		if (data.badges !== undefined) {
-			this.badges.clear();
-			for (const badge of data.badges) this.badges.add(badge);
-		}
+		if (data.achievements !== undefined)
+			this.achievements.overrideItems(data.achievements);
+		if (data.arena !== undefined) this.arena.patch(data.arena);
+		if (data.badges !== undefined) this.badges.overrideItems(data.badges);
 		if (data.battleCount !== undefined) this.battleCount = data.battleCount;
 		if (data.bestTrophies !== undefined) this.bestTrophies = data.bestTrophies;
-		if (data.cards !== undefined) {
-			this.cards.clear();
-			for (const card of data.cards) this.cards.add(card);
-		}
+		if (data.cards !== undefined) this.cards.overrideItems(data.cards);
 		if (data.challengeCardsWon !== undefined)
 			this.cardsWonInChallenges = data.challengeCardsWon;
-		if (data.clan !== undefined) this.clan = this.client.clans.add(data.clan);
-		if (data.currentDeck !== undefined) {
-			this.deck.clear();
-			for (const card of data.currentDeck) this.deck.add(card);
-		}
-		if (data.totalDonations !== undefined)
-			this.totalDonations = data.totalDonations;
+		if (data.challengeMaxWins !== undefined)
+			this.maxWinsInChallenge = data.challengeMaxWins;
+		if (data.clan !== undefined)
+			this.clan = this.client.clanPreviews.add(data.clan);
+		if (data.clanCardsCollected !== undefined)
+			this.oldClanCardsCollected = data.clanCardsCollected;
+		if (data.currentDeck !== undefined)
+			this.deck.overrideItems(data.currentDeck);
+		if (data.currentFavouriteCard !== undefined)
+			this.favouriteCard = this.cards.get(
+				`${data.currentFavouriteCard.id}`
+			) as PlayerCard;
 		if (data.donations !== undefined) this.donationsPerWeek = data.donations;
 		if (data.donationsReceived !== undefined)
 			this.donationsReceivedPerWeek = data.donationsReceived;
 		if (data.expLevel !== undefined) this.kingLevel = data.expLevel;
 		if (data.expPoints !== undefined) this.expPoints = data.expPoints;
-		if (data.currentFavouriteCard !== undefined)
-			this.favouriteCard = this.cards.get(
-				`${data.currentFavouriteCard.id}`
-			) as PlayerCard;
 		if (data.leagueStatistics !== undefined)
 			this.leagueStatistics = data.leagueStatistics;
 		if (data.losses !== undefined) this.losses = data.losses;
-		if (data.challengeMaxWins !== undefined)
-			this.maxWinsInChallenge = data.challengeMaxWins;
-		if (data.clanCardsCollected !== undefined)
-			this.oldClanCardsCollected = data.clanCardsCollected;
-		if (data.warDayWins !== undefined) this.oldWarDayWins = data.warDayWins;
+		if (data.role !== undefined) this.role = ClanMemberRole[data.role];
 		if (data.starPoints !== undefined) this.starPoints = data.starPoints;
 		if (data.threeCrownWins !== undefined)
 			this.threeCrownWins = data.threeCrownWins;
+		if (data.totalDonations !== undefined)
+			this.totalDonations = data.totalDonations;
 		if (data.tournamentBattleCount !== undefined)
 			this.tournamentBattleCount = data.tournamentBattleCount;
 		if (data.tournamentCardsWon !== undefined)
 			this.tournamentCardsWon = data.tournamentCardsWon;
 		if (data.trophies !== undefined) this.trophies = data.trophies;
+		if (data.warDayWins !== undefined) this.oldWarDayWins = data.warDayWins;
 		if (data.wins !== undefined) this.wins = data.wins;
 
-		if (!this.equals(old)) this.client.emit("playerUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this player.
-	 * @returns The JSON representation
+	 * Get a JSON representation of this player.
+	 * @returns The JSON representation of this player
 	 */
 	toJson(): APIPlayer {
 		return {
@@ -399,14 +368,6 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 			trophies: this.trophies,
 			wins: this.wins,
 		};
-	}
-
-	/**
-	 * Gets the string representation of this player.
-	 * @returns The name of this player
-	 */
-	toString(): string {
-		return this.name;
 	}
 }
 

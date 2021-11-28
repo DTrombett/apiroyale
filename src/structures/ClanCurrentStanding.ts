@@ -1,5 +1,8 @@
-import type { CurrentRiverRace } from ".";
-import type { APIClanCurrentStanding, ClientRoyale } from "..";
+import type {
+	APIClanCurrentStanding,
+	ClientRoyale,
+	CurrentRiverRace,
+} from "..";
 import BaseClanStanding from "./BaseClanStanding";
 
 /**
@@ -25,7 +28,7 @@ export class ClanCurrentStanding<
 	}
 
 	/**
-	 * Clone this standing
+	 * Clone this standing.
 	 * @returns A clone of this standing
 	 */
 	clone(): ClanCurrentStanding<T> {
@@ -33,27 +36,25 @@ export class ClanCurrentStanding<
 	}
 
 	/**
-	 * Check if this standing is equal to another standing
-	 * @param other - The other standing to compare to
+	 * Check if this standing is equal to another standing.
+	 * @param standing - The other standing to compare to
 	 * @returns Whether this standing is equal to the other standing
 	 */
-	equals(other: ClanCurrentStanding<T>): boolean {
-		return super.equals(other) && this.race.monthDay === other.race.monthDay;
+	equals(standing: ClanCurrentStanding<T>): standing is this {
+		return super.equals(standing) && this.race.id === standing.race.id;
 	}
 
 	/**
-	 * Patch this standing
-	 * @param data - The data to patch the standing with
+	 * Patch this standing.
+	 * @param data - The data to patch this standing with
 	 * @returns The patched standing
 	 */
 	patch(data: Partial<T>): this {
-		super.patch(data);
-
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this standing
+	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
 	toJson(): APIClanCurrentStanding {

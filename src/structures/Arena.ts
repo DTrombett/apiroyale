@@ -2,15 +2,13 @@ import type { APIArena, ClientRoyale, StringId } from "..";
 import Structure from "./Structure";
 
 /**
- * A class representing an arena
+ * An arena
  */
 export class Arena<T extends APIArena = APIArena> extends Structure<T> {
-	static id = "id" as const;
-
 	/**
 	 * The id of this arena
 	 */
-	readonly id: StringId;
+	readonly id!: StringId;
 
 	/**
 	 * The name of this arena
@@ -22,9 +20,11 @@ export class Arena<T extends APIArena = APIArena> extends Structure<T> {
 	 * @param data - The data of the arena
 	 */
 	constructor(client: ClientRoyale, data: T) {
-		super(client, data);
-		this.id = data.id.toString() as StringId;
-		this.patch(data);
+		super(client, data, `${data.id}`);
+		this.patch({
+			...data,
+			id: undefined,
+		});
 	}
 
 	/**
@@ -36,33 +36,29 @@ export class Arena<T extends APIArena = APIArena> extends Structure<T> {
 	}
 
 	/**
-	 * Checks whether this arena is equal to another arena, comparing all properties.
-	 * @param other - The arena to compare to
+	 * Check whether this arena is equal to another arena.
+	 * @param arena - The arena to compare to
 	 * @returns Whether the arenas are equal
 	 */
-	equals(other: Arena<T>): boolean {
+	equals(arena: Arena<T>): arena is this {
 		return (
-			super.equals(other) && this.id === other.id && this.name === other.name
+			super.equals(arena) && this.id === arena.id && this.name === arena.name
 		);
 	}
 
 	/**
-	 * Patches this arena.
-	 * @param data - The data to update this arena with
-	 * @returns The updated arena
+	 * Patch this arena.
+	 * @param data - The data to patch this arena with
+	 * @returns The patched arena
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
 		if (data.name !== undefined) this.name = data.name;
 
-		if (!this.equals(old)) this.client.emit("arenaUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this arena.
+	 * Get a JSON representation of this arena.
 	 * @returns The JSON representation of this arena
 	 */
 	toJson(): APIArena {
@@ -71,14 +67,6 @@ export class Arena<T extends APIArena = APIArena> extends Structure<T> {
 			name: this.name,
 			id: Number(this.id),
 		};
-	}
-
-	/**
-	 * Gets a string representation of this arena.
-	 * @returns The name of this arena
-	 */
-	toString(): string {
-		return this.name;
 	}
 }
 

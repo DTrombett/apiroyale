@@ -21,7 +21,7 @@ export class PlayerCard<
 	/**
 	 * The player that owns this card
 	 */
-	player: Player;
+	readonly player: Player;
 
 	/**
 	 * The star level of the card
@@ -36,7 +36,7 @@ export class PlayerCard<
 	constructor(client: ClientRoyale, data: T, player: Player) {
 		super(client, data);
 		this.player = player;
-		super.patch(data);
+		this.patch(data);
 	}
 
 	/**
@@ -47,37 +47,34 @@ export class PlayerCard<
 	}
 
 	/**
-	 * Checks whether this card is equal to another, comparing all properties.
+	 * Check whether this card is equal to another.
 	 * @param card - The card to compare to
 	 */
-	equals(card: PlayerCard): boolean {
+	equals(card: PlayerCard): card is this {
 		return (
 			super.equals(card) &&
 			this.count === card.count &&
 			this.level === card.level &&
+			this.player.id === card.player.id &&
 			this.starLevel === card.starLevel
 		);
 	}
 
 	/**
 	 * Patch this card.
-	 * @param data - The data to patch
+	 * @param data - The data to patch this card with
 	 * @returns The patched card
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
 		if (data.count != null) this.count = data.count;
 		if (data.level != null) this.level = data.level;
 		if (data.starLevel != null) this.starLevel = data.starLevel;
 
-		if (!this.equals(old)) this.client.emit("cardUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this card.
+	 * Get a JSON representation of this card.
 	 */
 	toJson(): APIPlayerCard {
 		return {

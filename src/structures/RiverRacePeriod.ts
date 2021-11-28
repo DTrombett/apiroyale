@@ -1,94 +1,94 @@
+import type ClientRoyale from "..";
+import type { APIRiverRacePeriod, CurrentRiverRace, StringId } from "..";
+import { RiverRacePeriodStandingManager } from "../managers";
 import Structure from "./Structure";
-import type { APIRiverRacePeriod, ClientRoyale } from "..";
-import type { CurrentRiverRace } from ".";
-import RiverRacePeriodStandingManager from "../managers/RiverRacePeriodStandingManager";
 
 /**
- * A clan preview
+ * A river race period
  */
 export class RiverRacePeriod<
 	T extends APIRiverRacePeriod = APIRiverRacePeriod
 > extends Structure<T> {
-	static id = "periodIndex" as const;
-
-	/**
-	 * The race of this period
-	 */
-	race: CurrentRiverRace;
+	readonly id!: StringId;
 
 	/**
 	 * The leaderboard of this period
 	 */
-	leaderboard: RiverRacePeriodStandingManager;
+	readonly leaderboard: RiverRacePeriodStandingManager;
 
 	/**
 	 * The month day of this period
 	 */
-	monthDay: number;
+	monthDay!: number;
 
 	/**
-	 * @param client - The client that instantiated this clan
-	 * @param data - The data of the clan
+	 * The race of this period
+	 */
+	readonly race: CurrentRiverRace;
+
+	/**
+	 * @param client - The client that instantiated this period
+	 * @param data - The data of the period
 	 * @param race - The race of this period
 	 */
 	constructor(client: ClientRoyale, data: T, race: CurrentRiverRace) {
-		super(client, data);
+		super(client, data, `${data.periodIndex}`);
 		this.race = race;
 		this.leaderboard = new RiverRacePeriodStandingManager(
 			this.client,
 			this,
 			data.items
 		);
-		this.monthDay = data.periodIndex;
-		this.patch(data);
+		this.patch({
+			...data,
+			items: undefined,
+		});
 	}
 
 	/**
-	 * Clone this clan preview.
-	 * @returns The cloned clan preview
+	 * Clone this period.
+	 * @returns The cloned period
 	 */
 	clone(): RiverRacePeriod<T> {
 		return new RiverRacePeriod(this.client, this.toJson(), this.race);
 	}
 
 	/**
-	 * Checks if this clan is equal to another.
-	 * @param other - The other clan
-	 * @returns Whether this clan is equal to the other clan
+	 * Check if this period is equal to another.
+	 * @param period - The other period
+	 * @returns Whether this period is equal to the other period
 	 */
-	equals(other: RiverRacePeriod<T>): boolean {
-		return super.equals(other);
+	equals(period: RiverRacePeriod<T>): period is this {
+		return (
+			super.equals(period) &&
+			this.leaderboard.equals(period.leaderboard) &&
+			this.monthDay === period.monthDay &&
+			this.race.id === period.race.id
+		);
 	}
 
 	/**
-	 * Patches this clan.
-	 * @param data - The data to patch
+	 * Patch this clan.
+	 * @param data - The data to patch this clan with
 	 * @returns The new clan
 	 */
 	patch(data: Partial<T>): this {
-		super.patch(data);
+		if (data.items !== undefined) this.leaderboard.overrideItems(data.items);
+		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex;
 
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this clan.
+	 * Get a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
 	toJson(): APIRiverRacePeriod {
 		return {
 			...super.toJson(),
-			items: this.leaderboard.map((standing) => standing.toJson()),
+			items: this.leaderboard.toJson(),
 			periodIndex: this.monthDay,
 		};
-	}
-
-	/**
-	 * Gets a string representation of this clan.
-	 * @returns The string representation of this clan
-	 */
-	toString(): string {
-		return this.monthDay.toString();
 	}
 }
 

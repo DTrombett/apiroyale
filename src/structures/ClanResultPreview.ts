@@ -10,14 +10,14 @@ export class ClanResultPreview<
 	T extends APIClanResultPreview = APIClanResultPreview
 > extends ClanPreview<T> {
 	/**
-	 * The donations made by the clan since this week started
+	 * The donations made in the clan since this week started
 	 */
 	donationsPerWeek!: number;
 
 	/**
 	 * The clan's location
 	 */
-	location!: Location;
+	readonly location!: Location;
 
 	/**
 	 * The clan's member count
@@ -50,7 +50,11 @@ export class ClanResultPreview<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-		this.patch(data);
+		this.location = new Location(client, data.location);
+		this.patch({
+			...data,
+			location: undefined,
+		});
 	}
 
 	/**
@@ -70,47 +74,44 @@ export class ClanResultPreview<
 
 	/**
 	 * Check if this clan is equal to another clan
-	 * @param other - The other clan to compare to
+	 * @param clan - The other clan to compare to
 	 * @returns Whether this clan is equal to the other clan
 	 */
-	equals(other: ClanResultPreview<T>): boolean {
+	equals(clan: ClanResultPreview<T>): clan is this {
 		return (
-			super.equals(other) &&
-			this.score === other.score &&
-			this.warTrophies === other.warTrophies &&
-			this.donationsPerWeek === other.donationsPerWeek &&
-			this.location.id === other.location.id &&
-			this.requiredTrophies === other.requiredTrophies &&
-			this.type === other.type &&
-			this.memberCount === other.memberCount
+			super.equals(clan) &&
+			this.donationsPerWeek === clan.donationsPerWeek &&
+			this.location.id === clan.location.id &&
+			this.memberCount === clan.memberCount &&
+			this.requiredTrophies === clan.requiredTrophies &&
+			this.score === clan.score &&
+			this.type === clan.type &&
+			this.warTrophies === clan.warTrophies
 		);
 	}
 
 	/**
 	 * Patch this clan result preview
-	 * @param data - The data to patch the clan result preview with
+	 * @param data - The data to patch this clan result preview with
 	 * @returns The patched clan result preview
 	 */
 	patch(data: Partial<T>): this {
-		super.patch(data);
-
 		if (data.clanScore !== undefined) this.score = data.clanScore;
 		if (data.clanWarTrophies !== undefined)
 			this.warTrophies = data.clanWarTrophies;
 		if (data.donationsPerWeek !== undefined)
 			this.donationsPerWeek = data.donationsPerWeek;
-		if (data.location !== undefined)
-			this.location = new Location(this.client, data.location);
+		if (data.location !== undefined) this.location.patch(data.location);
+		if (data.members !== undefined) this.memberCount = data.members;
 		if (data.requiredTrophies !== undefined)
 			this.requiredTrophies = data.requiredTrophies;
 		if (data.type !== undefined) this.type = ClanType[data.type];
-		if (data.members !== undefined) this.memberCount = data.members;
 
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this clan result preview
+	 * Get a JSON representation of this clan result preview
 	 * @returns The JSON representation of this clan result preview
 	 */
 	toJson(): APIClanResultPreview {
@@ -120,9 +121,9 @@ export class ClanResultPreview<
 			clanWarTrophies: this.warTrophies,
 			donationsPerWeek: this.donationsPerWeek,
 			location: this.location.toJson(),
+			members: this.memberCount,
 			requiredTrophies: this.requiredTrophies,
 			type: ClanType[this.type] as APIClanType,
-			members: this.memberCount,
 		};
 	}
 }

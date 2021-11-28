@@ -1,6 +1,9 @@
-import type { RiverRaceWeekStanding } from ".";
-import type { APIClanWeekStanding, ClientRoyale } from "..";
-import { APIDateToObject, dateObjectToAPIDate } from "..";
+import type {
+	APIClanWeekStanding,
+	ClientRoyale,
+	RiverRaceWeekStanding,
+} from "..";
+import { APIDateToObject, dateObjectToAPIDate } from "../util";
 import BaseClanStanding from "./BaseClanStanding";
 
 /**
@@ -32,7 +35,7 @@ export class ClanWeekStanding<
 	}
 
 	/**
-	 * Clone this standing
+	 * Clone this standing.
 	 * @returns A clone of this standing
 	 */
 	clone(): ClanWeekStanding<T> {
@@ -40,34 +43,32 @@ export class ClanWeekStanding<
 	}
 
 	/**
-	 * Check if this standing is equal to another standing
-	 * @param other - The other standing to compare to
+	 * Check if this standing is equal to another standing.
+	 * @param standing - The other standing to compare to
 	 * @returns Whether this standing is equal to the other standing
 	 */
-	equals(other: ClanWeekStanding<T>): boolean {
+	equals(standing: ClanWeekStanding<T>): standing is this {
 		return (
-			super.equals(other) &&
-			this.finishedAt?.getTime() === other.finishedAt?.getTime() &&
-			this.standing.rank === other.standing.rank
+			super.equals(standing) &&
+			this.finishedAt?.getTime() === standing.finishedAt?.getTime() &&
+			this.standing.id === standing.standing.id
 		);
 	}
 
 	/**
-	 * Patch this standing
-	 * @param data - The data to patch the standing with
+	 * Patch this standing.
+	 * @param data - The data to patch this standing with
 	 * @returns The patched standing
 	 */
 	patch(data: Partial<T>): this {
-		super.patch(data);
-
 		if (data.finishTime !== undefined)
 			this.finishedAt = APIDateToObject(data.finishTime);
 
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this standing
+	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
 	toJson(): APIClanWeekStanding {

@@ -12,12 +12,12 @@ export class ClanMember<
 	/**
 	 * The arena this member is currently in
 	 */
-	arena!: Arena;
+	readonly arena!: Arena;
 
 	/**
 	 * The clan of this member
 	 */
-	clan: Clan;
+	readonly clan: Clan;
 
 	/**
 	 * The number of donations this member has made this week
@@ -35,7 +35,7 @@ export class ClanMember<
 	kingLevel!: number;
 
 	/**
-	 * When this member was last seen
+	 * When this member was last online
 	 */
 	lastSeen!: Date;
 
@@ -67,11 +67,15 @@ export class ClanMember<
 	constructor(client: ClientRoyale, data: T, clan: Clan) {
 		super(client, data);
 		this.clan = clan;
-		this.patch(data);
+		this.arena = this.client.arenas.add(data.arena);
+		this.patch({
+			...data,
+			arena: undefined,
+		});
 	}
 
 	/**
-	 * The contribution to the total donations of this member
+	 * The contribution to the total clan donations of this member
 	 */
 	get donationPercentage(): number {
 		return (this.donationsPerWeek / this.clan.donationsPerWeek) * 100;
@@ -100,15 +104,15 @@ export class ClanMember<
 	}
 
 	/**
-	 * Checks whether this member is equal to another member.
+	 * Check whether this member is equal to another member.
 	 * @param member - The member to compare to
 	 * @returns Whether the members are equal
 	 */
-	equals(member: ClanMember<T>): boolean {
+	equals(member: ClanMember<T>): member is this {
 		return (
 			super.equals(member) &&
 			this.arena.id === member.arena.id &&
-			this.clan.tag === member.clan.tag &&
+			this.clan.id === member.clan.id &&
 			this.donationsPerWeek === member.donationsPerWeek &&
 			this.donationsReceivedPerWeek === member.donationsReceivedPerWeek &&
 			this.kingLevel === member.kingLevel &&
@@ -121,58 +125,46 @@ export class ClanMember<
 	}
 
 	/**
-	 * Patches this member.
-	 * @param data - The data to update this member with
-	 * @returns The updated member
+	 * Patch this member.
+	 * @param member - The data to patch this member with
+	 * @returns The patched member
 	 */
-	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
+	patch(member: Partial<T>): this {
+		if (member.arena !== undefined) this.arena.patch(member.arena);
+		if (member.clanRank !== undefined) this.rank = member.clanRank;
+		if (member.donations !== undefined)
+			this.donationsPerWeek = member.donations;
+		if (member.donationsReceived !== undefined)
+			this.donationsReceivedPerWeek = member.donationsReceived;
+		if (member.expLevel !== undefined) this.kingLevel = member.expLevel;
+		if (member.lastSeen !== undefined)
+			this.lastSeen = APIDateToObject(member.lastSeen);
+		if (member.previousClanRank !== undefined)
+			this.previousRank = member.previousClanRank;
+		if (member.role !== undefined) this.role = ClanMemberRole[member.role];
+		if (member.trophies !== undefined) this.trophies = member.trophies;
 
-		if (data.arena !== undefined)
-			this.arena = this.client.arenas.add(data.arena);
-		if (data.clanRank !== undefined) this.rank = data.clanRank;
-		if (data.donations !== undefined) this.donationsPerWeek = data.donations;
-		if (data.donationsReceived !== undefined)
-			this.donationsReceivedPerWeek = data.donationsReceived;
-		if (data.expLevel !== undefined) this.kingLevel = data.expLevel;
-		if (data.lastSeen !== undefined)
-			this.lastSeen = APIDateToObject(data.lastSeen);
-		if (data.previousClanRank !== undefined)
-			this.previousRank = data.previousClanRank;
-		if (data.role !== undefined) this.role = ClanMemberRole[data.role];
-		if (data.trophies !== undefined) this.trophies = data.trophies;
-
-		if (!this.equals(old)) this.client.emit("clanMemberUpdate", old, this);
-		return this;
+		return super.patch(member);
 	}
 
 	/**
-	 * Gets a JSON representation of this member.
+	 * Get a JSON representation of this member.
 	 * @returns The JSON representation
 	 */
 	toJson(): APIClanMember {
 		return {
 			...super.toJson(),
 			arena: this.arena.toJson(),
+			clanChestPoints: 0,
+			clanRank: this.rank,
 			donations: this.donationsPerWeek,
 			donationsReceived: this.donationsReceivedPerWeek,
 			expLevel: this.kingLevel,
+			lastSeen: dateObjectToAPIDate(this.lastSeen),
+			previousClanRank: this.previousRank,
 			role: ClanMemberRole[this.role] as APIRole,
 			trophies: this.trophies,
-			clanChestPoints: 0,
-			clanRank: this.rank,
-			previousClanRank: this.previousRank,
-			lastSeen: dateObjectToAPIDate(this.lastSeen),
 		};
-	}
-
-	/**
-	 * Gets the string representation of this member.
-	 * @returns The name of this member
-	 */
-	toString(): string {
-		return this.name;
 	}
 }
 

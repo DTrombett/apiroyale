@@ -1,5 +1,4 @@
 import { URLSearchParams } from "node:url";
-import { CurrentRiverRace } from "..";
 import type {
 	APIClan,
 	APICurrentRiverRace,
@@ -9,7 +8,9 @@ import type {
 } from "..";
 import { RiverRaceLogResults } from "../lists";
 import { ClanMemberManager, FinishedRiverRaceManager } from "../managers";
+import { Routes } from "../util";
 import ClanResultPreview from "./ClanResultPreview";
+import CurrentRiverRace from "./CurrentRiverRace";
 
 /**
  * A clan
@@ -28,12 +29,12 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	/**
 	 * The members of the clan
 	 */
-	members: ClanMemberManager;
+	readonly members: ClanMemberManager;
 
 	/**
 	 * The river race log of this clan
 	 */
-	riverRaceLog: FinishedRiverRaceManager;
+	readonly riverRaceLog: FinishedRiverRaceManager;
 
 	/**
 	 * @param client - The client that instantiated this clan
@@ -41,88 +42,86 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
-		this.members = new ClanMemberManager(client, this);
+		this.members = new ClanMemberManager(client, this, data.memberList);
 		this.riverRaceLog = new FinishedRiverRaceManager(client);
-		this.patch(data);
+		this.patch({
+			...data,
+			memberList: undefined,
+		});
 	}
 
 	/**
 	 * Clone this clan.
-	 * @returns A clone of this clan
+	 * @returns The cloned clan
 	 */
 	clone(): Clan<T> {
 		return new Clan(this.client, this.toJson());
 	}
 
 	/**
-	 * Checks whether this clan is equal to another clan.
-	 * @param other - The clan to compare to
+	 * Check whether this clan is equal to another clan.
+	 * @param clan - The clan to compare to
 	 * @returns Whether the clans are equal
 	 */
-	equals(other: Clan<T>): boolean {
+	equals(clan: Clan<T>): clan is this {
 		return (
-			super.equals(other) &&
-			this.description === other.description &&
-			this.members.every((member) => other.members.has(member.tag))
+			super.equals(clan) &&
+			this.description === clan.description &&
+			this.members.equals(clan.members)
 		);
 	}
 
 	/**
-	 * Fetch the current river race for this clan.
+	 * Fetch the current river race of this clan.
 	 * @returns The current river race of this clan
 	 */
 	async fetchCurrentRiverRace(): Promise<CurrentRiverRace> {
-		const riverRace = await this.client.api.get<APICurrentRiverRace>(
-			`/clans/${this.tag}/currentriverrace`
-		);
 		return (this.currentRiverRace = new CurrentRiverRace(
 			this.client,
-			riverRace
+			await this.client.api.get<APICurrentRiverRace>(
+				Routes.CurrentRiverRace(this.tag)
+			)
 		));
 	}
 
 	/**
 	 * Fetch the river race log of this clan.
 	 * @param options - Options for fetching the river race log
-	 * @returns The river race log for this clan
+	 * @returns The river race log of this clan
 	 */
 	async fetchRiverRaceLog(
 		options?: FetchRiverRaceLogOptions
 	): Promise<RiverRaceLogResults> {
 		const query = new URLSearchParams();
 
-		if (options?.limit !== undefined)
-			query.append("limit", options.limit.toString());
+		if (options?.limit !== undefined) query.append("limit", `${options.limit}`);
 		if (options?.after !== undefined) query.append("after", options.after);
 		if (options?.before !== undefined) query.append("before", options.before);
 
-		const results = await this.client.api.get<APIRiverRaceLog>(
-			`/clans/${this.tag}/riverracelog`,
+		const log = await this.client.api.get<APIRiverRaceLog>(
+			Routes.RiverRaceLog(this.tag),
 			{ query }
 		);
-		for (const race of results.items) this.riverRaceLog.add(race);
-		return new RiverRaceLogResults(this, options ?? {}, results);
+
+		this.riverRaceLog.add(...log.items);
+		return new RiverRaceLogResults(this, options ?? {}, log);
 	}
 
 	/**
-	 * Patches this clan.
-	 * @param data - The data to update this clan with
-	 * @returns The updated clan
+	 * Patch this clan.
+	 * @param data - The data to patch this clan with
+	 * @returns The patched clan
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
 		if (data.description !== undefined) this.description = data.description;
 		if (data.memberList !== undefined)
-			for (const member of data.memberList) this.members.add(member);
+			this.members.overrideItems(data.memberList);
 
-		if (!this.equals(old)) this.client.emit("clanUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this clan.
+	 * Get a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
 	toJson(): APIClan {

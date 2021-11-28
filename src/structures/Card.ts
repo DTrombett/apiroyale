@@ -7,17 +7,15 @@ import Structure from "./Structure";
  * A card
  */
 export class Card<T extends APICard = APICard> extends Structure<T> {
-	static id = "id" as const;
-
 	/**
 	 * The icon urls of the card
 	 */
-	iconUrls!: APICard["iconUrls"];
+	readonly iconUrls!: APICard["iconUrls"];
 
 	/**
 	 * The id of this arena
 	 */
-	readonly id: StringId;
+	readonly id!: StringId;
 
 	/**
 	 * The maximum level of this card
@@ -34,10 +32,11 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	 * @param data - The data of the card
 	 */
 	constructor(client: ClientRoyale, data: T) {
-		super(client, data);
-
-		this.id = data.id.toString() as StringId;
-		this.patch(data);
+		super(client, data, `${data.id}`);
+		this.patch({
+			...data,
+			id: undefined,
+		});
 	}
 
 	/**
@@ -49,57 +48,46 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	}
 
 	/**
-	 * Checks whether this card is equal to another.
+	 * Check whether this card is equal to another card.
 	 * @param card - The card to compare to
 	 * @returns Whether the cards are equal
 	 */
-	equals(card: Card<T>): boolean {
+	equals(card: Card<T>): card is this {
 		return (
 			super.equals(card) &&
-			this.name === card.name &&
 			isEqual(this.iconUrls, card.iconUrls) &&
+			this.id === card.id &&
 			this.maxLevel === card.maxLevel &&
-			this.id === card.id
+			this.name === card.name
 		);
 	}
 
 	/**
 	 * Patch this card.
-	 * @param data - The data to patch
+	 * @param data - The data to patch this card with
 	 * @returns The patched card
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
-		if (data.name !== undefined) this.name = data.name;
-		if (data.iconUrls !== undefined) this.iconUrls = data.iconUrls;
+		if (data.iconUrls?.medium !== undefined)
+			this.iconUrls.medium = data.iconUrls.medium;
 		if (data.maxLevel !== undefined) this.maxLevel = data.maxLevel;
 		if (data.name !== undefined) this.name = data.name;
 
-		if (!this.equals(old)) this.client.emit("cardUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this card.
+	 * Get a JSON representation of this card.
 	 * @returns The card's data
 	 */
 	toJson(): APICard {
 		return {
-			name: this.name,
+			...super.toJson(),
 			iconUrls: this.iconUrls,
 			id: Number(this.id),
 			maxLevel: this.maxLevel,
+			name: this.name,
 		};
-	}
-
-	/**
-	 * Gets a string representation of this card.
-	 * @returns The card's name
-	 */
-	toString(): string {
-		return this.name;
 	}
 }
 

@@ -49,23 +49,24 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 			addEvent,
 			data,
 			removeEvent,
+			updateEvent,
 		}: {
 			addEvent: StructureEvents<T>;
 			data?: StructureType<T>[];
 			removeEvent: StructureEvents<T>;
+			updateEvent: StructureEvents<T>;
 		},
 		...args: ConstructorExtras<T>
 	) {
 		super();
-
 		this.client = client;
 		this.events = {
 			add: addEvent,
 			remove: removeEvent,
+			update: updateEvent,
 		};
 		this.extras = args;
 		this.structure = structure;
-
 		if (data !== undefined) for (const element of data) this.add(element);
 	}
 
@@ -75,17 +76,45 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	 * @returns The added structure
 	 * @template S - The type to cast the structure to
 	 */
-	add<S extends T["prototype"] = T["prototype"]>(data: StructureType<T>): S {
-		const existing = this.get(
-			`${data[this.structure.id] as number | string}` as T["prototype"]["id"]
-		) as S | undefined;
+	add<S extends T["prototype"] = T["prototype"]>(data: StructureType<T>): S;
+	add(...data: StructureType<T>[]): this;
+	add(...data: StructureType<T>[]): T["prototype"] | this {
+		let instance: T["prototype"] | undefined;
 
-		if (existing !== undefined) return existing.patch(data);
-		const instance = new this.structure(this.client, data, ...this.extras) as S;
-		this.set(instance.id as T["prototype"]["id"], instance);
-		if (this.events.add !== undefined)
+		for (const element of data) {
+			instance = new this.structure(this.client, element, ...this.extras);
+			const existing = this.get(instance.id);
+
+			if (existing !== undefined) {
+				existing.patch(element);
+				this.client.emit(this.events.update, ...([existing] as never));
+				continue;
+			}
+			this.set(instance.id, instance);
 			this.client.emit(this.events.add, ...([instance] as never));
-		return instance;
+		}
+		return data.length === 1 ? instance! : this;
+	}
+
+	/**
+	 * Check if this manager has all the items of another manager.
+	 * @param manager - The manager to check against
+	 * @returns Whether or not this manager has all the items of another manager
+	 */
+	equals(manager: Manager<T>): manager is this {
+		for (const [id] of this) if (!manager.has(id)) return false;
+		return true;
+	}
+
+	/**
+	 * Override all the structures in this manager.
+	 * @param items - The items to add
+	 * @returns The patched manager
+	 */
+	overrideItems(items: StructureType<T>[]): this {
+		this.clear();
+		this.add(...items);
+		return this;
 	}
 
 	/**
@@ -98,9 +127,16 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 
 		if (existing === undefined) return undefined;
 		this.delete(id);
-		if (this.events.remove !== undefined)
-			this.client.emit(this.events.remove, ...([existing] as never));
+		this.client.emit(this.events.remove, ...([existing] as never));
 		return existing;
+	}
+
+	/**
+	 * Get a JSON representation of this manager.
+	 * @returns An array of the JSON representations of the structures in this manager
+	 */
+	toJson(): StructureType<T>[] {
+		return this.map((structure) => structure.toJson()) as StructureType<T>[];
 	}
 }
 

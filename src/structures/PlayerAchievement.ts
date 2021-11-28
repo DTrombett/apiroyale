@@ -1,5 +1,5 @@
-import type { APIAchievement, Player } from "..";
 import type ClientRoyale from "..";
+import type { APIAchievement, Player } from "..";
 import Structure from "./Structure";
 
 /**
@@ -8,8 +8,6 @@ import Structure from "./Structure";
 export class PlayerAchievement<
 	T extends APIAchievement = APIAchievement
 > extends Structure<T> {
-	static id = "name" as const;
-
 	/**
 	 * Info about this achievement
 	 */
@@ -23,12 +21,12 @@ export class PlayerAchievement<
 	/**
 	 * The name of the achievement
 	 */
-	name!: string;
+	readonly name!: string;
 
 	/**
 	 * The player that owns this achievement
 	 */
-	player: Player;
+	readonly player: Player;
 
 	/**
 	 * The progress of the achievement
@@ -46,9 +44,13 @@ export class PlayerAchievement<
 	 * @param player - The player that owns this achievement
 	 */
 	constructor(client: ClientRoyale, data: T, player: Player) {
-		super(client, data);
+		super(client, data, data.name);
 		this.player = player;
-		this.patch(data);
+		this.name = data.name;
+		this.patch({
+			...data,
+			name: undefined,
+		});
 	}
 
 	/**
@@ -67,65 +69,56 @@ export class PlayerAchievement<
 
 	/**
 	 * Clone this achievement.
+	 * @returns The cloned achievement
 	 */
 	clone(): PlayerAchievement {
 		return new PlayerAchievement(this.client, this.toJson(), this.player);
 	}
 
 	/**
-	 * Checks whether this achievement is equal to another, comparing all properties.
+	 * Check whether this achievement is equal to another.
 	 * @param achievement - The achievement to compare to
+	 * @returns Whether the achievements are equal
 	 */
-	equals(achievement: PlayerAchievement): boolean {
+	equals(achievement: PlayerAchievement): achievement is this {
 		return (
-			this.name === achievement.name &&
-			this.progress === achievement.progress &&
+			this.info === achievement.info &&
 			this.level === achievement.level &&
-			this.target === achievement.target &&
-			this.info === achievement.info
+			this.name === achievement.name &&
+			this.player.id === achievement.player.id &&
+			this.progress === achievement.progress &&
+			this.target === achievement.target
 		);
 	}
 
 	/**
 	 * Patch this achievement.
-	 * @param data - The data to patch
+	 * @param data - The data to patch this achievement with
 	 * @returns The patched achievement
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
-		if (data.name !== undefined) this.name = data.name;
 		if (data.info !== undefined) this.info = data.info;
 		if (data.stars !== undefined) this.level = data.stars;
 		if (data.target !== undefined) this.target = data.target;
 		if (data.value !== undefined) this.progress = data.value;
 
-		if (!this.equals(old))
-			this.client.emit("playerAchievementUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this achievement.
+	 * Get a JSON representation of this achievement.
+	 * @returns The JSON representation of this achievement
 	 */
 	toJson(): APIAchievement {
 		return {
-			name: this.name,
+			...super.toJson(),
 			completionInfo: null,
+			info: this.info,
+			name: this.name,
 			stars: this.level,
 			target: this.target,
 			value: this.progress,
-			info: this.info,
 		};
-	}
-
-	/**
-	 * Gets a string representation of this achievement.
-	 * @returns The achievement's name
-	 */
-	toString(): string {
-		return this.name;
 	}
 }
 

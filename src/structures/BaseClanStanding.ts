@@ -9,14 +9,14 @@ export class BaseClanStanding<
 	T extends APIClanCurrentStanding = APIClanCurrentStanding
 > extends ClanPreview<T> {
 	/**
-	 * The number of medals this clan has in the current day
+	 * The number of medals this clan has earned
 	 */
 	medals!: number;
 
 	/**
 	 * The participants to this war
 	 */
-	participants: RiverRaceParticipantManager;
+	readonly participants: RiverRaceParticipantManager;
 
 	/**
 	 * The clan's fame in the war
@@ -29,8 +29,8 @@ export class BaseClanStanding<
 	score!: number;
 
 	/**
-	 * @param client - The client that instantiated this clan standing
-	 * @param data - The data for this clan standing
+	 * @param client - The client that instantiated this standing
+	 * @param data - The data for this standing
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
@@ -39,54 +39,52 @@ export class BaseClanStanding<
 			this,
 			data.participants
 		);
-		this.patch(data);
+		this.patch({
+			...data,
+			participants: undefined,
+		});
 	}
 
 	/**
-	 * Clone this standing
-	 * @returns A clone of this standing
+	 * Clone this standing.
+	 * @returns The cloned standing
 	 */
 	clone(): BaseClanStanding<T> {
 		return new BaseClanStanding(this.client, this.toJson());
 	}
 
 	/**
-	 * Check if this standing is equal to another standing
-	 * @param other - The other standing to compare to
+	 * Check if this standing is equal to another standing.
+	 * @param standing - The other standing to compare to
 	 * @returns Whether this standing is equal to the other standing
 	 */
-	equals(other: BaseClanStanding<T>): boolean {
+	equals(standing: BaseClanStanding<T>): standing is this {
 		return (
-			super.equals(other) &&
-			this.score === other.score &&
-			this.points === other.points &&
-			this.medals === other.medals &&
-			this.participants
-				.mapValues((p) => p.tag)
-				.equals(other.participants.mapValues((p) => p.tag))
+			super.equals(standing) &&
+			this.medals === standing.medals &&
+			this.participants.equals(standing.participants) &&
+			this.points === standing.points &&
+			this.score === standing.score
 		);
 	}
 
 	/**
-	 * Patch this standing
-	 * @param data - The data to patch the standing with
+	 * Patch this standing.
+	 * @param data - The data to patch this standing with
 	 * @returns The patched standing
 	 */
 	patch(data: Partial<T>): this {
-		super.patch(data);
-
 		if (data.clanScore !== undefined) this.score = data.clanScore;
 		if (data.fame !== undefined) this.points = data.fame;
 		if (data.participants !== undefined)
-			for (const participant of data.participants)
-				this.participants.add(participant);
+			this.participants.add(...data.participants);
 		if (data.periodPoints !== undefined) this.medals = data.periodPoints;
 
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this standing
+	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
 	toJson(): APIClanCurrentStanding {
@@ -94,7 +92,7 @@ export class BaseClanStanding<
 			...super.toJson(),
 			clanScore: this.score,
 			fame: this.points,
-			participants: this.participants.map((p) => p.toJson()),
+			participants: this.participants.toJson(),
 			periodPoints: this.medals,
 			repairPoints: 0,
 		};

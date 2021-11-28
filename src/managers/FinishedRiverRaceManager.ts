@@ -17,7 +17,8 @@ export class FinishedRiverRaceManager extends Manager<
 		super(client, FinishedRiverRace, {
 			addEvent: "newFinishedRiverRace",
 			data,
-			removeEvent: "finishedRiverRaceRemoved",
+			removeEvent: "finishedRiverRaceRemove",
+			updateEvent: "finishedRiverRaceUpdate",
 		});
 	}
 }

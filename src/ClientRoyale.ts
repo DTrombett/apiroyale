@@ -3,6 +3,7 @@ import {
 	ArenaManager,
 	CardManager,
 	ClanManager,
+	ClanPreviewManager,
 	LocationManager,
 	PlayerManager,
 } from "./managers";
@@ -86,6 +87,12 @@ export class ClientRoyale extends EventEmitter {
 	 * The token used for the API
 	 */
 	token: string = process.env.CLASH_ROYALE_TOKEN!;
+
+	/**
+	 * A manager of clan previews
+	 * This will be more populated than {@link ClientRoyale.clans} as it's updated with player clans info too
+	 */
+	clanPreviews = new ClanPreviewManager(this);
 
 	/**
 	 * @param options - Options for the client

@@ -14,7 +14,8 @@ export class PlayerManager extends FetchableManager<typeof Player> {
 		super(client, Player, {
 			addEvent: "newPlayer",
 			data,
-			removeEvent: "playerRemoved",
+			removeEvent: "playerRemove",
+			updateEvent: "playerUpdate",
 		});
 	}
 }

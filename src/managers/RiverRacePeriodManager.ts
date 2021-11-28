@@ -28,7 +28,8 @@ export class RiverRacePeriodManager extends Manager<typeof RiverRacePeriod> {
 			{
 				addEvent: "newRiverRacePeriod",
 				data,
-				removeEvent: "riverRacePeriodRemoved",
+				removeEvent: "riverRacePeriodRemove",
+				updateEvent: "riverRacePeriodUpdate",
 			},
 			race
 		);

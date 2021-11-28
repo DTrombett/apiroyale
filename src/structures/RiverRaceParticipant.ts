@@ -35,22 +35,21 @@ export class RiverRaceParticipant<
 	points!: number;
 
 	/**
-	 * The player that refers to this participant
-	 */
-	player: Player;
-
-	/**
 	 * @param client - The client that instantiated this
 	 * @param data - The data for this participant
 	 * @param clan - The clan standing in the race related to this participant
 	 */
 	constructor(client: ClientRoyale, data: T, clan: BaseClanStanding) {
 		super(client, data);
-
 		this.clan = clan;
-		this.player = this.client.players.add<Player>(data);
-
 		this.patch(data);
+	}
+
+	/**
+	 * The player that this participant is related to
+	 */
+	get player(): Player | null {
+		return this.client.players.get(this.tag) ?? null;
 	}
 
 	/**
@@ -61,10 +60,10 @@ export class RiverRaceParticipant<
 	}
 
 	/**
-	 * Checks whether this participant is equal to another, comparing all properties.
+	 * Check whether this participant is equal to another.
 	 * @param participant - The participant to compare to
 	 */
-	equals(participant: RiverRaceParticipant): boolean {
+	equals(participant: RiverRaceParticipant): participant is this {
 		return (
 			this.boatAttacks === participant.boatAttacks &&
 			this.decksUsed === participant.decksUsed &&
@@ -76,25 +75,20 @@ export class RiverRaceParticipant<
 
 	/**
 	 * Patch this participant.
-	 * @param data - The data to patch
+	 * @param data - The data to patch this participant with
 	 * @returns The patched participant
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
 		if (data.boatAttacks != null) this.boatAttacks = data.boatAttacks;
 		if (data.decksUsed != null) this.decksUsed = data.decksUsed;
 		if (data.decksUsedToday != null) this.decksUsedToday = data.decksUsedToday;
 		if (data.fame != null) this.points = data.fame;
 
-		if (!this.equals(old))
-			this.client.emit("riverRaceParticipantUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this participant.
+	 * Get a JSON representation of this participant.
 	 */
 	toJson(): APIRiverRaceParticipant {
 		return {

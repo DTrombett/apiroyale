@@ -29,7 +29,8 @@ export class RiverRaceParticipantManager extends Manager<
 			{
 				addEvent: "newRiverRaceParticipant",
 				data,
-				removeEvent: "riverRaceParticipantRemoved",
+				removeEvent: "riverRaceParticipantRemove",
+				updateEvent: "riverRaceParticipantUpdate",
 			},
 			clan
 		);

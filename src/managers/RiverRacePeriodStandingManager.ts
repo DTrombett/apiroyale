@@ -30,7 +30,8 @@ export class RiverRacePeriodStandingManager extends Manager<
 			{
 				addEvent: "newRiverRacePeriodStanding",
 				data,
-				removeEvent: "riverRacePeriodStandingRemoved",
+				removeEvent: "riverRacePeriodStandingRemove",
+				updateEvent: "riverRacePeriodStandingUpdate",
 			},
 			period
 		);

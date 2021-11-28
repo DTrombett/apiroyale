@@ -14,7 +14,8 @@ export class LocationManager extends FetchableManager<typeof Location> {
 		super(client, Location, {
 			addEvent: "newLocation",
 			data,
-			removeEvent: "locationRemoved",
+			removeEvent: "locationRemove",
+			updateEvent: "locationUpdate",
 		});
 	}
 }

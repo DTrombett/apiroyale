@@ -1,5 +1,5 @@
-import type { APIPlayerCard, Player } from "..";
 import type ClientRoyale from "..";
+import type { APIPlayerCard, Player } from "..";
 import { PlayerCard } from "../structures";
 import Manager from "./Manager";
 
@@ -24,7 +24,8 @@ export class PlayerCardManager extends Manager<typeof PlayerCard> {
 			{
 				addEvent: "newPlayerCard",
 				data,
-				removeEvent: "playerCardRemoved",
+				removeEvent: "playerCardRemove",
+				updateEvent: "playerCardUpdate",
 			},
 			player
 		);

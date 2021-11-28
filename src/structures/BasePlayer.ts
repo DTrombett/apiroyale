@@ -1,6 +1,7 @@
 import type ClientRoyale from "..";
-import type { APIPlayer, APITag, FetchOptions, Path, Player } from "..";
-import FetchableStructure from "./FetchableStructure";
+import type { APIPlayer, APITag, FetchOptions, Player } from "..";
+import { Routes } from "../util";
+import Structure from "./Structure";
 
 export type APIBasePlayer = Pick<APIPlayer, "name" | "tag">;
 
@@ -9,9 +10,8 @@ export type APIBasePlayer = Pick<APIPlayer, "name" | "tag">;
  */
 export class BasePlayer<
 	T extends APIBasePlayer = APIBasePlayer
-> extends FetchableStructure<T> {
-	static route: Path = "/players/:id";
-	static id = "tag" as const;
+> extends Structure<T> {
+	readonly id!: APITag;
 
 	/**
 	 * The name of this player
@@ -24,13 +24,16 @@ export class BasePlayer<
 	readonly tag: APITag;
 
 	/**
-	 * @param client - The client that instantiated this clan player
+	 * @param client - The client that instantiated this player
 	 * @param data - The data of the player
 	 */
 	constructor(client: ClientRoyale, data: T) {
-		super(client, data);
+		super(client, data, data.tag);
 		this.tag = data.tag;
-		this.patch(data);
+		this.patch({
+			...data,
+			tag: undefined,
+		});
 	}
 
 	/**
@@ -42,57 +45,48 @@ export class BasePlayer<
 	}
 
 	/**
-	 * Checks whether this player is equal to another player.
+	 * Check whether this player is equal to another player.
 	 * @param player - The player to compare to
 	 * @returns Whether the players are equal
 	 */
-	equals(player: BasePlayer<T>): boolean {
+	equals(player: BasePlayer<T>): player is this {
 		return (
 			super.equals(player) &&
-			this.tag === player.tag &&
-			this.name === player.name
+			this.name === player.name &&
+			this.tag === player.tag
 		);
 	}
 
 	/**
-	 * Fetches this player.
+	 * Fetch this player.
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the new player
 	 */
 	fetch(options?: FetchOptions): Promise<Player> {
-		return this.client.players.fetch(this.tag, options);
+		return this.client.players.fetch(Routes.Player(this.tag), this.id, options);
 	}
 
 	/**
-	 * Patches this player.
-	 * @param data - The data to update this player with
-	 * @returns The updated player
+	 * Patch this player.
+	 * @param data - The data to patch this player with
+	 * @returns The patched player
 	 */
 	patch(data: Partial<T>): this {
-		super.patch(data);
-
 		if (data.name !== undefined) this.name = data.name;
 
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this player.
+	 * Get a JSON representation of this player.
 	 * @returns The JSON representation
 	 */
 	toJson(): APIBasePlayer {
 		return {
+			...super.toJson(),
 			name: this.name,
 			tag: this.tag,
 		};
-	}
-
-	/**
-	 * Gets the string representation of this player.
-	 * @returns The name of this player
-	 */
-	toString(): string {
-		return this.name;
 	}
 }
 

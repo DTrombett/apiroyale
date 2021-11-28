@@ -26,7 +26,8 @@ export class PlayerAchievementManager extends Manager<
 			{
 				addEvent: "newAchievement",
 				data,
-				removeEvent: "achievementRemoved",
+				removeEvent: "achievementRemove",
+				updateEvent: "achievementUpdate",
 			},
 			player
 		);

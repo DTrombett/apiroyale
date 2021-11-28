@@ -1,7 +1,7 @@
 import type ClientRoyale from "..";
 import type { APIClanCurrentStanding, CurrentRiverRace } from "..";
-import Manager from "../managers";
 import { ClanCurrentStanding } from "../structures";
+import Manager from "./Manager";
 
 /**
  * A manager for clans current standings
@@ -30,7 +30,8 @@ export class ClanCurrentStandingManager extends Manager<
 			{
 				addEvent: "newClanCurrentStanding",
 				data,
-				removeEvent: "clanCurrentStandingRemoved",
+				removeEvent: "clanCurrentStandingRemove",
+				updateEvent: "clanCurrentStandingUpdate",
 			},
 			race
 		);

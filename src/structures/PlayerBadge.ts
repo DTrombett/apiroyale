@@ -1,10 +1,10 @@
+import type ClientRoyale from "..";
 import type {
 	APIBadge,
 	APIMultipleLevelsBadge,
 	NonNullableProperties,
 	Player,
 } from "..";
-import type ClientRoyale from "..";
 import Structure from "./Structure";
 
 export type PlayerMultipleLevelsBadge<T extends PlayerBadge = PlayerBadge> =
@@ -14,8 +14,6 @@ export type PlayerMultipleLevelsBadge<T extends PlayerBadge = PlayerBadge> =
  * A player's badge
  */
 export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
-	static id = "name" as const;
-
 	/**
 	 * The current level of the badge
 	 */
@@ -29,12 +27,12 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	/**
 	 * The name of the badge
 	 */
-	name!: string;
+	readonly name!: string;
 
 	/**
 	 * The player that owns this badge
 	 */
-	player: Player;
+	readonly player: Player;
 
 	/**
 	 * The progress of the badge
@@ -52,9 +50,13 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	 * @param player - The player that owns this badge
 	 */
 	constructor(client: ClientRoyale, data: T, player: Player) {
-		super(client, data);
+		super(client, data, data.name);
 		this.player = player;
-		this.patch(data);
+		this.name = data.name;
+		this.patch({
+			...data,
+			name: undefined,
+		});
 	}
 
 	/**
@@ -80,27 +82,31 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 
 	/**
 	 * Clone this badge.
+	 * @returns The cloned badge
 	 */
 	clone(): PlayerBadge {
 		return new PlayerBadge(this.client, this.toJson(), this.player);
 	}
 
 	/**
-	 * Checks whether this badge is equal to another, comparing all properties.
+	 * Check whether this badge is equal to another.
 	 * @param badge - The badge to compare to
 	 */
-	equals(badge: PlayerBadge): boolean {
+	equals(badge: PlayerBadge): badge is this {
 		return (
-			this.name === badge.name &&
-			this.progress === badge.progress &&
-			this.levels === badge.levels &&
+			super.equals(badge) &&
 			this.level === badge.level &&
+			this.levels === badge.levels &&
+			this.name === badge.name &&
+			this.player.id === badge.player.id &&
+			this.progress === badge.progress &&
 			this.target === badge.target
 		);
 	}
 
 	/**
-	 * Checks if this badge has multiple levels.
+	 * Check if this badge has multiple levels.
+	 * @returns Whether this badge has multiple levels
 	 */
 	isMultipleLevels(): this is PlayerMultipleLevelsBadge<this> {
 		return this.levels > 1;
@@ -108,31 +114,24 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 
 	/**
 	 * Patch this badge.
-	 * @param data - The data to patch
+	 * @param data - The data to patch this badge with
 	 * @returns The patched badge
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
-		if (data.name !== undefined) this.name = data.name;
 		if (data.progress !== undefined) this.progress = data.progress;
+		if ((data as Partial<APIMultipleLevelsBadge>).maxLevel !== undefined)
+			this.levels = (data as unknown as APIMultipleLevelsBadge).maxLevel;
+		if ((data as Partial<APIMultipleLevelsBadge>).level !== undefined)
+			this.level = (data as unknown as APIMultipleLevelsBadge).level;
+		if ((data as Partial<APIMultipleLevelsBadge>).target !== undefined)
+			this.target = (data as unknown as APIMultipleLevelsBadge).target;
 
-		if ("maxLevel" in data) {
-			if ((data as Partial<APIMultipleLevelsBadge>).maxLevel !== undefined)
-				this.levels = (data as unknown as APIMultipleLevelsBadge).maxLevel;
-			if ((data as Partial<APIMultipleLevelsBadge>).level !== undefined)
-				this.level = (data as unknown as APIMultipleLevelsBadge).level;
-			if ((data as Partial<APIMultipleLevelsBadge>).target !== undefined)
-				this.target = (data as unknown as APIMultipleLevelsBadge).target;
-		}
-
-		if (!this.equals(old)) this.client.emit("playerBadgeUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this badge.
+	 * Get a JSON representation of this badge.
+	 * @returns The JSON representation of this badge
 	 */
 	toJson(): APIBadge {
 		return {
@@ -146,14 +145,6 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 				  }
 				: {}),
 		};
-	}
-
-	/**
-	 * Gets a string representation of this badge.
-	 * @returns The badge's name
-	 */
-	toString(): string {
-		return this.name;
 	}
 }
 

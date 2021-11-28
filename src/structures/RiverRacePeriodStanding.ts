@@ -1,59 +1,62 @@
-import type { Clan } from ".";
 import type ClientRoyale from "..";
-import type { APIRiverRacePeriodStanding, APITag } from "..";
-import type RiverRacePeriod from "./RiverRacePeriod";
+import type {
+	APIRiverRacePeriodStanding,
+	APITag,
+	Clan,
+	RiverRacePeriod,
+} from "..";
 import Structure from "./Structure";
 
 /**
- * A river race standing
+ * A river race period standing
  */
 export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStanding> {
-	static id = "progressEarnedFromDefenses" as const;
-
-	/**
-	 * The rank of the clan in this race
-	 */
-	rank!: number;
-
 	/**
 	 * The clan tag for this standing
 	 */
-	clanTag: APITag;
+	readonly clanTag: APITag;
 
 	/**
-	 * The race this standing is for
-	 */
-	readonly period: RiverRacePeriod;
-
-	/**
-	 * The defenses remaining for the clan in this standing
+	 * The defenses remaining for the clan in this period
 	 */
 	defensesRemaining!: number;
 
+	readonly id!: APITag;
+
 	/**
-	 * The medal count for the clan in this standing
+	 * The medal count of the clan in this period
 	 */
 	medals!: number;
-
-	/**
-	 * The points earned for this standing
-	 */
-	pointsEarned!: number;
-
-	/**
-	 * The points earned from defenses for this standing
-	 */
-	pointsEarnedFromDefenses!: number;
-
-	/**
-	 * The total progress after this period
-	 */
-	totalProgress!: number;
 
 	/**
 	 * The progress before this period
 	 */
 	oldProgress!: number;
+
+	/**
+	 * The period of this standing
+	 */
+	readonly period: RiverRacePeriod;
+
+	/**
+	 * The points earned in this period
+	 */
+	pointsEarned!: number;
+
+	/**
+	 * The points earned from defenses in this period
+	 */
+	pointsEarnedFromDefenses!: number;
+
+	/**
+	 * The rank of the clan in this period
+	 */
+	rank!: number;
+
+	/**
+	 * The total progress after this period
+	 */
+	totalProgress!: number;
 
 	/**
 	 * @param client - The client that instantiated this
@@ -65,11 +68,9 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 		data: APIRiverRacePeriodStanding,
 		period: RiverRacePeriod
 	) {
-		super(client, data);
-
+		super(client, data, data.clan.tag);
 		this.period = period;
 		this.clanTag = data.clan.tag;
-
 		this.patch({
 			...data,
 			clan: undefined,
@@ -77,7 +78,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	}
 
 	/**
-	 * The clan of this standing, if cached
+	 * The clan of this standing
 	 */
 	get clan(): Clan | null {
 		return this.client.clans.get(this.clanTag) ?? null;
@@ -98,32 +99,30 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	}
 
 	/**
-	 * Checks whether this standing is equal to another, comparing all properties.
+	 * Check whether this standing is equal to another.
 	 * @param standing - The standing to compare to
 	 */
-	equals(standing: RiverRacePeriodStanding): boolean {
+	equals(standing: RiverRacePeriodStanding): standing is this {
 		return (
 			super.equals(standing) &&
-			this.period.id === standing.period.id &&
-			this.rank === standing.rank &&
+			this.clanTag === standing.clanTag &&
 			this.defensesRemaining === standing.defensesRemaining &&
 			this.medals === standing.medals &&
+			this.oldProgress === standing.oldProgress &&
+			this.period.id === standing.period.id &&
 			this.pointsEarned === standing.pointsEarned &&
 			this.pointsEarnedFromDefenses === standing.pointsEarnedFromDefenses &&
-			this.totalProgress === standing.totalProgress &&
-			this.oldProgress === standing.oldProgress
+			this.rank === standing.rank &&
+			this.totalProgress === standing.totalProgress
 		);
 	}
 
 	/**
 	 * Patch this standing.
-	 * @param data - The data to patch
+	 * @param data - The data to patch this standing with
 	 * @returns The patched standing
 	 */
 	patch(data: Partial<APIRiverRacePeriodStanding>): this {
-		const old = this.clone();
-		super.patch(data);
-
 		if (data.endOfDayRank !== undefined) this.rank = data.endOfDayRank;
 		if (data.numOfDefensesRemaining !== undefined)
 			this.defensesRemaining = data.numOfDefensesRemaining;
@@ -137,13 +136,12 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 		if (data.progressStartOfDay !== undefined)
 			this.oldProgress = data.progressStartOfDay;
 
-		if (!this.equals(old))
-			this.client.emit("riverRacePeriodStandingUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this standing.
+	 * Get a JSON representation of this standing.
+	 * @returns The JSON representation of this standing
 	 */
 	toJson(): APIRiverRacePeriodStanding {
 		return {
@@ -159,13 +157,6 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 			progressEndOfDay: this.totalProgress,
 			progressStartOfDay: this.oldProgress,
 		};
-	}
-
-	/**
-	 * Gets a string representation of this standing.
-	 */
-	toString(): string {
-		return `${this.rank}`;
 	}
 }
 

@@ -24,7 +24,8 @@ export class PlayerBadgeManager extends Manager<typeof PlayerBadge> {
 			{
 				addEvent: "newBadge",
 				data,
-				removeEvent: "badgeRemoved",
+				removeEvent: "badgeRemove",
+				updateEvent: "badgeUpdate",
 			},
 			player
 		);

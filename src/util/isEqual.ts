@@ -1,8 +1,8 @@
 /**
  * Check whether two values are equal, checking all properties if it's an object.
- * @param x First value to compare.
- * @param y Second value to compare.
- * @returns Whether the two values are equal.
+ * @param x - First value to compare
+ * @param y - Second value to compare
+ * @returns Whether the two values are equal
  */
 export const isEqual = <T>(x: T, y: T): boolean => {
 	if (x === y) return true;

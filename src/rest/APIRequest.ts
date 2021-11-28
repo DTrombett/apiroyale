@@ -65,7 +65,7 @@ export class APIRequest {
 	/**
 	 * The full URL of this request
 	 */
-	get url() {
+	get url(): URL {
 		const url = new URL(this.baseUrl);
 
 		url.pathname += this.path;
@@ -78,7 +78,7 @@ export class APIRequest {
 	 * @param headers - Headers to add/remove
 	 * @returns The new request
 	 */
-	editHeaders(headers: RequestOptions["headers"]) {
+	editHeaders(headers: RequestOptions["headers"]): this {
 		this.headers = { ...this.headers, ...headers };
 		return this;
 	}
@@ -87,7 +87,7 @@ export class APIRequest {
 	 * Send the request to the api.
 	 * @returns A promise that resolves with the response
 	 */
-	send() {
+	send(): Promise<Response> {
 		this.rest.client.emit("requestStart", this);
 		this.status = RequestStatus.InProgress;
 		return new Promise<Response>((resolve, reject) => {

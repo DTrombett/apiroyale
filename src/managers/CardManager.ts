@@ -1,18 +1,13 @@
 import type ClientRoyale from "..";
-import type { APICard, FetchOptions, Path } from "..";
+import type { APICard, FetchOptions } from "..";
 import { Card } from "../structures";
-import Constants from "../util";
+import Constants, { Routes } from "../util";
 import Manager from "./Manager";
 
 /**
  * A manager for cards
  */
 export class CardManager extends Manager<typeof Card> {
-	/**
-	 * The route to fetch the cards from
-	 */
-	static route: Path = "/cards";
-
 	/**
 	 * @param client - The client that instantiated this manager
 	 * @param data - The data to initialize this manager with
@@ -21,12 +16,13 @@ export class CardManager extends Manager<typeof Card> {
 		super(client, Card, {
 			addEvent: "newCard",
 			data,
-			removeEvent: "cardRemoved",
+			removeEvent: "cardRemove",
+			updateEvent: "cardUpdate",
 		});
 	}
 
 	/**
-	 * Fetches all the cards.
+	 * Fetch all the cards.
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched cards
 	 */
@@ -41,9 +37,7 @@ export class CardManager extends Manager<typeof Card> {
 		)
 			return Promise.resolve(this);
 
-		const cards = await this.client.api.get<APICard[]>(CardManager.route);
-		this.clear();
-		for (const card of cards) this.add(card);
+		this.overrideItems(await this.client.api.get<APICard[]>(Routes.Cards()));
 		return this;
 	}
 }

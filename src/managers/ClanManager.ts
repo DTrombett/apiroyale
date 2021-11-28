@@ -3,7 +3,7 @@ import type ClientRoyale from "..";
 import type { APIClan, APIClanSearchResults, SearchClanOptions } from "..";
 import { ClanSearchResults } from "../lists";
 import { Clan } from "../structures";
-import Constants, { Errors } from "../util";
+import Constants, { Errors, Routes } from "../util";
 import FetchableManager from "./FetchableManager";
 
 /**
@@ -18,7 +18,8 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 		super(client, Clan, {
 			addEvent: "newClan",
 			data,
-			removeEvent: "clanRemoved",
+			removeEvent: "clanRemove",
+			updateEvent: "clanUpdate",
 		});
 	}
 
@@ -53,7 +54,7 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 				return Promise.reject(
 					new TypeError(Errors.clanMinMembersNotPositive())
 				);
-			query.append("minMembers", options.minMembers.toString());
+			query.append("minMembers", `${options.minMembers}`);
 		}
 		if (options.maxMembers !== undefined) {
 			if (options.maxMembers < (options.minMembers ?? 0))
@@ -62,26 +63,28 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 				return Promise.reject(
 					new TypeError(Errors.clanMaxMembersNotPositive())
 				);
-			query.append("maxMembers", options.maxMembers.toString());
+			query.append("maxMembers", `${options.maxMembers}`);
 		}
 		if (options.minScore !== undefined) {
 			if (options.minScore < 1)
 				return Promise.reject(new TypeError(Errors.clanMinScoreNotPositive()));
-			query.append("minScore", options.minScore.toString());
+			query.append("minScore", `${options.minScore}`);
 		}
 
 		if (query.toString() === "")
 			return Promise.reject(new TypeError(Errors.missingQuery()));
 
-		if (options.limit !== undefined)
-			query.append("limit", options.limit.toString());
+		if (options.limit !== undefined) query.append("limit", `${options.limit}`);
 		if (options.after !== undefined) query.append("after", options.after);
 		if (options.before !== undefined) query.append("before", options.before);
 
-		const results = await this.client.api.get<APIClanSearchResults>("/clans", {
-			query,
-		});
-		return new ClanSearchResults(this, options, results);
+		return new ClanSearchResults(
+			this,
+			options,
+			await this.client.api.get<APIClanSearchResults>(Routes.Clans(), {
+				query,
+			})
+		);
 	}
 }
 

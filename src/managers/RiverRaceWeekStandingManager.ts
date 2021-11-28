@@ -33,7 +33,8 @@ export class RiverRaceWeekStandingManager extends Manager<
 			{
 				addEvent: "newRiverRaceWeekStanding",
 				data,
-				removeEvent: "riverRaceWeekStandingRemoved",
+				removeEvent: "riverRaceWeekStandingRemove",
+				updateEvent: "riverRaceWeekStandingUpdate",
 			},
 			race
 		);

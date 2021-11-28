@@ -1,17 +1,17 @@
-import Structure from ".";
 import type ClientRoyale from "..";
 import type {
 	APICurrentRiverRace,
 	APIRiverRacePeriodType,
 	APIRiverRaceState,
+	StringId,
 } from "..";
 import {
 	ClanCurrentStandingManager,
 	RiverRacePeriodManager,
-	RiverRacePeriodType,
-	RiverRaceState,
-} from "..";
+} from "../managers";
+import { RiverRacePeriodType, RiverRaceState } from "../util";
 import ClanCurrentStanding from "./ClanCurrentStanding";
+import Structure from "./Structure";
 
 /**
  * The current river race of a clan
@@ -19,32 +19,27 @@ import ClanCurrentStanding from "./ClanCurrentStanding";
 export class CurrentRiverRace<
 	T extends APICurrentRiverRace = APICurrentRiverRace
 > extends Structure<T> {
-	static id = "periodIndex" as const;
-
 	/**
 	 * The clan of this race
 	 */
-	clan: ClanCurrentStanding;
+	readonly clan: ClanCurrentStanding;
+
+	readonly id!: StringId;
 
 	/**
 	 * The leaderboard of clans in this race
 	 */
-	leaderboard: ClanCurrentStandingManager;
-
-	/**
-	 * The state of this race
-	 */
-	state!: RiverRaceState;
-
-	/**
-	 * The number of war day from the start of this week
-	 */
-	weekDay!: number;
+	readonly leaderboard: ClanCurrentStandingManager;
 
 	/**
 	 * The number of war day from the start of this month
 	 */
 	monthDay!: number;
+
+	/**
+	 * The state of this race
+	 */
+	state!: RiverRaceState;
 
 	/**
 	 * If the war is in the training phase or not
@@ -54,14 +49,19 @@ export class CurrentRiverRace<
 	/**
 	 * The progress of clans in this war for every war day
 	 */
-	warDays: RiverRacePeriodManager;
+	readonly warDays: RiverRacePeriodManager;
+
+	/**
+	 * The number of war day from the start of this week
+	 */
+	weekDay!: number;
 
 	/**
 	 * @param client - The client that instantiated this race
 	 * @param data - The data of the current river race
 	 */
 	constructor(client: ClientRoyale, data: T) {
-		super(client, data);
+		super(client, data, `${data.sectionIndex}`);
 		this.leaderboard = new ClanCurrentStandingManager(
 			this.client,
 			this,
@@ -73,7 +73,12 @@ export class CurrentRiverRace<
 			data.periodLogs
 		);
 		this.clan = new ClanCurrentStanding(this.client, data.clan, this);
-		this.patch(data);
+		this.patch({
+			...data,
+			clan: undefined,
+			clans: undefined,
+			periodLogs: undefined,
+		});
 	}
 
 	/**
@@ -85,57 +90,49 @@ export class CurrentRiverRace<
 	}
 
 	/**
-	 * Checks whether this race is equal to another race, comparing all properties.
-	 * @param other - The race to compare to
+	 * Check whether this race is equal to another race.
+	 * @param race - The race to compare to
 	 * @returns Whether the races are equal
 	 */
-	equals(other: CurrentRiverRace): boolean {
+	equals(race: CurrentRiverRace): race is this {
 		return (
-			super.equals(other) &&
-			this.clan.tag === other.clan.tag &&
-			this.leaderboard
-				.mapValues((clan) => clan.tag)
-				.equals(other.leaderboard.mapValues((clan) => clan.tag)) &&
-			this.state === other.state &&
-			this.weekDay === other.weekDay &&
-			this.monthDay === other.monthDay &&
-			this.type === other.type &&
-			this.warDays
-				.mapValues((period) => period.monthDay)
-				.equals(other.warDays.mapValues((period) => period.monthDay))
+			super.equals(race) &&
+			this.clan.id === race.clan.id &&
+			this.leaderboard.equals(race.leaderboard) &&
+			this.monthDay === race.monthDay &&
+			this.state === race.state &&
+			this.type === race.type &&
+			this.warDays.equals(race.warDays) &&
+			this.weekDay === race.weekDay
 		);
 	}
 
 	/**
 	 * Patch this race.
+	 * @param data - The data to patch this race with
 	 * @return The patched race
 	 */
 	patch(data: Partial<T>): this {
-		const old = this.clone();
-		super.patch(data);
-
 		if (data.clan !== undefined) this.clan.patch(data.clan);
-		if (data.clans !== undefined)
-			for (const clan of data.clans) this.leaderboard.add(clan);
+		if (data.clans !== undefined) this.leaderboard.overrideItems(data.clans);
 		if (data.state !== undefined) this.state = RiverRaceState[data.state];
 		if (data.sectionIndex !== undefined) this.weekDay = data.sectionIndex;
 		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex;
 		if (data.periodType !== undefined)
 			this.type = RiverRacePeriodType[data.periodType];
 		if (data.periodLogs !== undefined)
-			for (const period of data.periodLogs) this.warDays.add(period);
+			this.warDays.overrideItems(data.periodLogs);
 
-		if (!this.equals(old))
-			this.client.emit("currentRiverRaceUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this race
+	 * Get a JSON representation of this race
 	 * @returns The JSON representation of this race
 	 */
 	toJson(): APICurrentRiverRace {
 		return {
+			...super.toJson(),
 			clan: this.clan.toJson(),
 			clans: this.leaderboard.map((c) => c.toJson()),
 			periodIndex: this.monthDay,
@@ -144,16 +141,6 @@ export class CurrentRiverRace<
 			sectionIndex: this.weekDay,
 			state: RiverRaceState[this.state] as APIRiverRaceState,
 		};
-	}
-
-	/**
-	 * Gets a string representation of this race.
-	 * @returns The day of this race
-	 */
-	toString(): string {
-		return `${
-			this.type === RiverRacePeriodType["training"] ? "Training" : "War"
-		} Day ${this.weekDay}`;
 	}
 }
 
