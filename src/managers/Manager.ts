@@ -76,8 +76,11 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 			const existing = this.get(instance.id);
 
 			if (existing !== undefined) {
+				const old = existing.clone();
+
 				existing.patch(element);
-				this.client.emit(this.events.update, ...([existing] as never));
+				if (!existing.equals(old))
+					this.client.emit(this.events.update, ...([old, existing] as never));
 				continue;
 			}
 			this.set(instance.id, instance);
