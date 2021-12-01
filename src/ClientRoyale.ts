@@ -1,8 +1,23 @@
 import EventEmitter from "node:events";
-import { ArenaManager, ClanManager, LocationManager } from "./managers";
+import { URLSearchParams } from "node:url";
+import type {
+	APIRiverRaceLog,
+	ClientEvents,
+	ClientOptions,
+	FetchRiverRaceLogOptions,
+} from ".";
+import { RiverRaceLogResults } from "./lists";
+import {
+	ArenaManager,
+	CardManager,
+	ClanManager,
+	ClanPreviewManager,
+	CurrentRiverRaceManager,
+	LocationManager,
+	PlayerManager,
+} from "./managers";
 import Rest from "./rest";
-import type { ClientEvents, ClientOptions } from "./util";
-import { Errors } from "./util";
+import { Errors, Routes } from "./util";
 
 /**
  * A class to connect to the Clash Royale API
@@ -47,9 +62,25 @@ export interface ClientRoyale extends EventEmitter {
  */
 export class ClientRoyale extends EventEmitter {
 	/**
+	 * The rest client
+	 */
+	api = new Rest(this);
+
+	/**
 	 * A manager for arenas
 	 */
 	arenas = new ArenaManager(this);
+
+	/**
+	 * A manager of cards
+	 */
+	cards = new CardManager(this);
+
+	/**
+	 * A manager of clan previews
+	 * This will be more populated than {@link ClientRoyale.clans} as it's updated with player clans info too
+	 */
+	clanPreviews = new ClanPreviewManager(this);
 
 	/**
 	 * A manager for clans
@@ -62,9 +93,14 @@ export class ClientRoyale extends EventEmitter {
 	locations = new LocationManager(this);
 
 	/**
-	 * The rest client
+	 * A manager for players
 	 */
-	api = new Rest(this);
+	players = new PlayerManager(this);
+
+	/**
+	 * A manager for clans current river races
+	 */
+	races = new CurrentRiverRaceManager(this);
 
 	/**
 	 * The token used for the API
@@ -79,6 +115,32 @@ export class ClientRoyale extends EventEmitter {
 
 		if (token != null) this.token = token;
 		if (!this.token) throw new TypeError(Errors.tokenMissing());
+	}
+
+	/**
+	 * Fetch the river race log of a clan.
+	 * @param options - Options for fetching the river race log
+	 * @returns The river race log of a clan
+	 */
+	async fetchRiverRaceLog(
+		options: FetchRiverRaceLogOptions
+	): Promise<RiverRaceLogResults> {
+		const clan = this.clanPreviews.get(options.tag);
+		const query = new URLSearchParams();
+
+		if (options.limit !== undefined) query.append("limit", `${options.limit}`);
+		if (options.after !== undefined) query.append("after", options.after);
+		if (options.before !== undefined) query.append("before", options.before);
+
+		const log = await this.api.get<APIRiverRaceLog>(
+			Routes.RiverRaceLog(options.tag),
+			{
+				query,
+			}
+		);
+
+		clan?.riverRaceLog.add(...log.items);
+		return new RiverRaceLogResults(this, options, log);
 	}
 }
 

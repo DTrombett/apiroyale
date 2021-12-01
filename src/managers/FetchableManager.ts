@@ -1,33 +1,68 @@
 import type {
-	ConstructableFetchableStructure,
+	APITag,
+	ClientRoyale,
+	ConstructableStructure,
+	ConstructorExtras,
+	FetchableManagerOptions,
 	FetchOptions,
+	StringId,
 	StructureType,
 } from "..";
 import Constants from "../util";
 import Manager from "./Manager";
 
 /**
- * A manager that can fetch structures
+ * A manager of fetchable structures
+ * @template T - The structure class this manager handles
  */
 export class FetchableManager<
-	T extends ConstructableFetchableStructure = ConstructableFetchableStructure
+	T extends ConstructableStructure
 > extends Manager<T> {
 	/**
-	 * Fetches a structure from the API.
+	 * The route to fetch the data from
+	 */
+	route: FetchableManagerOptions<T>["route"];
+
+	/**
+	 * @param client - The client that instantiated this manager
+	 * @param structure - The structure class this manager handles
+	 * @param options - The options to initialize this manager with
+	 * @param args - Other parameters for the structure class
+	 */
+	constructor(
+		client: ClientRoyale,
+		structure: T,
+		options: FetchableManagerOptions<T>,
+		...args: ConstructorExtras<T>
+	) {
+		super(client, structure, options, ...args);
+		this.route = options.route;
+	}
+
+	/**
+	 * Fetch a structure from the API.
+	 * @param path - The path of the structure to fetch
 	 * @param id - The id of the structure to fetch
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched structure
+	 * @template S - The type to cast the structure to
 	 */
-	async fetch(
-		id: string,
+	async fetch<S extends T["prototype"] = T["prototype"]>(
+		id: T["prototype"]["id"],
 		{ force = false, maxAge = Constants.defaultMaxAge }: FetchOptions = {}
-	): Promise<this["structure"]["prototype"]> {
-		const data = this.get(id);
+	): Promise<S> {
+		const existing = this.get(id) as S | undefined;
 
-		if (data && !force && Date.now() - data.lastUpdate.getTime() < maxAge)
-			return data;
-		return this.add(
-			await this.client.api.get<StructureType<T>>(this.structure.path(id))
+		if (
+			existing &&
+			!force &&
+			Date.now() - existing.lastUpdate.getTime() < maxAge
+		)
+			return existing;
+		return this.add<S>(
+			await this.client.api.get<StructureType<T>>(
+				this.route(id as APITag & StringId)
+			)
 		);
 	}
 }

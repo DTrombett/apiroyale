@@ -1,14 +1,13 @@
 import type ClientRoyale from "..";
-import type { APILocation, FetchOptions, Path, StringId } from "..";
-import FetchableStructure from "./FetchableStructure";
+import type { APILocation, FetchOptions, StringId } from "..";
+import Structure from "./Structure";
 
 /**
- * Represents a location
+ * A location
  */
-export class Location extends FetchableStructure<APILocation> {
-	static id = "id";
-	static route: Path = "/locations/:id";
-
+export class Location<
+	T extends APILocation = APILocation
+> extends Structure<T> {
 	/**
 	 * The location's country code, if it is a country
 	 */
@@ -17,7 +16,7 @@ export class Location extends FetchableStructure<APILocation> {
 	/**
 	 * The id of this location
 	 */
-	readonly id: StringId;
+	readonly id!: StringId;
 
 	/**
 	 * The location's name
@@ -33,90 +32,79 @@ export class Location extends FetchableStructure<APILocation> {
 	 * @param client - The client that instantiated this location
 	 * @param data - The data of the location
 	 */
-	constructor(client: ClientRoyale, data: APILocation) {
-		super(client, data);
+	constructor(client: ClientRoyale, data: T) {
+		super(client, data, `${data.id}`);
 
-		this.name = data.name;
 		this.countryCode = data.countryCode;
-		this.id = data.id.toString() as StringId;
+		this.name = data.name;
 		this._isCountry = data.isCountry;
 	}
 
 	/**
 	 * Clone this location.
+	 * @returns The cloned location
 	 */
-	clone(): Location {
+	clone(): Location<T> {
 		return new Location(this.client, this.toJson());
 	}
 
 	/**
-	 * Checks whether this location is equal to another location, comparing all properties.
-	 * @param other - The location to compare to
+	 * Check whether this location is equal to another location.
+	 * @param location - The location to compare to
 	 * @returns Whether the locations are equal
 	 */
-	equals(other: Location): boolean {
+	equals(location: Location<T>): location is this {
 		return (
-			super.equals(other) &&
-			this.name === other.name &&
-			this.countryCode === other.countryCode &&
-			this._isCountry === other._isCountry
+			super.equals(location) &&
+			this.countryCode === location.countryCode &&
+			this.id === location.id &&
+			this.name === location.name &&
+			this._isCountry === location._isCountry
 		);
 	}
 
 	/**
-	 * Checks if the location is a country.
+	 * Fetch this location.
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the new location
+	 */
+	fetch(options: FetchOptions): Promise<this> {
+		return this.client.locations.fetch<this>(this.id, options);
+	}
+
+	/**
+	 * Check if the location is a country.
 	 * @returns Whether this location is a country
 	 */
-	isCountry(): this is this & { countryCode: string } {
+	isCountry(): this is { countryCode: string } {
 		return this._isCountry;
 	}
 
 	/**
-	 * Patches this location.
-	 * @param data - The data to update this location with
-	 * @returns The updated location
+	 * Patch this location.
+	 * @param data - The data to patch this location with
+	 * @returns The patched location
 	 */
-	patch(data: Partial<APILocation>) {
-		const old = this.clone();
-		super.patch(data);
-
-		if (data.name !== undefined) this.name = data.name;
+	patch(data: Partial<T>): this {
 		if (data.countryCode !== undefined) this.countryCode = data.countryCode;
 		if (data.isCountry !== undefined) this._isCountry = data.isCountry;
+		if (data.name !== undefined) this.name = data.name;
 
-		if (!this.equals(old)) this.client.emit("locationUpdate", old, this);
-		return this;
+		return super.patch(data);
 	}
 
 	/**
-	 * Gets a JSON representation of this location.
+	 * Get a JSON representation of this location.
 	 * @returns The JSON representation of this location
 	 */
 	toJson(): APILocation {
 		return {
 			...super.toJson(),
-			id: Number(this.id),
-			name: this.name,
 			countryCode: this.countryCode,
+			id: Number(this.id),
 			isCountry: this._isCountry,
+			name: this.name,
 		};
-	}
-
-	/**
-	 * Gets a string representation of this location.
-	 * @returns The name of this location
-	 */
-	toString() {
-		return this.name;
-	}
-
-	/**
-	 * Fetches this location.
-	 * @param options - The options for the fetch
-	 * @returns A promise that resolves with the new location
-	 */
-	fetch(options: FetchOptions): Promise<this> {
-		return this.client.locations.fetch(this.id, options) as Promise<this>;
 	}
 }
 
