@@ -3,8 +3,12 @@ import type {
 	APITag,
 	Clan,
 	ClientRoyale,
+	CurrentRiverRace,
 	FetchOptions,
+	FetchRiverRaceLogOptions,
+	RiverRaceLogResults,
 } from "..";
+import { FinishedRiverRaceManager } from "../managers";
 import Structure from "./Structure";
 
 /**
@@ -26,6 +30,11 @@ export class ClanPreview<
 	name!: string;
 
 	/**
+	 * The river race log of this clan
+	 */
+	readonly riverRaceLog: FinishedRiverRaceManager;
+
+	/**
 	 * The clan's tag
 	 */
 	readonly tag: APITag;
@@ -36,11 +45,20 @@ export class ClanPreview<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, data.tag);
+		this.riverRaceLog = new FinishedRiverRaceManager(client);
 		this.tag = data.tag;
 		this.patch({
 			...data,
 			tag: undefined,
 		});
+	}
+
+	/**
+	 * The current river race of this clan, if fetched.
+	 * Use {@link Clan.fetchCurrentRiverRace} to fetch it
+	 */
+	get currentRiverRace(): CurrentRiverRace | null {
+		return this.client.races.get(this.id) ?? null;
 	}
 
 	/**
@@ -72,6 +90,29 @@ export class ClanPreview<
 	 */
 	fetch(options?: FetchOptions): Promise<Clan> {
 		return this.client.clans.fetch(this.id, options);
+	}
+
+	/**
+	 * Fetch the current river race of this clan.
+	 * @param options - Options for fetching the current river race
+	 * @returns The current river race of this clan
+	 */
+	fetchCurrentRiverRace(options: FetchOptions): Promise<CurrentRiverRace> {
+		return this.client.races.fetch(this.id, options);
+	}
+
+	/**
+	 * Fetch the river race log of this clan.
+	 * @param options - Options for fetching the river race log
+	 * @returns The river race log of this clan
+	 */
+	async fetchRiverRaceLog(
+		options?: FetchRiverRaceLogOptions
+	): Promise<RiverRaceLogResults> {
+		return this.client.fetchRiverRaceLog({
+			...options,
+			tag: this.id,
+		});
 	}
 
 	/**

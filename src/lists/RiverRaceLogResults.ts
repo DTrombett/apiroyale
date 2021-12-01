@@ -1,4 +1,9 @@
-import type { APIRiverRaceLog, Clan, FetchRiverRaceLogOptions } from "..";
+import type {
+	APIRiverRaceLog,
+	ClientRoyale,
+	FetchRiverRaceLogOptions,
+	ListMethod,
+} from "..";
 import { FinishedRiverRace } from "../structures";
 import List from "./List";
 
@@ -7,23 +12,26 @@ import List from "./List";
  */
 export class RiverRaceLogResults extends List<number, FinishedRiverRace> {
 	/**
-	 * @param clan - The clan that instantiated this log
+	 * @param client - The client that instantiated this list
 	 * @param options - The options used to get these results
 	 * @param data - The results provided by the API
 	 */
 	constructor(
-		clan: Clan,
+		client: ClientRoyale,
 		options: FetchRiverRaceLogOptions,
 		data: APIRiverRaceLog
 	) {
 		super(
-			clan.client,
-			clan.fetchRiverRaceLog.bind(clan),
+			client,
+			client.fetchRiverRaceLog.bind(client) as ListMethod<
+				number,
+				FinishedRiverRace
+			>,
 			options,
 			data.paging,
 			data.items.map((value) => [
 				value.seasonId,
-				new FinishedRiverRace(clan.client, value),
+				new FinishedRiverRace(client, value),
 			])
 		);
 	}

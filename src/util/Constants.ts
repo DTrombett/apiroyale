@@ -299,7 +299,12 @@ export interface FetchOptions {
 /**
  * Options for fetching a river race log
  */
-export type FetchRiverRaceLogOptions = ListOptions;
+export interface FetchRiverRaceLogOptions extends ListOptions {
+	/**
+	 * The tag of the clan
+	 */
+	tag: APITag;
+}
 
 /**
  * Any JSON data

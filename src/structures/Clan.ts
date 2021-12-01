@@ -1,16 +1,6 @@
-import { URLSearchParams } from "node:url";
-import type {
-	APIClan,
-	APIRiverRaceLog,
-	ClientRoyale,
-	FetchOptions,
-	FetchRiverRaceLogOptions,
-} from "..";
-import { RiverRaceLogResults } from "../lists";
-import { ClanMemberManager, FinishedRiverRaceManager } from "../managers";
-import { Routes } from "../util";
+import type { APIClan, ClientRoyale } from "..";
+import { ClanMemberManager } from "../managers";
 import ClanResultPreview from "./ClanResultPreview";
-import type CurrentRiverRace from "./CurrentRiverRace";
 
 /**
  * A clan
@@ -27,30 +17,16 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	readonly members: ClanMemberManager;
 
 	/**
-	 * The river race log of this clan
-	 */
-	readonly riverRaceLog: FinishedRiverRaceManager;
-
-	/**
 	 * @param client - The client that instantiated this clan
 	 * @param data - The data of the clan
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
 		this.members = new ClanMemberManager(client, this, data.memberList);
-		this.riverRaceLog = new FinishedRiverRaceManager(client);
 		this.patch({
 			...data,
 			memberList: undefined,
 		});
-	}
-
-	/**
-	 * The current river race of this clan, if fetched.
-	 * Use {@link Clan.fetchCurrentRiverRace} to fetch it
-	 */
-	get currentRiverRace(): CurrentRiverRace | null {
-		return this.client.races.get(this.id) ?? null;
 	}
 
 	/**
@@ -72,38 +48,6 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 			this.description === clan.description &&
 			this.members.equals(clan.members)
 		);
-	}
-
-	/**
-	 * Fetch the current river race of this clan.
-	 * @param options - Options for fetching the current river race
-	 * @returns The current river race of this clan
-	 */
-	fetchCurrentRiverRace(options: FetchOptions): Promise<CurrentRiverRace> {
-		return this.client.races.fetch(this.id, options);
-	}
-
-	/**
-	 * Fetch the river race log of this clan.
-	 * @param options - Options for fetching the river race log
-	 * @returns The river race log of this clan
-	 */
-	async fetchRiverRaceLog(
-		options?: FetchRiverRaceLogOptions
-	): Promise<RiverRaceLogResults> {
-		const query = new URLSearchParams();
-
-		if (options?.limit !== undefined) query.append("limit", `${options.limit}`);
-		if (options?.after !== undefined) query.append("after", options.after);
-		if (options?.before !== undefined) query.append("before", options.before);
-
-		const log = await this.client.api.get<APIRiverRaceLog>(
-			Routes.RiverRaceLog(this.tag),
-			{ query }
-		);
-
-		this.riverRaceLog.add(...log.items);
-		return new RiverRaceLogResults(this, options ?? {}, log);
 	}
 
 	/**
