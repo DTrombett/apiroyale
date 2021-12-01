@@ -12,7 +12,7 @@ export class FinishedRiverRace<
 	/**
 	 * When this race has ended
 	 */
-	finishTime!: Date;
+	finishTime: Date;
 
 	readonly id!: StringId;
 
@@ -24,12 +24,12 @@ export class FinishedRiverRace<
 	/**
 	 * The season id of this race
 	 */
-	seasonId!: number;
+	seasonId: number;
 
 	/**
 	 * The number of the week of this race
 	 */
-	weekNumber!: number;
+	weekNumber: number;
 
 	/**
 	 * @param client - The client that instantiated this
@@ -37,12 +37,15 @@ export class FinishedRiverRace<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, `${data.seasonId}`);
+
 		this.leaderboard = new RiverRaceWeekStandingManager(
 			this.client,
 			this,
 			data.standings
 		);
-		this.patch(data);
+		this.finishTime = APIDateToObject(data.createdDate);
+		this.seasonId = data.seasonId;
+		this.weekNumber = data.sectionIndex + 1;
 	}
 
 	/**

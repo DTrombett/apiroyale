@@ -23,8 +23,8 @@ export class ClanCurrentStanding<
 	 */
 	constructor(client: ClientRoyale, data: T, race: CurrentRiverRace) {
 		super(client, data);
+
 		this.race = race;
-		this.patch(data);
 	}
 
 	/**

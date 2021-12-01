@@ -22,12 +22,12 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	/**
 	 * The rank of the clan in this race
 	 */
-	rank!: number;
+	rank: number;
 
 	/**
 	 * The number of war trophies the clan wins/loses with this standing
 	 */
-	trophyChange!: number;
+	trophyChange: number;
 
 	/**
 	 * @param client - The client that instantiated this
@@ -40,12 +40,11 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 		race: FinishedRiverRace
 	) {
 		super(client, data, data.clan.tag);
+
 		this.race = race;
 		this.clan = new ClanWeekStanding(this.client, data.clan, this);
-		this.patch({
-			...data,
-			clan: undefined,
-		});
+		this.rank = data.rank;
+		this.trophyChange = data.trophyChange;
 	}
 
 	/**

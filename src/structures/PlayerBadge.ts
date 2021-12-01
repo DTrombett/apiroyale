@@ -27,7 +27,7 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	/**
 	 * The name of the badge
 	 */
-	readonly name!: string;
+	readonly name: string;
 
 	/**
 	 * The player that owns this badge
@@ -37,7 +37,7 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	/**
 	 * The progress of the badge
 	 */
-	progress!: number;
+	progress: number;
 
 	/**
 	 * The target of the badge
@@ -51,12 +51,13 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	 */
 	constructor(client: ClientRoyale, data: T, player: Player) {
 		super(client, data, data.name);
+
 		this.player = player;
 		this.name = data.name;
-		this.patch({
-			...data,
-			name: undefined,
-		});
+		this.progress = data.progress;
+		if ("maxLevel" in data) this.levels = data.maxLevel;
+		if ("level" in data) this.level = data.level;
+		if ("target" in data) this.target = data.target;
 	}
 
 	/**

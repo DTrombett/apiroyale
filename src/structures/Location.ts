@@ -21,12 +21,12 @@ export class Location<
 	/**
 	 * The location's name
 	 */
-	name!: string;
+	name: string;
 
 	/**
 	 * If the location is a country
 	 */
-	private _isCountry!: boolean;
+	private _isCountry: boolean;
 
 	/**
 	 * @param client - The client that instantiated this location
@@ -34,7 +34,10 @@ export class Location<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, `${data.id}`);
-		this.patch(data);
+
+		this.countryCode = data.countryCode;
+		this.name = data.name;
+		this._isCountry = data.isCountry;
 	}
 
 	/**

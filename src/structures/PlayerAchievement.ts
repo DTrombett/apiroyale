@@ -11,17 +11,17 @@ export class PlayerAchievement<
 	/**
 	 * Info about this achievement
 	 */
-	info!: string;
+	info: string;
 
 	/**
 	 * The level of the achievement
 	 */
-	level!: number;
+	level: number;
 
 	/**
 	 * The name of the achievement
 	 */
-	readonly name!: string;
+	readonly name: string;
 
 	/**
 	 * The player that owns this achievement
@@ -31,12 +31,12 @@ export class PlayerAchievement<
 	/**
 	 * The progress of the achievement
 	 */
-	progress!: number;
+	progress: number;
 
 	/**
 	 * The target of the achievement
 	 */
-	target!: number;
+	target: number;
 
 	/**
 	 * @param client - The client that instantiated this achievement
@@ -45,12 +45,13 @@ export class PlayerAchievement<
 	 */
 	constructor(client: ClientRoyale, data: T, player: Player) {
 		super(client, data, data.name);
+
 		this.player = player;
 		this.name = data.name;
-		this.patch({
-			...data,
-			name: undefined,
-		});
+		this.info = data.info;
+		this.level = data.stars;
+		this.progress = data.value;
+		this.target = data.target;
 	}
 
 	/**

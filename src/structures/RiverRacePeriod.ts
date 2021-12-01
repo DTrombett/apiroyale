@@ -19,7 +19,7 @@ export class RiverRacePeriod<
 	/**
 	 * The month day of this period
 	 */
-	monthDay!: number;
+	monthDay: number;
 
 	/**
 	 * The race of this period
@@ -33,16 +33,14 @@ export class RiverRacePeriod<
 	 */
 	constructor(client: ClientRoyale, data: T, race: CurrentRiverRace) {
 		super(client, data, `${data.periodIndex}`);
+
 		this.race = race;
 		this.leaderboard = new RiverRacePeriodStandingManager(
 			this.client,
 			this,
 			data.items
 		);
-		this.patch({
-			...data,
-			items: undefined,
-		});
+		this.monthDay = data.periodIndex;
 	}
 
 	/**

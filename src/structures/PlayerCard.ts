@@ -11,12 +11,12 @@ export class PlayerCard<
 	/**
 	 * The amount of cards in the player card
 	 */
-	count!: number;
+	count: number;
 
 	/**
 	 * The level of the card
 	 */
-	level!: number;
+	level: number;
 
 	/**
 	 * The player that owns this card
@@ -35,8 +35,11 @@ export class PlayerCard<
 	 */
 	constructor(client: ClientRoyale, data: T, player: Player) {
 		super(client, data);
+
 		this.player = player;
-		this.patch(data);
+		this.count = data.count;
+		this.level = data.level;
+		this.starLevel = data.starLevel;
 	}
 
 	/**

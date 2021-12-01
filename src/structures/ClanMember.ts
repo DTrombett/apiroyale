@@ -12,7 +12,7 @@ export class ClanMember<
 	/**
 	 * The arena this member is currently in
 	 */
-	readonly arena!: Arena;
+	readonly arena: Arena;
 
 	/**
 	 * The clan of this member
@@ -22,42 +22,42 @@ export class ClanMember<
 	/**
 	 * The number of donations this member has made this week
 	 */
-	donationsPerWeek!: number;
+	donationsPerWeek: number;
 
 	/**
 	 * The number of donations this member has received this week
 	 */
-	donationsReceivedPerWeek!: number;
+	donationsReceivedPerWeek: number;
 
 	/**
 	 * The experience level of this member
 	 */
-	kingLevel!: number;
+	kingLevel: number;
 
 	/**
 	 * When this member was last online
 	 */
-	lastSeen!: Date;
+	lastSeen: Date;
 
 	/**
 	 * The previous rank of this member in the clan
 	 */
-	previousRank!: number;
+	previousRank: number;
 
 	/**
 	 * The rank of this member in the clan
 	 */
-	rank!: number;
+	rank: number;
 
 	/**
 	 * The role of this member
 	 */
-	role!: ClanMemberRole;
+	role: ClanMemberRole;
 
 	/**
 	 * The number of trophies this member has
 	 */
-	trophies!: number;
+	trophies: number;
 
 	/**
 	 * @param client - The client that instantiated this clan member
@@ -66,12 +66,17 @@ export class ClanMember<
 	 */
 	constructor(client: ClientRoyale, data: T, clan: Clan) {
 		super(client, data);
+
 		this.clan = clan;
 		this.arena = this.client.arenas.add(data.arena);
-		this.patch({
-			...data,
-			arena: undefined,
-		});
+		this.donationsPerWeek = data.donations;
+		this.donationsReceivedPerWeek = data.donationsReceived;
+		this.kingLevel = data.expLevel;
+		this.lastSeen = APIDateToObject(data.lastSeen);
+		this.previousRank = data.previousClanRank;
+		this.rank = data.clanRank;
+		this.role = ClanMemberRole[data.role];
+		this.trophies = data.trophies;
 	}
 
 	/**

@@ -39,12 +39,12 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The number of battle this player has participated in
 	 */
-	battleCount!: number;
+	battleCount: number;
 
 	/**
 	 * The best number of trophies this player has ever achieved
 	 */
-	bestTrophies!: number;
+	bestTrophies: number;
 
 	/**
 	 * The cards of this player
@@ -54,7 +54,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The number of cards won in challenges
 	 */
-	cardsWonInChallenges!: number;
+	cardsWonInChallenges: number;
 
 	/**
 	 * The clan of this player
@@ -69,27 +69,27 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The number of donations this player has made this week
 	 */
-	donationsPerWeek!: number;
+	donationsPerWeek: number;
 
 	/**
 	 * The number of donations this player has received this week
 	 */
-	donationsReceivedPerWeek!: number;
+	donationsReceivedPerWeek: number;
 
 	/**
 	 * The exp points of this player
 	 */
-	expPoints!: number;
+	expPoints: number;
 
 	/**
 	 * The most used card of this player
 	 */
-	favouriteCard!: PlayerCard;
+	favouriteCard: PlayerCard;
 
 	/**
 	 * The experience/king level of this player
 	 */
-	kingLevel!: number;
+	kingLevel: number;
 
 	/**
 	 * League statistics of this player
@@ -99,62 +99,62 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The number of matches this player has lost
 	 */
-	losses!: number;
+	losses: number;
 
 	/**
 	 * The maximum number of wins in a challenge this player has
 	 */
-	maxWinsInChallenge!: number;
+	maxWinsInChallenge: number;
 
 	/**
 	 * The number of cards this player had collected in the old war
 	 */
-	oldClanCardsCollected!: number;
+	oldClanCardsCollected: number;
 
 	/**
 	 * The number of wins this player had in the old war day
 	 */
-	oldWarDayWins!: number;
+	oldWarDayWins: number;
 
 	/**
 	 * The role of this player
 	 */
-	role!: ClanMemberRole;
+	role: ClanMemberRole;
 
 	/**
 	 * The star points of this player
 	 */
-	starPoints!: number;
+	starPoints: number;
 
 	/**
 	 * The number of three crown wins this player has
 	 */
-	threeCrownWins!: number;
+	threeCrownWins: number;
 
 	/**
 	 * The total number of donations this player has made
 	 */
-	totalDonations!: number;
+	totalDonations: number;
 
 	/**
 	 * The number of matches this player has played in tournaments
 	 */
-	tournamentBattleCount!: number;
+	tournamentBattleCount: number;
 
 	/**
 	 * Number of cards won in tournaments
 	 */
-	tournamentCardsWon!: number;
+	tournamentCardsWon: number;
 
 	/**
 	 * The number of trophies this player has
 	 */
-	trophies!: number;
+	trophies: number;
 
 	/**
 	 * The number of matches this player has won
 	 */
-	wins!: number;
+	wins: number;
 
 	/**
 	 * @param client - The client that instantiated this player
@@ -162,6 +162,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
+
 		this.achievements = new PlayerAchievementManager(
 			this.client,
 			this,
@@ -171,14 +172,30 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 		this.badges = new PlayerBadgeManager(this.client, this, data.badges);
 		this.cards = new PlayerCardManager(this.client, this, data.cards);
 		this.deck = new PlayerCardManager(this.client, this, data.currentDeck);
-		this.patch({
-			...data,
-			achievements: undefined,
-			arena: undefined,
-			badges: undefined,
-			cards: undefined,
-			currentDeck: undefined,
-		});
+		this.clan = data.clan ? this.client.clanPreviews.add(data.clan) : undefined;
+		this.battleCount = data.battleCount;
+		this.bestTrophies = data.bestTrophies;
+		this.cardsWonInChallenges = data.challengeCardsWon;
+		this.maxWinsInChallenge = data.challengeMaxWins;
+		this.oldClanCardsCollected = data.clanCardsCollected;
+		this.favouriteCard = this.cards.get(
+			`${data.currentFavouriteCard.id}`
+		) as PlayerCard;
+		this.donationsPerWeek = data.donations;
+		this.donationsReceivedPerWeek = data.donationsReceived;
+		this.kingLevel = data.expLevel;
+		this.expPoints = data.expPoints;
+		this.leagueStatistics = data.leagueStatistics;
+		this.losses = data.losses;
+		this.role = ClanMemberRole[data.role];
+		this.starPoints = data.starPoints;
+		this.threeCrownWins = data.threeCrownWins;
+		this.totalDonations = data.totalDonations;
+		this.tournamentBattleCount = data.tournamentBattleCount;
+		this.tournamentCardsWon = data.tournamentCardsWon;
+		this.trophies = data.trophies;
+		this.oldWarDayWins = data.warDayWins;
+		this.wins = data.wins;
 	}
 
 	/**

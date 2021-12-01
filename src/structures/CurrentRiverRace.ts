@@ -35,17 +35,17 @@ export class CurrentRiverRace<
 	/**
 	 * The number of war day from the start of this month
 	 */
-	monthDay!: number;
+	monthDay: number;
 
 	/**
 	 * The state of this race
 	 */
-	state!: RiverRaceState;
+	state: RiverRaceState;
 
 	/**
 	 * If the war is in the training phase or not
 	 */
-	type!: RiverRacePeriodType;
+	type: RiverRacePeriodType;
 
 	/**
 	 * The progress of clans in this war for every war day
@@ -55,7 +55,7 @@ export class CurrentRiverRace<
 	/**
 	 * The number of war day from the start of this week
 	 */
-	weekDay!: number;
+	weekDay: number;
 
 	/**
 	 * @param client - The client that instantiated this race
@@ -63,6 +63,7 @@ export class CurrentRiverRace<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, `${data.clan.tag}`);
+
 		this.leaderboard = new ClanCurrentStandingManager(
 			this.client,
 			this,
@@ -74,12 +75,10 @@ export class CurrentRiverRace<
 			data.periodLogs
 		);
 		this.clan = new ClanCurrentStanding(this.client, data.clan, this);
-		this.patch({
-			...data,
-			clan: undefined,
-			clans: undefined,
-			periodLogs: undefined,
-		});
+		this.monthDay = data.periodIndex;
+		this.state = RiverRaceState[data.state];
+		this.type = RiverRacePeriodType[data.periodType];
+		this.weekDay = data.sectionIndex;
 	}
 
 	/**

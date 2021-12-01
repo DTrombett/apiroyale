@@ -15,7 +15,7 @@ export class BasePlayer<
 	/**
 	 * The name of this player
 	 */
-	name!: string;
+	name: string;
 
 	/**
 	 * The tag of this player
@@ -28,11 +28,9 @@ export class BasePlayer<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, data.tag);
+
 		this.tag = data.tag;
-		this.patch({
-			...data,
-			tag: undefined,
-		});
+		this.name = data.name;
 	}
 
 	/**

@@ -9,7 +9,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	/**
 	 * The description of the clan
 	 */
-	description!: string;
+	description: string;
 
 	/**
 	 * The members of the clan
@@ -22,11 +22,9 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
+
 		this.members = new ClanMemberManager(client, this, data.memberList);
-		this.patch({
-			...data,
-			memberList: undefined,
-		});
+		this.description = data.description;
 	}
 
 	/**

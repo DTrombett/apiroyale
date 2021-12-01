@@ -12,37 +12,37 @@ export class ClanResultPreview<
 	/**
 	 * The donations made in the clan since this week started
 	 */
-	donationsPerWeek!: number;
+	donationsPerWeek: number;
 
 	/**
 	 * The clan's location
 	 */
-	readonly location!: Location;
+	readonly location: Location;
 
 	/**
 	 * The clan's member count
 	 */
-	memberCount!: number;
+	memberCount: number;
 
 	/**
 	 * The clan's required trophies to join
 	 */
-	requiredTrophies!: number;
+	requiredTrophies: number;
 
 	/**
 	 * The clan's score
 	 */
-	score!: number;
+	score: number;
 
 	/**
 	 * The type of clan
 	 */
-	type!: ClanType;
+	type: ClanType;
 
 	/**
 	 * The clan's war trophies
 	 */
-	warTrophies!: number;
+	warTrophies: number;
 
 	/**
 	 * @param client - The client that instantiated this clan
@@ -50,11 +50,14 @@ export class ClanResultPreview<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
+
 		this.location = new Location(client, data.location);
-		this.patch({
-			...data,
-			location: undefined,
-		});
+		this.donationsPerWeek = data.donationsPerWeek;
+		this.memberCount = data.members;
+		this.requiredTrophies = data.requiredTrophies;
+		this.score = data.clanScore;
+		this.type = ClanType[data.type];
+		this.warTrophies = data.clanWarTrophies;
 	}
 
 	/**

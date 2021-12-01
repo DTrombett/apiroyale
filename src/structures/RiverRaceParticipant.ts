@@ -16,23 +16,23 @@ export class RiverRaceParticipant<
 	/**
 	 * The number of boat attacks this player has made
 	 */
-	boatAttacks!: number;
+	boatAttacks: number;
 
 	/**
 	 * The number of decks this player has used in the race
 	 */
-	decksUsed!: number;
+	decksUsed: number;
 
 	/**
 	 * The number of decks this player has used today
 	 * * Note: This is always 0 for river race logs
 	 */
-	decksUsedToday!: number;
+	decksUsedToday: number;
 
 	/**
 	 * The number of points this player has accumulated
 	 */
-	points!: number;
+	points: number;
 
 	/**
 	 * @param client - The client that instantiated this
@@ -41,8 +41,12 @@ export class RiverRaceParticipant<
 	 */
 	constructor(client: ClientRoyale, data: T, clan: BaseClanStanding) {
 		super(client, data);
+
 		this.clan = clan;
-		this.patch(data);
+		this.boatAttacks = data.boatAttacks;
+		this.decksUsed = data.decksUsed;
+		this.decksUsedToday = data.decksUsedToday;
+		this.points = data.fame;
 	}
 
 	/**

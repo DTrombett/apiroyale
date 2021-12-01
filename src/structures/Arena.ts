@@ -13,7 +13,7 @@ export class Arena<T extends APIArena = APIArena> extends Structure<T> {
 	/**
 	 * The name of this arena
 	 */
-	name!: string;
+	name: string;
 
 	/**
 	 * @param client - The client that instantiated this arena
@@ -21,10 +21,8 @@ export class Arena<T extends APIArena = APIArena> extends Structure<T> {
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, `${data.id}`);
-		this.patch({
-			...data,
-			id: undefined,
-		});
+
+		this.name = data.name;
 	}
 
 	/**

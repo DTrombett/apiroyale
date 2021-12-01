@@ -11,7 +11,7 @@ export class BaseClanStanding<
 	/**
 	 * The number of medals this clan has earned
 	 */
-	medals!: number;
+	medals: number;
 
 	/**
 	 * The participants to this war
@@ -21,12 +21,12 @@ export class BaseClanStanding<
 	/**
 	 * The clan's fame in the war
 	 */
-	points!: number;
+	points: number;
 
 	/**
 	 * The clan's score
 	 */
-	score!: number;
+	score: number;
 
 	/**
 	 * @param client - The client that instantiated this standing
@@ -34,15 +34,15 @@ export class BaseClanStanding<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
+
 		this.participants = new RiverRaceParticipantManager(
 			this.client,
 			this,
 			data.participants
 		);
-		this.patch({
-			...data,
-			participants: undefined,
-		});
+		this.medals = data.periodPoints;
+		this.points = data.fame;
+		this.score = data.clanScore;
 	}
 
 	/**

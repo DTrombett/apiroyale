@@ -20,14 +20,14 @@ export class ClanPreview<
 	/**
 	 * The clan's badge id
 	 */
-	badgeId!: number;
+	badgeId: number;
 
 	readonly id!: APITag;
 
 	/**
 	 * The clan's name
 	 */
-	name!: string;
+	name: string;
 
 	/**
 	 * The river race log of this clan
@@ -45,12 +45,11 @@ export class ClanPreview<
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, data.tag);
+
 		this.riverRaceLog = new FinishedRiverRaceManager(client);
 		this.tag = data.tag;
-		this.patch({
-			...data,
-			tag: undefined,
-		});
+		this.badgeId = data.badgeId;
+		this.name = data.name;
 	}
 
 	/**

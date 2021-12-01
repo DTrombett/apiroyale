@@ -16,7 +16,7 @@ export class ClanWeekStanding<
 	 * When this clan finished the war
 	 * * If the clan didn't finish the war or it's in the colosseum, this will be `null`
 	 */
-	finishedAt!: Date | null;
+	finishedAt: Date | null;
 
 	/**
 	 * The standing that this clan is in
@@ -30,8 +30,9 @@ export class ClanWeekStanding<
 	 */
 	constructor(client: ClientRoyale, data: T, standing: RiverRaceWeekStanding) {
 		super(client, data);
+
 		this.standing = standing;
-		this.patch(data);
+		this.finishedAt = APIDateToObject(data.finishTime);
 	}
 
 	/**

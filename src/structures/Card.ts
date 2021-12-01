@@ -10,7 +10,7 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	/**
 	 * The icon urls of the card
 	 */
-	readonly iconUrls!: APICard["iconUrls"];
+	readonly iconUrls: APICard["iconUrls"];
 
 	/**
 	 * The id of this arena
@@ -20,12 +20,12 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	/**
 	 * The maximum level of this card
 	 */
-	maxLevel!: number;
+	maxLevel: number;
 
 	/**
 	 * The name of the card
 	 */
-	name!: string;
+	name: string;
 
 	/**
 	 * @param client - The client that instantiated this card
@@ -33,10 +33,10 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	 */
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, `${data.id}`);
-		this.patch({
-			...data,
-			id: undefined,
-		});
+
+		this.iconUrls = data.iconUrls;
+		this.maxLevel = data.maxLevel;
+		this.name = data.name;
 	}
 
 	/**

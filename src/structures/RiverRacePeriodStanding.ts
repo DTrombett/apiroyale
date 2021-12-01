@@ -26,12 +26,12 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	/**
 	 * The medal count of the clan in this period
 	 */
-	medals!: number;
+	medals: number;
 
 	/**
 	 * The progress before this period
 	 */
-	oldProgress!: number;
+	oldProgress: number;
 
 	/**
 	 * The period of this standing
@@ -41,22 +41,22 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	/**
 	 * The points earned in this period
 	 */
-	pointsEarned!: number;
+	pointsEarned: number;
 
 	/**
 	 * The points earned from defenses in this period
 	 */
-	pointsEarnedFromDefenses!: number;
+	pointsEarnedFromDefenses: number;
 
 	/**
 	 * The rank of the clan in this period
 	 */
-	rank!: number;
+	rank: number;
 
 	/**
 	 * The total progress after this period
 	 */
-	totalProgress!: number;
+	totalProgress: number;
 
 	/**
 	 * @param client - The client that instantiated this
@@ -69,12 +69,16 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 		period: RiverRacePeriod
 	) {
 		super(client, data, data.clan.tag);
+
 		this.period = period;
 		this.clanTag = data.clan.tag;
-		this.patch({
-			...data,
-			clan: undefined,
-		});
+		this.defensesRemaining = data.numOfDefensesRemaining;
+		this.medals = data.pointsEarned;
+		this.oldProgress = data.progressStartOfDay;
+		this.pointsEarned = data.progressEarned;
+		this.pointsEarnedFromDefenses = data.progressEarnedFromDefenses;
+		this.rank = data.endOfDayRank;
+		this.totalProgress = data.progressEndOfDay;
 	}
 
 	/**
