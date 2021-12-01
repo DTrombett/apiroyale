@@ -4,7 +4,7 @@ import type {
 	ConstructableStructure,
 	ConstructorExtras,
 	EventsOptions,
-	StructureEvents,
+	ManagerOptions,
 	StructureType,
 } from "..";
 
@@ -45,17 +45,7 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	constructor(
 		client: ClientRoyale,
 		structure: T,
-		{
-			addEvent,
-			data,
-			removeEvent,
-			updateEvent,
-		}: {
-			addEvent: StructureEvents<T>;
-			data?: StructureType<T>[];
-			removeEvent: StructureEvents<T>;
-			updateEvent: StructureEvents<T>;
-		},
+		{ addEvent, data, removeEvent, updateEvent }: ManagerOptions<T>,
 		...args: ConstructorExtras<T>
 	) {
 		super();

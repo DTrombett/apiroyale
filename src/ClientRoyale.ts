@@ -4,6 +4,7 @@ import {
 	CardManager,
 	ClanManager,
 	ClanPreviewManager,
+	CurrentRiverRaceManager,
 	LocationManager,
 	PlayerManager,
 } from "./managers";
@@ -54,6 +55,11 @@ export interface ClientRoyale extends EventEmitter {
  */
 export class ClientRoyale extends EventEmitter {
 	/**
+	 * The rest client
+	 */
+	api = new Rest(this);
+
+	/**
 	 * A manager for arenas
 	 */
 	arenas = new ArenaManager(this);
@@ -62,6 +68,12 @@ export class ClientRoyale extends EventEmitter {
 	 * A manager of cards
 	 */
 	cards = new CardManager(this);
+
+	/**
+	 * A manager of clan previews
+	 * This will be more populated than {@link ClientRoyale.clans} as it's updated with player clans info too
+	 */
+	clanPreviews = new ClanPreviewManager(this);
 
 	/**
 	 * A manager for clans
@@ -79,20 +91,14 @@ export class ClientRoyale extends EventEmitter {
 	players = new PlayerManager(this);
 
 	/**
-	 * The rest client
+	 * A manager for clans current river races
 	 */
-	api = new Rest(this);
+	races = new CurrentRiverRaceManager(this);
 
 	/**
 	 * The token used for the API
 	 */
 	token: string = process.env.CLASH_ROYALE_TOKEN!;
-
-	/**
-	 * A manager of clan previews
-	 * This will be more populated than {@link ClientRoyale.clans} as it's updated with player clans info too
-	 */
-	clanPreviews = new ClanPreviewManager(this);
 
 	/**
 	 * @param options - Options for the client

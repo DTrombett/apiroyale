@@ -1,5 +1,6 @@
 import type { APIPlayer, ClientRoyale } from "..";
 import { Player } from "../structures";
+import { Routes } from "../util";
 import FetchableManager from "./FetchableManager";
 
 /**
@@ -15,6 +16,7 @@ export class PlayerManager extends FetchableManager<typeof Player> {
 			addEvent: "newPlayer",
 			data,
 			removeEvent: "playerRemove",
+			route: Routes.Player,
 			updateEvent: "playerUpdate",
 		});
 	}

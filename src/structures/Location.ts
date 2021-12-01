@@ -1,6 +1,5 @@
 import type ClientRoyale from "..";
 import type { APILocation, FetchOptions, StringId } from "..";
-import { Routes } from "../util";
 import Structure from "./Structure";
 
 /**
@@ -67,11 +66,7 @@ export class Location<
 	 * @returns A promise that resolves with the new location
 	 */
 	fetch(options: FetchOptions): Promise<this> {
-		return this.client.locations.fetch<this>(
-			Routes.Location(this.id),
-			this.id,
-			options
-		);
+		return this.client.locations.fetch<this>(this.id, options);
 	}
 
 	/**

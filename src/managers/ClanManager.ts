@@ -19,6 +19,7 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 			addEvent: "newClan",
 			data,
 			removeEvent: "clanRemove",
+			route: Routes.Clan,
 			updateEvent: "clanUpdate",
 		});
 	}

@@ -1,7 +1,11 @@
 import type {
+	APITag,
+	ClientRoyale,
 	ConstructableStructure,
+	ConstructorExtras,
+	FetchableManagerOptions,
 	FetchOptions,
-	Path,
+	StringId,
 	StructureType,
 } from "..";
 import Constants from "../util";
@@ -15,6 +19,27 @@ export class FetchableManager<
 	T extends ConstructableStructure
 > extends Manager<T> {
 	/**
+	 * The route to fetch the data from
+	 */
+	route: FetchableManagerOptions<T>["route"];
+
+	/**
+	 * @param client - The client that instantiated this manager
+	 * @param structure - The structure class this manager handles
+	 * @param options - The options to initialize this manager with
+	 * @param args - Other parameters for the structure class
+	 */
+	constructor(
+		client: ClientRoyale,
+		structure: T,
+		options: FetchableManagerOptions<T>,
+		...args: ConstructorExtras<T>
+	) {
+		super(client, structure, options, ...args);
+		this.route = options.route;
+	}
+
+	/**
 	 * Fetch a structure from the API.
 	 * @param path - The path of the structure to fetch
 	 * @param id - The id of the structure to fetch
@@ -23,7 +48,6 @@ export class FetchableManager<
 	 * @template S - The type to cast the structure to
 	 */
 	async fetch<S extends T["prototype"] = T["prototype"]>(
-		path: Path,
 		id: T["prototype"]["id"],
 		{ force = false, maxAge = Constants.defaultMaxAge }: FetchOptions = {}
 	): Promise<S> {
@@ -35,7 +59,11 @@ export class FetchableManager<
 			Date.now() - existing.lastUpdate.getTime() < maxAge
 		)
 			return existing;
-		return this.add<S>(await this.client.api.get<StructureType<T>>(path));
+		return this.add<S>(
+			await this.client.api.get<StructureType<T>>(
+				this.route(id as APITag & StringId)
+			)
+		);
 	}
 }
 

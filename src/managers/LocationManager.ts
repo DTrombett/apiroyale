@@ -1,5 +1,6 @@
 import type { APILocation, ClientRoyale } from "..";
 import { Location } from "../structures";
+import { Routes } from "../util";
 import FetchableManager from "./FetchableManager";
 
 /**
@@ -15,6 +16,7 @@ export class LocationManager extends FetchableManager<typeof Location> {
 			addEvent: "newLocation",
 			data,
 			removeEvent: "locationRemove",
+			route: Routes.Location,
 			updateEvent: "locationUpdate",
 		});
 	}

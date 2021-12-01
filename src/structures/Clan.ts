@@ -1,26 +1,21 @@
 import { URLSearchParams } from "node:url";
 import type {
 	APIClan,
-	APICurrentRiverRace,
 	APIRiverRaceLog,
 	ClientRoyale,
+	FetchOptions,
 	FetchRiverRaceLogOptions,
 } from "..";
 import { RiverRaceLogResults } from "../lists";
 import { ClanMemberManager, FinishedRiverRaceManager } from "../managers";
 import { Routes } from "../util";
 import ClanResultPreview from "./ClanResultPreview";
-import CurrentRiverRace from "./CurrentRiverRace";
+import type CurrentRiverRace from "./CurrentRiverRace";
 
 /**
  * A clan
  */
 export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
-	/**
-	 * The current river race of this clan
-	 */
-	currentRiverRace?: CurrentRiverRace;
-
 	/**
 	 * The description of the clan
 	 */
@@ -51,6 +46,14 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	}
 
 	/**
+	 * The current river race of this clan, if fetched.
+	 * Use {@link Clan.fetchCurrentRiverRace} to fetch it
+	 */
+	get currentRiverRace(): CurrentRiverRace | null {
+		return this.client.races.get(this.id) ?? null;
+	}
+
+	/**
 	 * Clone this clan.
 	 * @returns The cloned clan
 	 */
@@ -73,15 +76,11 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 
 	/**
 	 * Fetch the current river race of this clan.
+	 * @param options - Options for fetching the current river race
 	 * @returns The current river race of this clan
 	 */
-	async fetchCurrentRiverRace(): Promise<CurrentRiverRace> {
-		return (this.currentRiverRace = new CurrentRiverRace(
-			this.client,
-			await this.client.api.get<APICurrentRiverRace>(
-				Routes.CurrentRiverRace(this.tag)
-			)
-		));
+	fetchCurrentRiverRace(options: FetchOptions): Promise<CurrentRiverRace> {
+		return this.client.races.fetch(this.id, options);
 	}
 
 	/**

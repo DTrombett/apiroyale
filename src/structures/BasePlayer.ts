@@ -1,6 +1,5 @@
 import type ClientRoyale from "..";
 import type { APIPlayer, APITag, FetchOptions, Player } from "..";
-import { Routes } from "../util";
 import Structure from "./Structure";
 
 export type APIBasePlayer = Pick<APIPlayer, "name" | "tag">;
@@ -63,7 +62,7 @@ export class BasePlayer<
 	 * @returns A promise that resolves with the new player
 	 */
 	fetch(options?: FetchOptions): Promise<Player> {
-		return this.client.players.fetch(Routes.Player(this.tag), this.id, options);
+		return this.client.players.fetch(this.id, options);
 	}
 
 	/**

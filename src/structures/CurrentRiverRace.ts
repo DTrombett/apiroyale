@@ -3,7 +3,8 @@ import type {
 	APICurrentRiverRace,
 	APIRiverRacePeriodType,
 	APIRiverRaceState,
-	StringId,
+	APITag,
+	FetchOptions,
 } from "..";
 import {
 	ClanCurrentStandingManager,
@@ -24,7 +25,7 @@ export class CurrentRiverRace<
 	 */
 	readonly clan: ClanCurrentStanding;
 
-	readonly id!: StringId;
+	readonly id!: APITag;
 
 	/**
 	 * The leaderboard of clans in this race
@@ -61,7 +62,7 @@ export class CurrentRiverRace<
 	 * @param data - The data of the current river race
 	 */
 	constructor(client: ClientRoyale, data: T) {
-		super(client, data, `${data.sectionIndex}`);
+		super(client, data, `${data.clan.tag}`);
 		this.leaderboard = new ClanCurrentStandingManager(
 			this.client,
 			this,
@@ -105,6 +106,15 @@ export class CurrentRiverRace<
 			this.warDays.equals(race.warDays) &&
 			this.weekDay === race.weekDay
 		);
+	}
+
+	/**
+	 * Fetch this race.
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the new location
+	 */
+	fetch(options: FetchOptions): Promise<this> {
+		return this.client.races.fetch<this>(this.id, options);
 	}
 
 	/**

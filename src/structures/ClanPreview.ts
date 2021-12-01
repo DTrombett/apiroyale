@@ -5,7 +5,6 @@ import type {
 	ClientRoyale,
 	FetchOptions,
 } from "..";
-import { Routes } from "../util";
 import Structure from "./Structure";
 
 /**
@@ -72,7 +71,7 @@ export class ClanPreview<
 	 * @returns A promise that resolves with the new clan
 	 */
 	fetch(options?: FetchOptions): Promise<Clan> {
-		return this.client.clans.fetch(Routes.Clan(this.tag), this.id, options);
+		return this.client.clans.fetch(this.id, options);
 	}
 
 	/**

@@ -102,6 +102,7 @@ export interface ClientEvents {
 		oldCurrentRiverRace: CurrentRiverRace,
 		newCurrentRiverRace: CurrentRiverRace
 	];
+	currentRiverRaceRemove: [currentRiverRace: CurrentRiverRace];
 	finishedRiverRaceRemove: [riverRace: FinishedRiverRace];
 	finishedRiverRaceUpdate: [
 		oldRiverRace: FinishedRiverRace,
@@ -117,6 +118,7 @@ export interface ClientEvents {
 	newClanCurrentStanding: [clan: ClanCurrentStanding];
 	newClanMember: [member: ClanMember];
 	newClanPreview: [clan: ClanPreview];
+	newCurrentRiverRace: [currentRiverRace: CurrentRiverRace];
 	newFinishedRiverRace: [riverRace: FinishedRiverRace];
 	newLocation: [location: Location];
 	newPlayer: [player: Player];
@@ -340,6 +342,45 @@ export interface ListOptions {
 	 * Limit the number of items returned in the response
 	 */
 	limit?: number;
+}
+
+/**
+ * Options for creating a manager
+ */
+export interface ManagerOptions<T extends ConstructableStructure> {
+	/**
+	 * The event to emit when a new structure is added
+	 */
+	addEvent: StructureEvents<T>;
+
+	/**
+	 * The data to initialize the manager with
+	 */
+	data?: StructureType<T>[];
+
+	/**
+	 * The event to emit when a structure is removed
+	 */
+	removeEvent: StructureEvents<T>;
+
+	/**
+	 * The event to emit when a structure is updated
+	 */
+	updateEvent: StructureEvents<T>;
+}
+
+export interface FetchableManagerOptions<T extends ConstructableStructure>
+	extends ManagerOptions<T> {
+	/**
+	 * The route to fetch the data from
+	 */
+	route: ValueOf<{
+		[K in keyof typeof Routes]: Parameters<
+			typeof Routes[K]
+		>[0] extends T["prototype"]["id"]
+			? typeof Routes[K]
+			: never;
+	}>;
 }
 
 /**
