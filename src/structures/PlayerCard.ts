@@ -43,6 +43,13 @@ export class PlayerCard<
 	}
 
 	/**
+	 * The level of the card displayed in the game
+	 */
+	get displayLevel(): number {
+		return this.level + (14 - this.maxLevel);
+	}
+
+	/**
 	 * Clone this card.
 	 */
 	clone(): PlayerCard {
