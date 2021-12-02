@@ -57,14 +57,14 @@ export class PlayerAchievement<
 	/**
 	 * The missing progress to reach the next target
 	 */
-	get missingProgress(): number | null {
+	get missingProgress(): number {
 		return this.target - this.progress;
 	}
 
 	/**
 	 * The percentage of the achievement's progress
 	 */
-	get percentage(): number | null {
+	get percentage(): number {
 		return (this.progress / this.target) * 100;
 	}
 
