@@ -53,6 +53,14 @@ export class ClanPreview<
 	}
 
 	/**
+	 * The badge url of the clan.
+	 * * Note: The image url is from deckshop.pro
+	 */
+	get badgeUrl(): `https://www.deckshop.pro/img/badges/${this["badgeId"]}.png` {
+		return `https://www.deckshop.pro/img/badges/${this.badgeId}.png` as const;
+	}
+
+	/**
 	 * The current river race of this clan, if fetched.
 	 * Use {@link Clan.fetchCurrentRiverRace} to fetch it
 	 */
