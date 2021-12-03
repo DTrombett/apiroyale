@@ -199,6 +199,13 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	}
 
 	/**
+	 * The percentual of matches finished with a draw
+	 */
+	get drawPercentage(): number {
+		return (this.draws / this.battleCount) * 100;
+	}
+
+	/**
 	 * The number of matches finished with a draw
 	 */
 	get draws(): number {
@@ -210,6 +217,13 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 */
 	get isBestTrophies(): boolean {
 		return this.trophies >= this.bestTrophies;
+	}
+
+	/**
+	 * The percentual of matches lost by this player
+	 */
+	get lossPercentage(): number {
+		return (this.losses / this.battleCount) * 100;
 	}
 
 	/**
