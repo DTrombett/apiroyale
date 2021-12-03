@@ -55,6 +55,13 @@ export class PlayerAchievement<
 	}
 
 	/**
+	 * If the player has completed this achievement
+	 */
+	get completed(): boolean {
+		return this.progress >= this.target;
+	}
+
+	/**
 	 * The missing progress to reach the next target
 	 */
 	get missingProgress(): number {
