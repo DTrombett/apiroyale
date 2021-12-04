@@ -29,9 +29,6 @@
     "eslint": "^8.3.0",
     "prettier": "^2.5.0"
   },
-  "engines": {
-    "node": ">=16.13.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/DTrombett/apiroyale.git"
