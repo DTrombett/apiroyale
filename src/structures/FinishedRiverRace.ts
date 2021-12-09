@@ -14,7 +14,7 @@ export class FinishedRiverRace<
 	 */
 	finishTime: Date;
 
-	readonly id!: StringId;
+	readonly id!: `${StringId}-${StringId}`;
 
 	/**
 	 * A leaderboard of clans in this race
@@ -36,7 +36,7 @@ export class FinishedRiverRace<
 	 * @param data - The data of the river race
 	 */
 	constructor(client: ClientRoyale, data: T) {
-		super(client, data, `${data.seasonId}`);
+		super(client, data, `${data.seasonId}-${data.sectionIndex}`);
 
 		this.leaderboard = new RiverRaceWeekStandingManager(
 			this.client,
