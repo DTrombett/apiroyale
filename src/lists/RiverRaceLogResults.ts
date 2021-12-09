@@ -10,7 +10,10 @@ import List from "./List";
 /**
  * Manage a river race log
  */
-export class RiverRaceLogResults extends List<number, FinishedRiverRace> {
+export class RiverRaceLogResults extends List<
+	FinishedRiverRace["id"],
+	FinishedRiverRace
+> {
 	/**
 	 * @param client - The client that instantiated this list
 	 * @param options - The options used to get these results
@@ -24,15 +27,16 @@ export class RiverRaceLogResults extends List<number, FinishedRiverRace> {
 		super(
 			client,
 			client.fetchRiverRaceLog.bind(client) as ListMethod<
-				number,
+				FinishedRiverRace["id"],
 				FinishedRiverRace
 			>,
 			options,
 			data.paging,
-			data.items.map((value) => [
-				value.seasonId,
-				new FinishedRiverRace(client, value),
-			])
+			data.items.map((value) => {
+				const race = new FinishedRiverRace(client, value);
+
+				return [race.id, race];
+			})
 		);
 	}
 }
