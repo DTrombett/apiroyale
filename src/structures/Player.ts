@@ -209,7 +209,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 * The percentual of matches lost by this player
 	 */
 	get lossPercentage(): number {
-		return (this.losses / this.total1v1) * 100;
+		return (this.losses / (this.wins + this.losses)) * 100;
 	}
 
 	/**
@@ -220,13 +220,6 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	}
 
 	/**
-	 * The number of other battles this player has participated in (2v2...)
-	 */
-	get otherBattlesCount(): number {
-		return this.battleCount - this.total1v1;
-	}
-
-	/**
 	 * The percentual of three crown wins of this player
 	 */
 	get threeCrownWinPercentage(): number {
@@ -234,17 +227,10 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	}
 
 	/**
-	 * The number of 1v1 matches this player has played
-	 */
-	get total1v1(): number {
-		return this.wins + this.losses;
-	}
-
-	/**
 	 * The percentual of matches won by this player
 	 */
 	get winPercentage(): number {
-		return (this.wins / this.total1v1) * 100;
+		return (this.wins / (this.wins + this.losses)) * 100;
 	}
 
 	/**
