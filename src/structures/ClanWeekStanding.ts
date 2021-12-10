@@ -29,10 +29,11 @@ export class ClanWeekStanding<
 	 * @param standing - The standing that this clan is in
 	 */
 	constructor(client: ClientRoyale, data: T, standing: RiverRaceWeekStanding) {
+		const finishedAt = APIDateToObject(data.finishTime);
 		super(client, data);
 
 		this.standing = standing;
-		this.finishedAt = APIDateToObject(data.finishTime);
+		this.finishedAt = finishedAt.getTime() <= 0 ? null : finishedAt;
 	}
 
 	/**
@@ -62,8 +63,11 @@ export class ClanWeekStanding<
 	 * @returns The patched standing
 	 */
 	patch(data: Partial<T>): this {
-		if (data.finishTime !== undefined)
-			this.finishedAt = APIDateToObject(data.finishTime);
+		if (data.finishTime !== undefined) {
+			const finishedAt = APIDateToObject(data.finishTime);
+
+			this.finishedAt = finishedAt.getTime() <= 0 ? null : finishedAt;
+		}
 
 		return super.patch(data);
 	}
