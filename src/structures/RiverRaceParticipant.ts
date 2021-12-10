@@ -30,9 +30,9 @@ export class RiverRaceParticipant<
 	decksUsedToday: number;
 
 	/**
-	 * The number of points this player has accumulated
+	 * The fame of this participant
 	 */
-	points: number;
+	medals: number;
 
 	/**
 	 * @param client - The client that instantiated this
@@ -46,7 +46,7 @@ export class RiverRaceParticipant<
 		this.boatAttacks = data.boatAttacks;
 		this.decksUsed = data.decksUsed;
 		this.decksUsedToday = data.decksUsedToday;
-		this.points = data.fame;
+		this.medals = data.fame;
 	}
 
 	/**
@@ -72,7 +72,7 @@ export class RiverRaceParticipant<
 			this.boatAttacks === participant.boatAttacks &&
 			this.decksUsed === participant.decksUsed &&
 			this.decksUsedToday === participant.decksUsedToday &&
-			this.points === participant.points &&
+			this.medals === participant.medals &&
 			this.tag === participant.tag
 		);
 	}
@@ -86,7 +86,7 @@ export class RiverRaceParticipant<
 		if (data.boatAttacks != null) this.boatAttacks = data.boatAttacks;
 		if (data.decksUsed != null) this.decksUsed = data.decksUsed;
 		if (data.decksUsedToday != null) this.decksUsedToday = data.decksUsedToday;
-		if (data.fame != null) this.points = data.fame;
+		if (data.fame != null) this.medals = data.fame;
 
 		return super.patch(data);
 	}
@@ -99,7 +99,7 @@ export class RiverRaceParticipant<
 			boatAttacks: this.boatAttacks,
 			decksUsed: this.decksUsed,
 			decksUsedToday: this.decksUsedToday,
-			fame: this.points,
+			fame: this.medals,
 			tag: this.tag,
 			repairPoints: 0,
 			name: this.name,
