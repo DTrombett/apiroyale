@@ -12,7 +12,9 @@ import {
 	CardManager,
 	ClanManager,
 	ClanPreviewManager,
+	ClanResultPreviewManager,
 	CurrentRiverRaceManager,
+	FinishedRiverRaceManager,
 	LocationManager,
 	PlayerManager,
 } from "./managers";
@@ -72,20 +74,30 @@ export class ClientRoyale extends EventEmitter {
 	arenas = new ArenaManager(this);
 
 	/**
-	 * A manager of cards
+	 * A manager for cards
 	 */
 	cards = new CardManager(this);
 
 	/**
-	 * A manager of clan previews
-	 * This will be more populated than {@link ClientRoyale.clans} as it's updated with player clans info too
+	 * A manager for clan previews
+	 * This is updated with player clans info
 	 */
 	clanPreviews = new ClanPreviewManager(this);
+
+	/**
+	 * A manager for clan result previews
+	 */
+	clanResultPreviews = new ClanResultPreviewManager(this);
 
 	/**
 	 * A manager for clans
 	 */
 	clans = new ClanManager(this);
+
+	/**
+	 * A manager for finished river races
+	 */
+	finishedRiverRaces = new FinishedRiverRaceManager(this);
 
 	/**
 	 * A manager for locations

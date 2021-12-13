@@ -1,7 +1,7 @@
 import type { APIClanResultPreview, APIClanType, ClientRoyale } from "..";
 import { ClanType } from "../util";
 import ClanPreview from "./ClanPreview";
-import Location from "./Location";
+import type Location from "./Location";
 
 /**
  * A clan result preview
@@ -51,7 +51,7 @@ export class ClanResultPreview<
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
 
-		this.location = new Location(client, data.location);
+		this.location = client.locations.add(data.location);
 		this.donationsPerWeek = data.donationsPerWeek;
 		this.memberCount = data.members;
 		this.requiredTrophies = data.requiredTrophies;

@@ -4,7 +4,7 @@ import type {
 	FetchRiverRaceLogOptions,
 	ListMethod,
 } from "..";
-import { FinishedRiverRace } from "../structures";
+import type { FinishedRiverRace } from "../structures";
 import List from "./List";
 
 /**
@@ -33,7 +33,7 @@ export class RiverRaceLogResults extends List<
 			options,
 			data.paging,
 			data.items.map((value) => {
-				const race = new FinishedRiverRace(client, value);
+				const race = client.finishedRiverRaces.add<FinishedRiverRace>(value);
 
 				return [race.id, race];
 			})

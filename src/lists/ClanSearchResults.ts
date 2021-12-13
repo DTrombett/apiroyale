@@ -2,9 +2,9 @@ import type {
 	APIClanSearchResults,
 	APITag,
 	ClanManager,
+	ClanResultPreview,
 	SearchClanOptions,
 } from "..";
-import { ClanResultPreview } from "../structures";
 import List from "./List";
 
 /**
@@ -26,10 +26,12 @@ export class ClanSearchResults extends List<APITag, ClanResultPreview> {
 			manager.search.bind(manager),
 			options,
 			data.paging,
-			data.items.map((result) => [
-				result.tag,
-				new ClanResultPreview(manager.client, result),
-			])
+			data.items.map((result) => {
+				const clan =
+					manager.client.clanResultPreviews.add<ClanResultPreview>(result);
+
+				return [clan.id, clan];
+			})
 		);
 	}
 }

@@ -6,6 +6,7 @@ export * from "./ClanCurrentStandingManager";
 export * from "./ClanManager";
 export * from "./ClanMemberManager";
 export * from "./ClanPreviewManager";
+export * from "./ClanResultPreviewManager";
 export * from "./CurrentRiverRaceManager";
 export * from "./FetchableManager";
 export * from "./FinishedRiverRaceManager";

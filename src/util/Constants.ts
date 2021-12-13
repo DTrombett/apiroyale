@@ -10,6 +10,7 @@ import type {
 	ClanCurrentStanding,
 	ClanMember,
 	ClanPreview,
+	ClanResultPreview,
 	CurrentRiverRace,
 	FinishedRiverRace,
 	List,
@@ -97,6 +98,11 @@ export interface ClientEvents {
 	clanPreviewRemove: [clan: ClanPreview];
 	clanPreviewUpdate: [oldClan: ClanPreview, newClan: ClanPreview];
 	clanRemove: [clan: Clan];
+	clanResultPreviewRemove: [clan: ClanResultPreview];
+	clanResultPreviewUpdate: [
+		oldClan: ClanResultPreview,
+		newClan: ClanResultPreview
+	];
 	clanUpdate: [oldClan: Clan, newClan: Clan];
 	currentRiverRaceUpdate: [
 		oldCurrentRiverRace: CurrentRiverRace,
@@ -118,6 +124,7 @@ export interface ClientEvents {
 	newClanCurrentStanding: [clan: ClanCurrentStanding];
 	newClanMember: [member: ClanMember];
 	newClanPreview: [clan: ClanPreview];
+	newClanResultPreview: [clan: ClanResultPreview];
 	newCurrentRiverRace: [currentRiverRace: CurrentRiverRace];
 	newFinishedRiverRace: [riverRace: FinishedRiverRace];
 	newLocation: [location: Location];
