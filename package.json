@@ -21,7 +21,7 @@
     "@sapphire/async-queue": "^1.1.9",
     "@tsconfig/node16": "^1.0.2",
     "@types/node": "^16.11.13",
-    "typescript": "^4.5.3"
+    "typescript": "^4.5.4"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.6.0",
