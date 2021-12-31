@@ -65,6 +65,14 @@ export class Structure<T extends {} = {}> {
 	toJSON(): {} {
 		return {};
 	}
+
+	/**
+	 * Gets a string representation of this structure.
+	 * @returns The JSON stringification of this structure
+	 */
+	toString(): string {
+		return JSON.stringify(this.toJSON());
+	}
 }
 
 export default Structure;
