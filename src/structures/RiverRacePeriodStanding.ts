@@ -99,7 +99,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	 * Clone this standing.
 	 */
 	clone(): RiverRacePeriodStanding {
-		return new RiverRacePeriodStanding(this.client, this.toJson(), this.period);
+		return new RiverRacePeriodStanding(this.client, this.toJSON(), this.period);
 	}
 
 	/**
@@ -147,9 +147,9 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJson(): APIRiverRacePeriodStanding {
+	toJSON(): APIRiverRacePeriodStanding {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			clan: {
 				tag: this.clanTag,
 			},

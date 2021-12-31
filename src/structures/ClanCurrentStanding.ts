@@ -32,7 +32,7 @@ export class ClanCurrentStanding<
 	 * @returns A clone of this standing
 	 */
 	clone(): ClanCurrentStanding<T> {
-		return new ClanCurrentStanding(this.client, this.toJson(), this.race);
+		return new ClanCurrentStanding(this.client, this.toJSON(), this.race);
 	}
 
 	/**
@@ -57,9 +57,9 @@ export class ClanCurrentStanding<
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJson(): APIClanCurrentStanding {
+	toJSON(): APIClanCurrentStanding {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 		};
 	}
 }

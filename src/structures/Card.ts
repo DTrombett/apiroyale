@@ -44,7 +44,7 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	 * @returns The cloned card
 	 */
 	clone(): Card<T> {
-		return new Card(this.client, this.toJson());
+		return new Card(this.client, this.toJSON());
 	}
 
 	/**
@@ -80,9 +80,9 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	 * Get a JSON representation of this card.
 	 * @returns The card's data
 	 */
-	toJson(): APICard {
+	toJSON(): APICard {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			iconUrls: this.iconUrls,
 			id: Number(this.id),
 			maxLevel: this.maxLevel,

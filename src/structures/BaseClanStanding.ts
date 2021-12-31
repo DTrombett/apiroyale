@@ -50,7 +50,7 @@ export class BaseClanStanding<
 	 * @returns The cloned standing
 	 */
 	clone(): BaseClanStanding<T> {
-		return new BaseClanStanding(this.client, this.toJson());
+		return new BaseClanStanding(this.client, this.toJSON());
 	}
 
 	/**
@@ -87,12 +87,12 @@ export class BaseClanStanding<
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJson(): APIClanCurrentStanding {
+	toJSON(): APIClanCurrentStanding {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			clanScore: this.score,
 			fame: this.points,
-			participants: this.participants.toJson(),
+			participants: this.participants.toJSON(),
 			periodPoints: this.medals,
 			repairPoints: 0,
 		};

@@ -35,7 +35,7 @@ export class Structure<T extends {} = {}> {
 	 * @returns The cloned structure
 	 */
 	clone(): Structure {
-		return new Structure(this.client, this.toJson(), this.id);
+		return new Structure(this.client, this.toJSON(), this.id);
 	}
 
 	/**
@@ -62,7 +62,7 @@ export class Structure<T extends {} = {}> {
 	 * Get a JSON representation of this structure.
 	 * @returns The JSON representation of this structure
 	 */
-	toJson(): {} {
+	toJSON(): {} {
 		return {};
 	}
 }

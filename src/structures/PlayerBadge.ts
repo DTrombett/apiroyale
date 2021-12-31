@@ -86,7 +86,7 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	 * @returns The cloned badge
 	 */
 	clone(): PlayerBadge {
-		return new PlayerBadge(this.client, this.toJson(), this.player);
+		return new PlayerBadge(this.client, this.toJSON(), this.player);
 	}
 
 	/**
@@ -134,7 +134,7 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	 * Get a JSON representation of this badge.
 	 * @returns The JSON representation of this badge
 	 */
-	toJson(): APIBadge {
+	toJSON(): APIBadge {
 		return {
 			name: this.name,
 			progress: this.progress,

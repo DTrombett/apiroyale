@@ -48,7 +48,7 @@ export class RiverRacePeriod<
 	 * @returns The cloned period
 	 */
 	clone(): RiverRacePeriod<T> {
-		return new RiverRacePeriod(this.client, this.toJson(), this.race);
+		return new RiverRacePeriod(this.client, this.toJSON(), this.race);
 	}
 
 	/**
@@ -81,10 +81,10 @@ export class RiverRacePeriod<
 	 * Get a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
-	toJson(): APIRiverRacePeriod {
+	toJSON(): APIRiverRacePeriod {
 		return {
-			...super.toJson(),
-			items: this.leaderboard.toJson(),
+			...super.toJSON(),
+			items: this.leaderboard.toJSON(),
 			periodIndex: this.monthDay,
 		};
 	}

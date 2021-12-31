@@ -52,7 +52,7 @@ export class FinishedRiverRace<
 	 * Clone this race.
 	 */
 	clone(): FinishedRiverRace {
-		return new FinishedRiverRace(this.client, this.toJson());
+		return new FinishedRiverRace(this.client, this.toJSON());
 	}
 
 	/**
@@ -88,13 +88,13 @@ export class FinishedRiverRace<
 	 * Get a JSON representation of this race.
 	 * @returns The JSON representation of this race
 	 */
-	toJson(): APIRiverRaceLogEntry {
+	toJSON(): APIRiverRaceLogEntry {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			createdDate: dateObjectToAPIDate(this.finishTime),
 			seasonId: this.seasonId,
 			sectionIndex: this.weekNumber - 1,
-			standings: this.leaderboard.toJson(),
+			standings: this.leaderboard.toJSON(),
 		};
 	}
 }

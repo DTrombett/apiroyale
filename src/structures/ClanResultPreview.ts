@@ -72,7 +72,7 @@ export class ClanResultPreview<
 	 * @returns A clone of this clan result preview
 	 */
 	clone(): ClanResultPreview<T> {
-		return new ClanResultPreview(this.client, this.toJson());
+		return new ClanResultPreview(this.client, this.toJSON());
 	}
 
 	/**
@@ -117,13 +117,13 @@ export class ClanResultPreview<
 	 * Get a JSON representation of this clan result preview
 	 * @returns The JSON representation of this clan result preview
 	 */
-	toJson(): APIClanResultPreview {
+	toJSON(): APIClanResultPreview {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			clanScore: this.score,
 			clanWarTrophies: this.warTrophies,
 			donationsPerWeek: this.donationsPerWeek,
-			location: this.location.toJson(),
+			location: this.location.toJSON(),
 			members: this.memberCount,
 			requiredTrophies: this.requiredTrophies,
 			type: ClanType[this.type] as APIClanType,

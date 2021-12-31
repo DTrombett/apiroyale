@@ -128,8 +128,8 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	 * Get a JSON representation of this manager.
 	 * @returns An array of the JSON representations of the structures in this manager
 	 */
-	toJson(): StructureType<T>[] {
-		return this.map((structure) => structure.toJson()) as StructureType<T>[];
+	toJSON(): StructureType<T>[] {
+		return this.map((structure) => structure.toJSON()) as StructureType<T>[];
 	}
 }
 

@@ -30,7 +30,7 @@ export class Arena<T extends APIArena = APIArena> extends Structure<T> {
 	 * @returns The cloned arena
 	 */
 	clone(): Arena<T> {
-		return new Arena(this.client, this.toJson());
+		return new Arena(this.client, this.toJSON());
 	}
 
 	/**
@@ -59,9 +59,9 @@ export class Arena<T extends APIArena = APIArena> extends Structure<T> {
 	 * Get a JSON representation of this arena.
 	 * @returns The JSON representation of this arena
 	 */
-	toJson(): APIArena {
+	toJSON(): APIArena {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			name: this.name,
 			id: Number(this.id),
 		};

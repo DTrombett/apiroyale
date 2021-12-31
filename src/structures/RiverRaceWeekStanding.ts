@@ -74,7 +74,7 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	 * @returns The cloned standing
 	 */
 	clone(): RiverRaceWeekStanding {
-		return new RiverRaceWeekStanding(this.client, this.toJson(), this.race);
+		return new RiverRaceWeekStanding(this.client, this.toJSON(), this.race);
 	}
 
 	/**
@@ -108,12 +108,12 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJson(): APIRiverRaceWeekStanding {
+	toJSON(): APIRiverRaceWeekStanding {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			rank: this.rank,
 			trophyChange: this.trophyChange,
-			clan: this.clan.toJson(),
+			clan: this.clan.toJSON(),
 		};
 	}
 }

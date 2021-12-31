@@ -238,7 +238,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 * @returns The cloned player
 	 */
 	clone(): Player<T> {
-		return new Player(this.client, this.toJson());
+		return new Player(this.client, this.toJSON());
 	}
 
 	/**
@@ -352,21 +352,21 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 * Get a JSON representation of this player.
 	 * @returns The JSON representation of this player
 	 */
-	toJson(): APIPlayer {
+	toJSON(): APIPlayer {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			achievements: this.achievements.map((achievement) =>
-				achievement.toJson()
+				achievement.toJSON()
 			),
-			arena: this.arena.toJson(),
-			badges: this.badges.map((badge) => badge.toJson()),
+			arena: this.arena.toJSON(),
+			badges: this.badges.map((badge) => badge.toJSON()),
 			battleCount: this.battleCount,
 			bestTrophies: this.bestTrophies,
-			cards: this.cards.map((card) => card.toJson()),
+			cards: this.cards.map((card) => card.toJSON()),
 			challengeCardsWon: this.cardsWonInChallenges,
-			clan: this.clan?.toJson(),
-			currentDeck: this.deck.map((card) => card.toJson()),
-			currentFavouriteCard: this.favouriteCard.toJson(),
+			clan: this.clan?.toJSON(),
+			currentDeck: this.deck.map((card) => card.toJSON()),
+			currentFavouriteCard: this.favouriteCard.toJSON(),
 			donations: this.donationsPerWeek,
 			donationsReceived: this.donationsReceivedPerWeek,
 			expLevel: this.kingLevel,

@@ -45,7 +45,7 @@ export class Location<
 	 * @returns The cloned location
 	 */
 	clone(): Location<T> {
-		return new Location(this.client, this.toJson());
+		return new Location(this.client, this.toJSON());
 	}
 
 	/**
@@ -97,9 +97,9 @@ export class Location<
 	 * Get a JSON representation of this location.
 	 * @returns The JSON representation of this location
 	 */
-	toJson(): APILocation {
+	toJSON(): APILocation {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			countryCode: this.countryCode,
 			id: Number(this.id),
 			isCountry: this._isCountry,

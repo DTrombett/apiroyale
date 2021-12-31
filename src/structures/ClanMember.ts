@@ -105,7 +105,7 @@ export class ClanMember<
 	 * @returns The cloned member
 	 */
 	clone(): ClanMember<T> {
-		return new ClanMember(this.client, this.toJson(), this.clan);
+		return new ClanMember(this.client, this.toJSON(), this.clan);
 	}
 
 	/**
@@ -156,10 +156,10 @@ export class ClanMember<
 	 * Get a JSON representation of this member.
 	 * @returns The JSON representation
 	 */
-	toJson(): APIClanMember {
+	toJSON(): APIClanMember {
 		return {
-			...super.toJson(),
-			arena: this.arena.toJson(),
+			...super.toJSON(),
+			arena: this.arena.toJSON(),
 			clanChestPoints: 0,
 			clanRank: this.rank,
 			donations: this.donationsPerWeek,

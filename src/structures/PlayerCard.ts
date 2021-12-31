@@ -53,7 +53,7 @@ export class PlayerCard<
 	 * Clone this card.
 	 */
 	clone(): PlayerCard {
-		return new PlayerCard(this.client, this.toJson(), this.player);
+		return new PlayerCard(this.client, this.toJSON(), this.player);
 	}
 
 	/**
@@ -86,9 +86,9 @@ export class PlayerCard<
 	/**
 	 * Get a JSON representation of this card.
 	 */
-	toJson(): APIPlayerCard {
+	toJSON(): APIPlayerCard {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			count: this.count,
 			level: this.level,
 			starLevel: this.starLevel,

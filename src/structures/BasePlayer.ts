@@ -38,7 +38,7 @@ export class BasePlayer<
 	 * @returns The cloned player
 	 */
 	clone(): BasePlayer<T> {
-		return new BasePlayer(this.client, this.toJson());
+		return new BasePlayer(this.client, this.toJSON());
 	}
 
 	/**
@@ -78,9 +78,9 @@ export class BasePlayer<
 	 * Get a JSON representation of this player.
 	 * @returns The JSON representation
 	 */
-	toJson(): APIBasePlayer {
+	toJSON(): APIBasePlayer {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			name: this.name,
 			tag: this.tag,
 		};

@@ -73,7 +73,7 @@ export class ClanPreview<
 	 * @returns The cloned clan preview
 	 */
 	clone(): ClanPreview<T> {
-		return new ClanPreview(this.client, this.toJson());
+		return new ClanPreview(this.client, this.toJSON());
 	}
 
 	/**
@@ -138,9 +138,9 @@ export class ClanPreview<
 	 * Get a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
-	toJson(): APIClanPreview {
+	toJSON(): APIClanPreview {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			badgeId: this.badgeId,
 			name: this.name,
 			tag: this.tag,

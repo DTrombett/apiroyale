@@ -86,7 +86,7 @@ export class CurrentRiverRace<
 	 * @returns The cloned race
 	 */
 	clone(): CurrentRiverRace {
-		return new CurrentRiverRace(this.client, this.toJson());
+		return new CurrentRiverRace(this.client, this.toJSON());
 	}
 
 	/**
@@ -139,13 +139,13 @@ export class CurrentRiverRace<
 	 * Get a JSON representation of this race
 	 * @returns The JSON representation of this race
 	 */
-	toJson(): APICurrentRiverRace {
+	toJSON(): APICurrentRiverRace {
 		return {
-			...super.toJson(),
-			clan: this.clan.toJson(),
-			clans: this.leaderboard.map((c) => c.toJson()),
+			...super.toJSON(),
+			clan: this.clan.toJSON(),
+			clans: this.leaderboard.map((c) => c.toJSON()),
 			periodIndex: this.monthDay,
-			periodLogs: this.warDays.map((p) => p.toJson()),
+			periodLogs: this.warDays.map((p) => p.toJSON()),
 			periodType: RiverRacePeriodType[this.type] as APIRiverRacePeriodType,
 			sectionIndex: this.weekDay,
 			state: RiverRaceState[this.state] as APIRiverRaceState,

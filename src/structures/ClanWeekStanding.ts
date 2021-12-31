@@ -41,7 +41,7 @@ export class ClanWeekStanding<
 	 * @returns A clone of this standing
 	 */
 	clone(): ClanWeekStanding<T> {
-		return new ClanWeekStanding(this.client, this.toJson(), this.standing);
+		return new ClanWeekStanding(this.client, this.toJSON(), this.standing);
 	}
 
 	/**
@@ -76,9 +76,9 @@ export class ClanWeekStanding<
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJson(): APIClanWeekStanding {
+	toJSON(): APIClanWeekStanding {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			finishTime: dateObjectToAPIDate(this.finishedAt),
 		};
 	}

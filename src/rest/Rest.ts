@@ -24,11 +24,6 @@ export class Rest {
 	rateLimited = false;
 
 	/**
-	 * All requests that have been made so far
-	 */
-	requests: APIRequest[] = [];
-
-	/**
 	 * @param client - The client that instantiated this
 	 */
 	constructor(client: ClientRoyale) {
@@ -53,9 +48,6 @@ export class Rest {
 			throw new Error(Errors.restRateLimited());
 
 		const request = new APIRequest(this, path, options);
-
-		this.requests.push(request);
-
 		const res = await request.send();
 		let data: T | null | undefined;
 

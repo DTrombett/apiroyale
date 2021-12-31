@@ -80,7 +80,7 @@ export class PlayerAchievement<
 	 * @returns The cloned achievement
 	 */
 	clone(): PlayerAchievement {
-		return new PlayerAchievement(this.client, this.toJson(), this.player);
+		return new PlayerAchievement(this.client, this.toJSON(), this.player);
 	}
 
 	/**
@@ -117,9 +117,9 @@ export class PlayerAchievement<
 	 * Get a JSON representation of this achievement.
 	 * @returns The JSON representation of this achievement
 	 */
-	toJson(): APIAchievement {
+	toJSON(): APIAchievement {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			completionInfo: null,
 			info: this.info,
 			name: this.name,

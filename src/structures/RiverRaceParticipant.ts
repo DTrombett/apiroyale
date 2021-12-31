@@ -60,7 +60,7 @@ export class RiverRaceParticipant<
 	 * Clone this participant.
 	 */
 	clone(): RiverRaceParticipant {
-		return new RiverRaceParticipant(this.client, this.toJson(), this.clan);
+		return new RiverRaceParticipant(this.client, this.toJSON(), this.clan);
 	}
 
 	/**
@@ -94,7 +94,7 @@ export class RiverRaceParticipant<
 	/**
 	 * Get a JSON representation of this participant.
 	 */
-	toJson(): APIRiverRaceParticipant {
+	toJSON(): APIRiverRaceParticipant {
 		return {
 			boatAttacks: this.boatAttacks,
 			decksUsed: this.decksUsed,

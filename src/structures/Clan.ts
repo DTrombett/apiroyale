@@ -32,7 +32,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	 * @returns The cloned clan
 	 */
 	clone(): Clan<T> {
-		return new Clan(this.client, this.toJson());
+		return new Clan(this.client, this.toJSON());
 	}
 
 	/**
@@ -65,11 +65,11 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	 * Get a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
-	toJson(): APIClan {
+	toJSON(): APIClan {
 		return {
-			...super.toJson(),
+			...super.toJSON(),
 			description: this.description,
-			memberList: this.members.map((member) => member.toJson()),
+			memberList: this.members.map((member) => member.toJSON()),
 			clanChestLevel: 1,
 			clanChestMaxLevel: 0,
 			clanChestStatus: "inactive",
