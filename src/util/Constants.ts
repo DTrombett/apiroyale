@@ -309,11 +309,6 @@ export interface FetchOptions {
 	 * Whether to skip the cache and fetch from the API
 	 */
 	force?: boolean;
-
-	/**
-	 * Maximum time (in milliseconds) passed after the structure was last fetched before fetching again
-	 */
-	maxAge?: number;
 }
 
 /**
