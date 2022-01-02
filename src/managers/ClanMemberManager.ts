@@ -1,7 +1,7 @@
 import type ClientRoyale from "..";
 import type { APIClanMember, Clan, FetchOptions, Path } from "..";
 import { ClanMember } from "../structures";
-import Constants, { Routes } from "../util";
+import { Routes } from "../util";
 import Manager from "./Manager";
 
 /**
@@ -46,11 +46,11 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched members
 	 */
-	async fetch({
-		force = false,
-		maxAge = Constants.defaultMaxAge,
-	}: FetchOptions = {}): Promise<this> {
-		if (!force && Date.now() - this.clan.lastUpdate.getTime() < maxAge)
+	async fetch({ force = false }: FetchOptions = {}): Promise<this> {
+		if (
+			!force &&
+			Date.now() - this.clan.lastUpdate.getTime() < this.client.structureMaxAge
+		)
 			return Promise.resolve(this);
 		return this.client.api
 			.get<APIClanMember[]>(this.path)

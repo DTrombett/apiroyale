@@ -10,11 +10,6 @@ import Response from "./Response";
  */
 export class APIRequest {
 	/**
-	 * The base url of this request
-	 */
-	baseUrl: string;
-
-	/**
 	 * Headers to be sent in the request
 	 */
 	headers: OutgoingHttpHeaders;
@@ -44,15 +39,10 @@ export class APIRequest {
 	 * @param path - The path to request
 	 * @param options - Options for this request
 	 */
-	constructor(
-		rest: Rest,
-		path: Path,
-		{ url = Constants.baseAPIUrl, query, headers }: RequestOptions = {}
-	) {
+	constructor(rest: Rest, path: Path, { query, headers }: RequestOptions = {}) {
 		this.path = path;
 		this.rest = rest;
 
-		this.baseUrl = url;
 		this.query = new URLSearchParams(query);
 
 		this.headers = {
@@ -66,7 +56,7 @@ export class APIRequest {
 	 * The full URL of this request
 	 */
 	get url(): URL {
-		const url = new URL(this.baseUrl);
+		const url = new URL(this.rest.client.baseURL);
 
 		url.pathname += this.path;
 		url.search = this.query.toString();
@@ -107,10 +97,11 @@ export class APIRequest {
 		// This is the data we'll receive
 		let data = "";
 
+		const { structureMaxAge } = this.rest.client;
 		const timeout = setTimeout(() => {
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
-			req.destroy(new Error(Errors.requestAborted(this.path)));
-		}, Constants.defaultAbortTimeout).unref();
+			req.destroy(new Error(Errors.requestAborted(this.path, structureMaxAge)));
+		}, structureMaxAge).unref();
 		const req = get(
 			this.url,
 			{

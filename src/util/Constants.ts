@@ -180,6 +180,21 @@ export interface ClientEvents {
  */
 export interface ClientOptions {
 	/**
+	 * The maximum time in milliseconds before cancelling a REST request
+	 */
+	abortTimeout?: number;
+
+	/**
+	 * The base URL of the API
+	 */
+	baseURL?: string;
+
+	/**
+	 * The maximum time in milliseconds passed after the structure was last fetched before fetching again
+	 */
+	structureMaxAge?: number;
+
+	/**
 	 * The token of this client
 	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
 	 */
@@ -200,15 +215,15 @@ export const enum Constants {
 	/**
 	 * The base URL for the API
 	 */
-	baseAPIUrl = "https://proxy.royaleapi.dev/v1",
+	baseURL = "https://api.clashroyale.com/v1",
 
 	/**
-	 * Default maximum time passed after the structure was last fetched before fetching again. (2 minutes)
+	 * Default maximum time in milliseconds passed after the structure was last fetched before fetching again
 	 */
-	defaultMaxAge = 120_000,
+	defaultMaxAge = 300_000,
 
 	/**
-	 * Default maximum time before cancelling a REST request. (10 seconds)
+	 * Default maximum time in milliseconds before cancelling a REST request
 	 */
 	defaultAbortTimeout = 10_000,
 
@@ -247,10 +262,8 @@ export const Errors = {
 	missingAfter: () => "The next page isn't available" as const,
 	missingBefore: () => "The previous page isn't available" as const,
 	missingQuery: () => "You didn't provide any query" as const,
-	requestAborted: (path: Path) =>
-		`Request to path ${path} took more than ${
-			Constants.defaultAbortTimeout / 1_000
-		} seconds and was aborted before ending` as const,
+	requestAborted: (path: Path, maxAge: number) =>
+		`Request to path ${path} took more than ${maxAge} milliseconds and was aborted before ending` as const,
 	requestError: (url: URL, error: Error) =>
 		`Request to ${url.href} failed with reason: ${error.message}` as const,
 	restRateLimited: () =>
@@ -420,11 +433,6 @@ export interface RequestOptions {
 	 * The query of this request
 	 */
 	query?: ConstructorParameters<typeof URLSearchParams>[0];
-
-	/**
-	 * The base url for this request
-	 */
-	url?: string;
 }
 
 /**

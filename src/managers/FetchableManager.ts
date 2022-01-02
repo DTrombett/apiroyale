@@ -8,7 +8,6 @@ import type {
 	StringId,
 	StructureType,
 } from "..";
-import Constants from "../util";
 import Manager from "./Manager";
 
 /**
@@ -49,14 +48,14 @@ export class FetchableManager<
 	 */
 	async fetch<S extends T["prototype"] = T["prototype"]>(
 		id: T["prototype"]["id"],
-		{ force = false, maxAge = Constants.defaultMaxAge }: FetchOptions = {}
+		{ force = false }: FetchOptions = {}
 	): Promise<S> {
 		const existing = this.get(id) as S | undefined;
 
 		if (
 			existing &&
 			!force &&
-			Date.now() - existing.lastUpdate.getTime() < maxAge
+			Date.now() - existing.lastUpdate.getTime() < this.client.structureMaxAge
 		)
 			return existing;
 		return this.add<S>(

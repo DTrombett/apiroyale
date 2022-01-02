@@ -1,7 +1,7 @@
 import type ClientRoyale from "..";
 import type { APICard, FetchOptions } from "..";
 import { Card } from "../structures";
-import Constants, { Routes } from "../util";
+import { Routes } from "../util";
 import Manager from "./Manager";
 
 /**
@@ -26,14 +26,11 @@ export class CardManager extends Manager<typeof Card> {
 	 * @param options - The options for the fetch
 	 * @returns A promise that resolves with the fetched cards
 	 */
-	async fetch({
-		force = false,
-		maxAge = Constants.defaultMaxAge,
-	}: FetchOptions = {}): Promise<this> {
+	async fetch({ force = false }: FetchOptions = {}): Promise<this> {
 		if (
 			!force &&
 			Date.now() - Math.max(...this.map((card) => card.lastUpdate.getTime())) <
-				maxAge
+				this.client.structureMaxAge
 		)
 			return Promise.resolve(this);
 

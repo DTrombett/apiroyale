@@ -19,7 +19,7 @@ import {
 	PlayerManager,
 } from "./managers";
 import Rest from "./rest";
-import { Errors, Routes } from "./util";
+import Constants, { Errors, Routes } from "./util";
 
 /**
  * A class to connect to the Clash Royale API
@@ -64,6 +64,11 @@ export interface ClientRoyale extends EventEmitter {
  */
 export class ClientRoyale extends EventEmitter {
 	/**
+	 * The maximum time in milliseconds before cancelling a REST request
+	 */
+	abortTimeout: number = Constants.defaultAbortTimeout;
+
+	/**
 	 * The rest client
 	 */
 	api = new Rest(this);
@@ -72,6 +77,11 @@ export class ClientRoyale extends EventEmitter {
 	 * A manager for arenas
 	 */
 	arenas = new ArenaManager(this);
+
+	/**
+	 * The base URL of the API
+	 */
+	baseURL: string = Constants.baseURL;
 
 	/**
 	 * A manager for cards
@@ -115,6 +125,11 @@ export class ClientRoyale extends EventEmitter {
 	races = new CurrentRiverRaceManager(this);
 
 	/**
+	 * The maximum time in milliseconds passed after the structure was last fetched before fetching again.
+	 */
+	structureMaxAge: number = Constants.defaultMaxAge;
+
+	/**
 	 * The token used for the API
 	 */
 	token: string = process.env.CLASH_ROYALE_TOKEN!;
@@ -122,11 +137,19 @@ export class ClientRoyale extends EventEmitter {
 	/**
 	 * @param options - Options for the client
 	 */
-	constructor({ token }: ClientOptions = {}) {
+	constructor({
+		abortTimeout,
+		baseURL,
+		structureMaxAge,
+		token,
+	}: ClientOptions = {}) {
 		super();
 
 		if (token != null) this.token = token;
 		if (!this.token) throw new TypeError(Errors.tokenMissing());
+		if (abortTimeout != null) this.abortTimeout = abortTimeout;
+		if (baseURL != null) this.baseURL = baseURL;
+		if (structureMaxAge != null) this.structureMaxAge = structureMaxAge;
 	}
 
 	/**
