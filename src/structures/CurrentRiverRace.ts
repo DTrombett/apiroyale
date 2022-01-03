@@ -75,10 +75,10 @@ export class CurrentRiverRace<
 			data.periodLogs
 		);
 		this.clan = new ClanCurrentStanding(this.client, data.clan, this);
-		this.monthDay = data.periodIndex;
+		this.monthDay = data.periodIndex + 1;
 		this.state = RiverRaceState[data.state];
 		this.type = RiverRacePeriodType[data.periodType];
-		this.weekDay = data.sectionIndex;
+		this.weekDay = data.sectionIndex + 1;
 	}
 
 	/**
@@ -125,8 +125,8 @@ export class CurrentRiverRace<
 		if (data.clan !== undefined) this.clan.patch(data.clan);
 		if (data.clans !== undefined) this.leaderboard.overrideItems(data.clans);
 		if (data.state !== undefined) this.state = RiverRaceState[data.state];
-		if (data.sectionIndex !== undefined) this.weekDay = data.sectionIndex;
-		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex;
+		if (data.sectionIndex !== undefined) this.weekDay = data.sectionIndex + 1;
+		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex + 1;
 		if (data.periodType !== undefined)
 			this.type = RiverRacePeriodType[data.periodType];
 		if (data.periodLogs !== undefined)
@@ -144,10 +144,10 @@ export class CurrentRiverRace<
 			...super.toJSON(),
 			clan: this.clan.toJSON(),
 			clans: this.leaderboard.map((c) => c.toJSON()),
-			periodIndex: this.monthDay,
+			periodIndex: this.monthDay - 1,
 			periodLogs: this.warDays.map((p) => p.toJSON()),
 			periodType: RiverRacePeriodType[this.type] as APIRiverRacePeriodType,
-			sectionIndex: this.weekDay,
+			sectionIndex: this.weekDay - 1,
 			state: RiverRaceState[this.state] as APIRiverRaceState,
 		};
 	}

@@ -1,7 +1,12 @@
+import type Collection from "@discordjs/collection";
 import EventEmitter from "node:events";
 import { URLSearchParams } from "node:url";
 import type {
 	APIRiverRaceLog,
+	APITag,
+	Clan,
+	ClanPreview,
+	ClanResultPreview,
 	ClientEvents,
 	ClientOptions,
 	FetchRiverRaceLogOptions,
@@ -150,6 +155,16 @@ export class ClientRoyale extends EventEmitter {
 		if (abortTimeout != null) this.abortTimeout = abortTimeout;
 		if (baseURL != null) this.baseURL = baseURL;
 		if (structureMaxAge != null) this.structureMaxAge = structureMaxAge;
+	}
+
+	/**
+	 * A collection of all the clans cached
+	 */
+	get allClans(): Collection<APITag, Clan | ClanPreview | ClanResultPreview> {
+		return (this.clanPreviews as Collection<APITag, unknown>).concat(
+			this.clanResultPreviews,
+			this.clans
+		) as Collection<APITag, Clan | ClanPreview | ClanResultPreview>;
 	}
 
 	/**
