@@ -110,7 +110,7 @@ export interface APICurrentRiverRace {
 	sectionIndex: number;
 	periodIndex: number;
 	periodType: APIRiverRacePeriodType;
-	periodLogs: APIRiverRacePeriod[];
+	periodLogs?: APIRiverRacePeriod[];
 }
 
 export type APIImageLink<P extends string = string> =
