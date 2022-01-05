@@ -31,6 +31,7 @@ export class RiverRacePeriodStandingManager extends Manager<
 				addEvent: "newRiverRacePeriodStanding",
 				data,
 				removeEvent: "riverRacePeriodStandingRemove",
+				sortMethod: (a, b) => a.rank - b.rank,
 				updateEvent: "riverRacePeriodStandingUpdate",
 			},
 			period

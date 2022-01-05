@@ -32,6 +32,11 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	readonly extras: ConstructorExtras<T>;
 
 	/**
+	 * The method to sort the data
+	 */
+	sortMethod?: ManagerOptions<T>["sortMethod"];
+
+	/**
 	 * The structure class this manager handles
 	 */
 	readonly structure: T;
@@ -45,7 +50,7 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	constructor(
 		client: ClientRoyale,
 		structure: T,
-		{ addEvent, data, removeEvent, updateEvent }: ManagerOptions<T>,
+		{ addEvent, data, removeEvent, sortMethod, updateEvent }: ManagerOptions<T>,
 		...args: ConstructorExtras<T>
 	) {
 		super();
@@ -56,6 +61,7 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 			update: updateEvent,
 		};
 		this.extras = args;
+		this.sortMethod = sortMethod;
 		this.structure = structure;
 		if (data !== undefined) for (const element of data) this.add(element);
 	}
@@ -84,6 +90,7 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 				continue;
 			}
 			this.set(instance.id, instance);
+			this.sort();
 			this.client.emit(this.events.add, ...([instance] as never));
 		}
 		return data.length === 1 ? instance! : this;
@@ -122,6 +129,15 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 		this.delete(id);
 		this.client.emit(this.events.remove, ...([existing] as never));
 		return existing;
+	}
+
+	/**
+	 * Sort the structures in this manager using the {@link sortMethod}.
+	 * @returns The sorted manager
+	 */
+	sort(): this {
+		if (this.sortMethod) super.sort(this.sortMethod);
+		return this;
 	}
 
 	/**

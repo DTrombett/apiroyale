@@ -20,6 +20,7 @@ export class CurrentRiverRaceManager extends FetchableManager<
 			data,
 			removeEvent: "currentRiverRaceRemove",
 			route: Routes.CurrentRiverRace,
+			sortMethod: (a, b) => b.clan.score - a.clan.score,
 			updateEvent: "currentRiverRaceUpdate",
 		});
 	}

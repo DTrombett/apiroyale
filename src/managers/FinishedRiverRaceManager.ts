@@ -18,6 +18,7 @@ export class FinishedRiverRaceManager extends Manager<
 			addEvent: "newFinishedRiverRace",
 			data,
 			removeEvent: "finishedRiverRaceRemove",
+			sortMethod: (a, b) => b.seasonId - a.seasonId,
 			updateEvent: "finishedRiverRaceUpdate",
 		});
 	}

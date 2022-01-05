@@ -16,6 +16,7 @@ export class ArenaManager extends Manager<typeof Arena> {
 			addEvent: "newArena",
 			data,
 			removeEvent: "arenaRemove",
+			sortMethod: (a, b) => a.name.localeCompare(b.name),
 			updateEvent: "arenaUpdate",
 		});
 	}

@@ -17,6 +17,7 @@ export class PlayerManager extends FetchableManager<typeof Player> {
 			data,
 			removeEvent: "playerRemove",
 			route: Routes.Player,
+			sortMethod: (a, b) => b.trophies - a.trophies,
 			updateEvent: "playerUpdate",
 		});
 	}

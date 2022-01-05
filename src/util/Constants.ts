@@ -1,3 +1,4 @@
+import type { Comparator } from "@discordjs/collection";
 import type { OutgoingHttpHeaders } from "node:http";
 import type { URL, URLSearchParams } from "node:url";
 import type ClientRoyale from "..";
@@ -382,6 +383,11 @@ export interface ManagerOptions<T extends ConstructableStructure> {
 	 * The event to emit when a structure is removed
 	 */
 	removeEvent: StructureEvents<T>;
+
+	/**
+	 * The method to sort the data
+	 */
+	sortMethod?: Comparator<T["prototype"]["id"], T["prototype"]>;
 
 	/**
 	 * The event to emit when a structure is updated

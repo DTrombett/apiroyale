@@ -29,6 +29,7 @@ export class RiverRacePeriodManager extends Manager<typeof RiverRacePeriod> {
 				addEvent: "newRiverRacePeriod",
 				data,
 				removeEvent: "riverRacePeriodRemove",
+				sortMethod: (a, b) => b.monthDay - a.monthDay,
 				updateEvent: "riverRacePeriodUpdate",
 			},
 			race

@@ -20,6 +20,7 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 			data,
 			removeEvent: "clanRemove",
 			route: Routes.Clan,
+			sortMethod: (a, b) => b.score - a.score,
 			updateEvent: "clanUpdate",
 		});
 	}

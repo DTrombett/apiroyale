@@ -17,6 +17,7 @@ export class CardManager extends Manager<typeof Card> {
 			addEvent: "newCard",
 			data,
 			removeEvent: "cardRemove",
+			sortMethod: (a, b) => a.name.localeCompare(b.name),
 			updateEvent: "cardUpdate",
 		});
 	}

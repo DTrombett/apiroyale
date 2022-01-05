@@ -16,6 +16,7 @@ export class ClanPreviewManager extends Manager<typeof ClanPreview> {
 			addEvent: "newClanPreview",
 			data,
 			removeEvent: "clanPreviewRemove",
+			sortMethod: (a, b) => a.name.localeCompare(b.name),
 			updateEvent: "clanPreviewUpdate",
 		});
 	}

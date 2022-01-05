@@ -34,6 +34,7 @@ export class RiverRaceWeekStandingManager extends Manager<
 				addEvent: "newRiverRaceWeekStanding",
 				data,
 				removeEvent: "riverRaceWeekStandingRemove",
+				sortMethod: (a, b) => a.rank - b.rank,
 				updateEvent: "riverRaceWeekStandingUpdate",
 			},
 			race

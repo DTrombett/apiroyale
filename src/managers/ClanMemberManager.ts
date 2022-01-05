@@ -26,6 +26,7 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 				addEvent: "newClanMember",
 				data,
 				removeEvent: "clanMemberRemove",
+				sortMethod: (a, b) => b.trophies - a.trophies,
 				updateEvent: "clanMemberUpdate",
 			},
 			clan

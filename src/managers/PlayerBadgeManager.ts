@@ -25,6 +25,11 @@ export class PlayerBadgeManager extends Manager<typeof PlayerBadge> {
 				addEvent: "newBadge",
 				data,
 				removeEvent: "badgeRemove",
+				sortMethod: (a, b) =>
+					b.level - a.level ||
+					a.levels - b.levels ||
+					b.progress - a.progress ||
+					a.name.localeCompare(b.name),
 				updateEvent: "badgeUpdate",
 			},
 			player

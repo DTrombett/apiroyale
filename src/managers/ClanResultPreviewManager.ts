@@ -18,6 +18,7 @@ export class ClanResultPreviewManager extends Manager<
 			addEvent: "newClanResultPreview",
 			data,
 			removeEvent: "clanResultPreviewRemove",
+			sortMethod: (a, b) => b.score - a.score,
 			updateEvent: "clanResultPreviewUpdate",
 		});
 	}

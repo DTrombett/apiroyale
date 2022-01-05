@@ -27,6 +27,11 @@ export class PlayerAchievementManager extends Manager<
 				addEvent: "newAchievement",
 				data,
 				removeEvent: "achievementRemove",
+				sortMethod: (a, b) =>
+					b.level - a.level ||
+					b.percentage - a.percentage ||
+					b.progress - a.progress ||
+					a.name.localeCompare(b.name),
 				updateEvent: "achievementUpdate",
 			},
 			player

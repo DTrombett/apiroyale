@@ -31,6 +31,7 @@ export class ClanCurrentStandingManager extends Manager<
 				addEvent: "newClanCurrentStanding",
 				data,
 				removeEvent: "clanCurrentStandingRemove",
+				sortMethod: (a, b) => b.points - a.points || b.medals - a.medals,
 				updateEvent: "clanCurrentStandingUpdate",
 			},
 			race

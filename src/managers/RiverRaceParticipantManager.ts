@@ -30,6 +30,11 @@ export class RiverRaceParticipantManager extends Manager<
 				addEvent: "newRiverRaceParticipant",
 				data,
 				removeEvent: "riverRaceParticipantRemove",
+				sortMethod: (a, b) =>
+					b.medals - a.medals ||
+					(a.medals === 0
+						? b.decksUsed - a.decksUsed
+						: a.decksUsed - b.decksUsed),
 				updateEvent: "riverRaceParticipantUpdate",
 			},
 			clan
