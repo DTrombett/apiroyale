@@ -34,7 +34,10 @@ export class RiverRaceParticipantManager extends Manager<
 					b.medals - a.medals ||
 					(a.medals === 0
 						? b.decksUsed - a.decksUsed
-						: a.decksUsed - b.decksUsed),
+						: a.decksUsed - b.decksUsed) ||
+					b.decksUsedToday - a.decksUsedToday ||
+					b.boatAttacks - a.boatAttacks ||
+					a.name.localeCompare(b.name),
 				updateEvent: "riverRaceParticipantUpdate",
 			},
 			clan
