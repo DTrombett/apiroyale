@@ -44,6 +44,20 @@ export class RiverRacePeriod<
 	}
 
 	/**
+	 * The number of day from the start of this week
+	 */
+	get day(): number {
+		return (this.monthDay % 7) - 3;
+	}
+
+	/**
+	 * The week number of this period
+	 */
+	get week(): number {
+		return Math.ceil(this.monthDay / 7);
+	}
+
+	/**
 	 * Clone this period.
 	 * @returns The cloned period
 	 */

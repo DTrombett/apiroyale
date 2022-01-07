@@ -55,7 +55,7 @@ export class CurrentRiverRace<
 	/**
 	 * The number of day from the start of this week
 	 */
-	weekDay: number;
+	day: number;
 
 	/**
 	 * @param client - The client that instantiated this race
@@ -78,7 +78,7 @@ export class CurrentRiverRace<
 		this.monthDay = data.periodIndex + 1;
 		this.state = RiverRaceState[data.state];
 		this.type = RiverRacePeriodType[data.periodType];
-		this.weekDay = data.sectionIndex || this.monthDay % 7;
+		this.day = data.sectionIndex || (this.monthDay % 7) - 3;
 	}
 
 	/**
@@ -110,7 +110,7 @@ export class CurrentRiverRace<
 			this.state === race.state &&
 			this.type === race.type &&
 			this.warDays.equals(race.warDays) &&
-			this.weekDay === race.weekDay
+			this.day === race.day
 		);
 	}
 
@@ -133,7 +133,7 @@ export class CurrentRiverRace<
 		if (data.clans !== undefined) this.leaderboard.overrideItems(data.clans);
 		if (data.state !== undefined) this.state = RiverRaceState[data.state];
 		if (data.sectionIndex !== undefined)
-			this.weekDay = data.sectionIndex || this.monthDay % 7;
+			this.day = data.sectionIndex || this.monthDay % 7;
 		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex + 1;
 		if (data.periodType !== undefined)
 			this.type = RiverRacePeriodType[data.periodType];
@@ -155,7 +155,7 @@ export class CurrentRiverRace<
 			periodIndex: this.monthDay - 1,
 			periodLogs: this.warDays.map((p) => p.toJSON()),
 			periodType: RiverRacePeriodType[this.type] as APIRiverRacePeriodType,
-			sectionIndex: this.weekDay < 3 ? 0 : this.weekDay,
+			sectionIndex: this.day < 3 ? 0 : this.day,
 			state: RiverRaceState[this.state] as APIRiverRaceState,
 		};
 	}
