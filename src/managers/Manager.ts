@@ -107,6 +107,15 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	}
 
 	/**
+	 * Returns the index of the first occurrence of a value in the manager, or -1 if it is not present.
+	 * @param searchElement - The value to locate in the manager
+	 * @returns The index of the first occurrence of a value in the manager, or -1 if it is not present
+	 */
+	indexOf(searchElement: T["prototype"]): number {
+		return [...this.values()].indexOf(searchElement);
+	}
+
+	/**
 	 * Override all the structures in this manager.
 	 * @param items - The items to add
 	 * @returns The patched manager

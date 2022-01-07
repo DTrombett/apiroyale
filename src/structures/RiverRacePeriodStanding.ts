@@ -77,7 +77,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 		this.oldProgress = data.progressStartOfDay;
 		this.pointsEarned = data.progressEarned;
 		this.pointsEarnedFromDefenses = data.progressEarnedFromDefenses;
-		this.rank = data.endOfDayRank;
+		this.rank = data.endOfDayRank + 1;
 		this.totalProgress = data.progressEndOfDay;
 	}
 
@@ -127,7 +127,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	 * @returns The patched standing
 	 */
 	patch(data: Partial<APIRiverRacePeriodStanding>): this {
-		if (data.endOfDayRank !== undefined) this.rank = data.endOfDayRank;
+		if (data.endOfDayRank !== undefined) this.rank = data.endOfDayRank + 1;
 		if (data.numOfDefensesRemaining !== undefined)
 			this.defensesRemaining = data.numOfDefensesRemaining;
 		if (data.pointsEarned !== undefined) this.medals = data.pointsEarned;
@@ -153,7 +153,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 			clan: {
 				tag: this.clanTag,
 			},
-			endOfDayRank: this.rank,
+			endOfDayRank: this.rank - 1,
 			numOfDefensesRemaining: this.defensesRemaining,
 			pointsEarned: this.medals,
 			progressEarned: this.pointsEarned,

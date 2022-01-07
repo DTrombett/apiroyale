@@ -28,6 +28,13 @@ export class ClanCurrentStanding<
 	}
 
 	/**
+	 * The rank of this clan in the race
+	 */
+	get rank(): number {
+		return this.race.leaderboard.indexOf(this) + 1;
+	}
+
+	/**
 	 * Clone this standing.
 	 * @returns A clone of this standing
 	 */
