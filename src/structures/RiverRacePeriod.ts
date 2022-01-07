@@ -47,7 +47,7 @@ export class RiverRacePeriod<
 	 * The number of day from the start of this week
 	 */
 	get day(): number {
-		return (this.monthDay % 7) - 3;
+		return (this.monthDay % 7) - 2;
 	}
 
 	/**
