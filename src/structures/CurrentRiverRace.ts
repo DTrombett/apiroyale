@@ -10,7 +10,6 @@ import {
 	ClanCurrentStandingManager,
 	RiverRacePeriodManager,
 } from "../managers";
-import { RiverRacePeriodType, RiverRaceState } from "../util";
 import ClanCurrentStanding from "./ClanCurrentStanding";
 import Structure from "./Structure";
 
@@ -40,12 +39,12 @@ export class CurrentRiverRace<
 	/**
 	 * The state of this race
 	 */
-	state: RiverRaceState;
+	state: APIRiverRaceState;
 
 	/**
 	 * If the war is in the training phase or not
 	 */
-	type: RiverRacePeriodType;
+	type: APIRiverRacePeriodType;
 
 	/**
 	 * The progress of clans in this war for every war day
@@ -76,8 +75,8 @@ export class CurrentRiverRace<
 		);
 		this.clan = new ClanCurrentStanding(this.client, data.clan, this);
 		this.monthDay = data.periodIndex + 1;
-		this.state = RiverRaceState[data.state];
-		this.type = RiverRacePeriodType[data.periodType];
+		this.state = data.state;
+		this.type = data.periodType;
 		this.day = data.sectionIndex || (this.monthDay % 7) - 3;
 	}
 
@@ -131,12 +130,11 @@ export class CurrentRiverRace<
 	patch(data: Partial<T>): this {
 		if (data.clan !== undefined) this.clan.patch(data.clan);
 		if (data.clans !== undefined) this.leaderboard.overrideItems(data.clans);
-		if (data.state !== undefined) this.state = RiverRaceState[data.state];
+		if (data.state !== undefined) this.state = data.state;
 		if (data.sectionIndex !== undefined)
 			this.day = data.sectionIndex || this.monthDay % 7;
 		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex + 1;
-		if (data.periodType !== undefined)
-			this.type = RiverRacePeriodType[data.periodType];
+		if (data.periodType !== undefined) this.type = data.periodType;
 		if (data.periodLogs !== undefined)
 			this.warDays.overrideItems(data.periodLogs);
 
@@ -154,9 +152,9 @@ export class CurrentRiverRace<
 			clans: this.leaderboard.map((c) => c.toJSON()),
 			periodIndex: this.monthDay - 1,
 			periodLogs: this.warDays.map((p) => p.toJSON()),
-			periodType: RiverRacePeriodType[this.type] as APIRiverRacePeriodType,
+			periodType: this.type,
 			sectionIndex: this.day < 3 ? 0 : this.day,
-			state: RiverRaceState[this.state] as APIRiverRaceState,
+			state: this.state,
 		};
 	}
 }

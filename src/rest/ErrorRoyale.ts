@@ -1,5 +1,5 @@
 import type { OutgoingHttpHeaders } from "node:http";
-import type { APIRequest, APIError, Path, Response } from "..";
+import type { APIError, APIRequest, Path, Response } from "..";
 
 /**
  * A class representing an error received from the API

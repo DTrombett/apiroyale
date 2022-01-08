@@ -1,5 +1,5 @@
-import type { APIPlayerCard, Player } from "..";
 import type ClientRoyale from "..";
+import type { APIPlayerCard, Player } from "..";
 import { Card } from "./Card";
 
 /**

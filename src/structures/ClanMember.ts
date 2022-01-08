@@ -1,6 +1,6 @@
 import type ClientRoyale from "..";
 import type { APIClanMember, APIRole, Arena, Clan, Player } from "..";
-import { APIDateToObject, ClanMemberRole, dateObjectToAPIDate } from "../util";
+import { APIDateToObject, dateObjectToAPIDate } from "../util";
 import BasePlayer from "./BasePlayer";
 
 /**
@@ -52,7 +52,7 @@ export class ClanMember<
 	/**
 	 * The role of this member
 	 */
-	role: ClanMemberRole;
+	role: APIRole;
 
 	/**
 	 * The number of trophies this member has
@@ -75,7 +75,7 @@ export class ClanMember<
 		this.lastSeen = APIDateToObject(data.lastSeen);
 		this.previousRank = data.previousClanRank;
 		this.rank = data.clanRank;
-		this.role = ClanMemberRole[data.role];
+		this.role = data.role;
 		this.trophies = data.trophies;
 	}
 
@@ -146,7 +146,7 @@ export class ClanMember<
 			this.lastSeen = APIDateToObject(member.lastSeen);
 		if (member.previousClanRank !== undefined)
 			this.previousRank = member.previousClanRank;
-		if (member.role !== undefined) this.role = ClanMemberRole[member.role];
+		if (member.role !== undefined) this.role = member.role;
 		if (member.trophies !== undefined) this.trophies = member.trophies;
 
 		return super.patch(member);
@@ -167,7 +167,7 @@ export class ClanMember<
 			expLevel: this.kingLevel,
 			lastSeen: dateObjectToAPIDate(this.lastSeen),
 			previousClanRank: this.previousRank,
-			role: ClanMemberRole[this.role] as APIRole,
+			role: this.role,
 			trophies: this.trophies,
 		};
 	}

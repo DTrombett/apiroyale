@@ -29,51 +29,6 @@ import type {
 } from "..";
 
 /**
- * The role of a clan member
- */
-export enum ClanMemberRole {
-	/**
-	 * The member is a member of the clan
-	 */
-	member,
-
-	/**
-	 * The member is an elder of the clan
-	 */
-	elder,
-
-	/**
-	 * The member is a co-leader of the clan
-	 */
-	coLeader,
-
-	/**
-	 * The member is the leader of the clan
-	 */
-	leader,
-}
-
-/**
- * Represents the type of a clan
- */
-export enum ClanType {
-	/**
-	 * Clan is closed
-	 */
-	closed,
-
-	/**
-	 * The clan is invite only
-	 */
-	inviteOnly,
-
-	/**
-	 * The clan is open
-	 */
-	open,
-}
-
-/**
  * Events that can be emitted by the client
  */
 export interface ClientEvents {
@@ -459,31 +414,6 @@ export enum RequestStatus {
 	 * The request failed
 	 */
 	Failed,
-}
-
-/**
- * The type of a war day
- */
-export enum RiverRacePeriodType {
-	/**
-	 * A training day
-	 */
-	training,
-
-	/**
-	 * A war day
-	 */
-	warDay,
-}
-
-/**
- * The state of a river race
- */
-export enum RiverRaceState {
-	/**
-	 * The race is full
-	 */
-	full,
 }
 
 /**

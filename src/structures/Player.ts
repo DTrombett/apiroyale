@@ -5,16 +5,16 @@ import type {
 	APIRole,
 	Arena,
 	Clan,
+	ClanMember,
 	FetchOptions,
 	PlayerCard,
-	ClanMember,
 } from "..";
 import {
 	PlayerAchievementManager,
 	PlayerBadgeManager,
 	PlayerCardManager,
 } from "../managers";
-import { ClanMemberRole, isEqual } from "../util";
+import { isEqual } from "../util";
 import BasePlayer from "./BasePlayer";
 
 /**
@@ -119,7 +119,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The role of this player
 	 */
-	role: ClanMemberRole;
+	role: APIRole;
 
 	/**
 	 * The star points of this player
@@ -187,7 +187,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 		this.expPoints = data.expPoints;
 		this.leagueStatistics = data.leagueStatistics;
 		this.losses = data.losses;
-		this.role = ClanMemberRole[data.role];
+		this.role = data.role;
 		this.starPoints = data.starPoints;
 		this.threeCrownWins = data.threeCrownWins;
 		this.totalDonations = data.totalDonations;
@@ -331,7 +331,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 		if (data.leagueStatistics !== undefined)
 			this.leagueStatistics = data.leagueStatistics;
 		if (data.losses !== undefined) this.losses = data.losses;
-		if (data.role !== undefined) this.role = ClanMemberRole[data.role];
+		if (data.role !== undefined) this.role = data.role;
 		if (data.starPoints !== undefined) this.starPoints = data.starPoints;
 		if (data.threeCrownWins !== undefined)
 			this.threeCrownWins = data.threeCrownWins;
@@ -377,7 +377,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 			challengeMaxWins: this.maxWinsInChallenge,
 			clanCardsCollected: this.oldClanCardsCollected,
 			warDayWins: this.oldWarDayWins,
-			role: ClanMemberRole[this.role] as APIRole,
+			role: this.role,
 			starPoints: this.starPoints,
 			threeCrownWins: this.threeCrownWins,
 			tournamentBattleCount: this.tournamentBattleCount,

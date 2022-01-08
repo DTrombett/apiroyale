@@ -1,5 +1,4 @@
 import type { APIClanResultPreview, APIClanType, ClientRoyale } from "..";
-import { ClanType } from "../util";
 import ClanPreview from "./ClanPreview";
 import type Location from "./Location";
 
@@ -37,7 +36,7 @@ export class ClanResultPreview<
 	/**
 	 * The type of clan
 	 */
-	type: ClanType;
+	type: APIClanType;
 
 	/**
 	 * The clan's war trophies
@@ -56,7 +55,7 @@ export class ClanResultPreview<
 		this.memberCount = data.members;
 		this.requiredTrophies = data.requiredTrophies;
 		this.score = data.clanScore;
-		this.type = ClanType[data.type];
+		this.type = data.type;
 		this.warTrophies = data.clanWarTrophies;
 	}
 
@@ -108,7 +107,7 @@ export class ClanResultPreview<
 		if (data.members !== undefined) this.memberCount = data.members;
 		if (data.requiredTrophies !== undefined)
 			this.requiredTrophies = data.requiredTrophies;
-		if (data.type !== undefined) this.type = ClanType[data.type];
+		if (data.type !== undefined) this.type = data.type;
 
 		return super.patch(data);
 	}
@@ -126,7 +125,7 @@ export class ClanResultPreview<
 			location: this.location.toJSON(),
 			members: this.memberCount,
 			requiredTrophies: this.requiredTrophies,
-			type: ClanType[this.type] as APIClanType,
+			type: this.type,
 		};
 	}
 }
