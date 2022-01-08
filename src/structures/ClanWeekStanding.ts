@@ -33,7 +33,10 @@ export class ClanWeekStanding<
 		super(client, data);
 
 		this.standing = standing;
-		this.finishedAt = finishedAt.getTime() <= 0 ? null : finishedAt;
+		this.finishedAt =
+			finishedAt.getMonth() && finishedAt.getFullYear() >= 2000
+				? finishedAt
+				: null;
 	}
 
 	/**
