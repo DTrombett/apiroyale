@@ -2,7 +2,7 @@
 	"clean": true,
 	"dts": true,
 	"entry": [
-		"src/index.ts"
+		"src/**/*.ts"
 	],
 	"format": [
 		"cjs"
