@@ -22,7 +22,7 @@ export class ClanPreview<
 	 */
 	badgeId: number;
 
-	readonly id!: APITag;
+	declare readonly id: APITag;
 
 	/**
 	 * The clan's name

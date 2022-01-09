@@ -10,7 +10,7 @@ export type APIBasePlayer = Pick<APIPlayer, "name" | "tag">;
 export class BasePlayer<
 	T extends APIBasePlayer = APIBasePlayer
 > extends Structure<T> {
-	readonly id!: APITag;
+	declare readonly id: APITag;
 
 	/**
 	 * The name of this player

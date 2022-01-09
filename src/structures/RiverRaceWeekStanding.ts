@@ -12,7 +12,7 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	 */
 	readonly clan: ClanWeekStanding;
 
-	readonly id!: APITag;
+	declare readonly id: APITag;
 
 	/**
 	 * The race this standing is for

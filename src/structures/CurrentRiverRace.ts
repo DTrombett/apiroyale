@@ -24,7 +24,7 @@ export class CurrentRiverRace<
 	 */
 	readonly clan: ClanCurrentStanding;
 
-	readonly id!: APITag;
+	declare readonly id: APITag;
 
 	/**
 	 * The leaderboard of clans in this race

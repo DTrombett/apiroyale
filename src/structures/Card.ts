@@ -15,7 +15,7 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	/**
 	 * The id of this arena
 	 */
-	readonly id!: StringId;
+	declare readonly id: StringId;
 
 	/**
 	 * The maximum level of this card

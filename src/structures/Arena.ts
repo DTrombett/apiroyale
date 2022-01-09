@@ -8,7 +8,7 @@ export class Arena<T extends APIArena = APIArena> extends Structure<T> {
 	/**
 	 * The id of this arena
 	 */
-	readonly id!: StringId;
+	declare readonly id: StringId;
 
 	/**
 	 * The name of this arena

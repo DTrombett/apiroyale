@@ -14,7 +14,7 @@ export class FinishedRiverRace<
 	 */
 	finishTime: Date;
 
-	readonly id!: `${StringId}-${StringId}`;
+	declare readonly id: `${StringId}-${StringId}`;
 
 	/**
 	 * A leaderboard of clans in this race

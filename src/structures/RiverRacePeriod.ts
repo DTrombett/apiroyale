@@ -9,7 +9,7 @@ import Structure from "./Structure";
 export class RiverRacePeriod<
 	T extends APIRiverRacePeriod = APIRiverRacePeriod
 > extends Structure<T> {
-	readonly id!: StringId;
+	declare readonly id: StringId;
 
 	/**
 	 * The leaderboard of this period

@@ -21,7 +21,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	 */
 	defensesRemaining!: number;
 
-	readonly id!: APITag;
+	declare readonly id: APITag;
 
 	/**
 	 * The medal count of the clan in this period

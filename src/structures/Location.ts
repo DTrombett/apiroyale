@@ -16,7 +16,7 @@ export class Location<
 	/**
 	 * The id of this location
 	 */
-	readonly id!: StringId;
+	declare readonly id: StringId;
 
 	/**
 	 * The location's name
