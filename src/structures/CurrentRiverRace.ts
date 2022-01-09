@@ -77,7 +77,7 @@ export class CurrentRiverRace<
 		this.monthDay = data.periodIndex + 1;
 		this.state = data.state;
 		this.type = data.periodType;
-		this.day = data.sectionIndex || (this.monthDay % 7) - 3;
+		this.day = data.sectionIndex || (this.monthDay - 3) % 7;
 	}
 
 	/**
