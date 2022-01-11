@@ -97,6 +97,25 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	}
 
 	/**
+	 * Creates an identical shallow copy of this manager.
+	 * @returns The cloned manager
+	 */
+	clone(): Manager<T> {
+		return new Manager(
+			this.client,
+			this.structure,
+			{
+				addEvent: this.events.add,
+				data: this.toJSON(),
+				removeEvent: this.events.remove,
+				sortMethod: this.sortMethod,
+				updateEvent: this.events.update,
+			},
+			...this.extras
+		).overrideItems(this.toJSON());
+	}
+
+	/**
 	 * Check if this manager has all the items of another manager.
 	 * @param manager - The manager to check against
 	 * @returns Whether or not this manager has all the items of another manager
