@@ -163,9 +163,8 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	 * Sort the structures in this manager using the {@link sortMethod}.
 	 * @returns The sorted manager
 	 */
-	sort(): this {
-		if (this.sortMethod) super.sort(this.sortMethod);
-		return this;
+	sort(sortMethod: this["sortMethod"] = this.sortMethod): this {
+		return super.sort(sortMethod);
 	}
 
 	/**
