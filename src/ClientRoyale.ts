@@ -5,11 +5,13 @@ import type {
 	APIRiverRaceLog,
 	APITag,
 	Clan,
+	ClanMember,
 	ClanPreview,
 	ClanResultPreview,
 	ClientEvents,
 	ClientOptions,
 	FetchRiverRaceLogOptions,
+	Player,
 } from ".";
 import { RiverRaceLogResults } from "./lists";
 import {
@@ -165,6 +167,15 @@ export class ClientRoyale extends EventEmitter {
 			this.clanResultPreviews,
 			this.clans
 		) as Collection<APITag, Clan | ClanPreview | ClanResultPreview>;
+	}
+
+	/**
+	 * A collection of all the players cached
+	 */
+	get allPlayers(): Collection<APITag, ClanMember | Player> {
+		return (this.players as Collection<APITag, unknown>).concat(
+			...this.clans.map((clan) => clan.members)
+		) as Collection<APITag, ClanMember | Player>;
 	}
 
 	/**
