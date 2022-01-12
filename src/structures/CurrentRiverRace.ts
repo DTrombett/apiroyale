@@ -106,7 +106,7 @@ export class CurrentRiverRace<
 			this.clan.id === race.clan.id &&
 			this.leaderboard.equals(race.leaderboard) &&
 			this.monthDay === race.monthDay &&
-			this.state === race.state &&
+			(this.state as string) === race.state &&
 			this.type === race.type &&
 			this.warDays.equals(race.warDays) &&
 			this.day === race.day
