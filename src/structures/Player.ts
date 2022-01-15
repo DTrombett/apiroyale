@@ -82,9 +82,9 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	expPoints: number;
 
 	/**
-	 * The most used card of this player
+	 * The most used card of this player, if any
 	 */
-	favouriteCard: PlayerCard;
+	favouriteCard?: PlayerCard;
 
 	/**
 	 * The experience/king level of this player
@@ -178,9 +178,10 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 		this.cardsWonInChallenges = data.challengeCardsWon;
 		this.maxWinsInChallenge = data.challengeMaxWins;
 		this.oldClanCardsCollected = data.clanCardsCollected;
-		this.favouriteCard = this.cards.get(
-			`${data.currentFavouriteCard.id}`
-		) as PlayerCard;
+		if (data.currentFavouriteCard !== undefined)
+			this.favouriteCard = this.cards.get(
+				`${data.currentFavouriteCard.id}`
+			) as PlayerCard;
 		this.donationsPerWeek = data.donations;
 		this.donationsReceivedPerWeek = data.donationsReceived;
 		this.kingLevel = data.expLevel;
@@ -261,7 +262,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 			this.donationsPerWeek === player.donationsPerWeek &&
 			this.donationsReceivedPerWeek === player.donationsReceivedPerWeek &&
 			this.expPoints === player.expPoints &&
-			this.favouriteCard.id === player.favouriteCard.id &&
+			this.favouriteCard?.id === player.favouriteCard?.id &&
 			this.kingLevel === player.kingLevel &&
 			isEqual(this.leagueStatistics, player.leagueStatistics) &&
 			this.losses === player.losses &&
@@ -366,7 +367,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 			challengeCardsWon: this.cardsWonInChallenges,
 			clan: this.clan?.toJSON(),
 			currentDeck: this.deck.map((card) => card.toJSON()),
-			currentFavouriteCard: this.favouriteCard.toJSON(),
+			currentFavouriteCard: this.favouriteCard?.toJSON(),
 			donations: this.donationsPerWeek,
 			donationsReceived: this.donationsReceivedPerWeek,
 			expLevel: this.kingLevel,

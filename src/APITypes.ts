@@ -157,7 +157,7 @@ export interface APIPlayer {
 	clan?: APIClanPreview;
 	clanCardsCollected: number;
 	currentDeck: APIPlayerCard[];
-	currentFavouriteCard: APICard;
+	currentFavouriteCard?: APICard;
 	donations: number;
 	donationsReceived: number;
 	expLevel: number;
