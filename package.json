@@ -39,7 +39,6 @@
     "build": "tsup",
     "lint": "eslint src/**/*.ts --fix && prettier --write src/**/*.ts",
     "precommit": "npm run lint",
-    "prepare": "npm test",
     "postinstall": "npm run build",
     "start": "npm run build && node .",
     "test": "eslint src && tsc --noEmit"

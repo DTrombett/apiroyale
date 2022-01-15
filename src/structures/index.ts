@@ -22,5 +22,6 @@ export * from "./RiverRacePeriod";
 export * from "./RiverRacePeriodStanding";
 export * from "./RiverRaceWeekStanding";
 export * from "./Structure";
+export * from "./UpcomingChest";
 
 export default Structure;

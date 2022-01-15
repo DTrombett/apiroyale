@@ -20,5 +20,6 @@ export * from "./RiverRaceParticipantManager";
 export * from "./RiverRacePeriodManager";
 export * from "./RiverRacePeriodStandingManager";
 export * from "./RiverRaceWeekStandingManager";
+export * from "./UpcomingChestManager";
 
 export default Manager;

@@ -30,7 +30,7 @@ export class CardManager extends Manager<typeof Card> {
 	async fetch({ force = false }: FetchOptions = {}): Promise<this> {
 		if (
 			!force &&
-			Date.now() - Math.max(...this.map((card) => card.lastUpdate.getTime())) <
+			Date.now() - (this.first()?.lastUpdate.getTime() ?? 0) <
 				this.client.structureMaxAge
 		)
 			return Promise.resolve(this);

@@ -26,6 +26,7 @@ import type {
 	RiverRacePeriodStanding,
 	RiverRaceWeekStanding,
 	Structure,
+	UpcomingChest,
 } from "..";
 
 /**
@@ -90,6 +91,7 @@ export interface ClientEvents {
 	newRiverRacePeriod: [period: RiverRacePeriod];
 	newRiverRacePeriodStanding: [standing: RiverRacePeriodStanding];
 	newRiverRaceWeekStanding: [standing: RiverRaceWeekStanding];
+	newUpcomingChest: [chest: UpcomingChest];
 	playerAchievementUpdate: [
 		oldAchievement: PlayerAchievement,
 		newAchievement: PlayerAchievement
@@ -129,6 +131,8 @@ export interface ClientEvents {
 		oldStanding: RiverRaceWeekStanding,
 		newStanding: RiverRaceWeekStanding
 	];
+	upcomingChestRemove: [chest: UpcomingChest];
+	upcomingChestUpdate: [oldChest: UpcomingChest, newChest: UpcomingChest];
 }
 
 /**
@@ -265,6 +269,21 @@ export interface FetchOptions {
 	 * Whether to skip the cache and fetch from the API
 	 */
 	force?: boolean;
+}
+
+/**
+ * Options for fetching a player's upcoming chests
+ */
+export interface FetchPlayerUpcomingChestsOptions {
+	/**
+	 * Whether to skip the cache and fetch from the API
+	 */
+	force?: boolean;
+
+	/**
+	 * The tag of the player
+	 */
+	tag: APITag;
 }
 
 /**
@@ -428,6 +447,7 @@ export const Routes = {
 	Location: (id: StringId) => `/locations/${id}` as const,
 	Player: (tag: APITag) => `/players/${tag}` as const,
 	RiverRaceLog: (tag: APITag) => `/clans/${tag}/riverracelog` as const,
+	UpcomingChests: (tag: APITag) => `/players/${tag}/upcomingchests` as const,
 } as const;
 
 /**

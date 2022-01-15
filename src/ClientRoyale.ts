@@ -4,6 +4,7 @@ import { URLSearchParams } from "node:url";
 import type {
 	APIRiverRaceLog,
 	APITag,
+	APIUpcomingChests,
 	Clan,
 	ClanMember,
 	ClanPreview,
@@ -24,8 +25,10 @@ import {
 	FinishedRiverRaceManager,
 	LocationManager,
 	PlayerManager,
+	UpcomingChestManager,
 } from "./managers";
 import Rest from "./rest";
+import type { FetchPlayerUpcomingChestsOptions } from "./util";
 import Constants, { Errors, Routes } from "./util";
 
 /**
@@ -186,7 +189,7 @@ export class ClientRoyale extends EventEmitter {
 	async fetchRiverRaceLog(
 		options: FetchRiverRaceLogOptions
 	): Promise<RiverRaceLogResults> {
-		const clan = this.clanPreviews.get(options.tag);
+		const clan = this.allClans.get(options.tag);
 		const query = new URLSearchParams();
 
 		if (options.limit !== undefined) query.append("limit", `${options.limit}`);
@@ -202,6 +205,32 @@ export class ClientRoyale extends EventEmitter {
 
 		clan?.riverRaceLog.add(...log.items);
 		return new RiverRaceLogResults(this, options, log);
+	}
+
+	/**
+	 * Fetch the upcoming chests of a player.
+	 * @param options - Options for fetching the upcoming chests
+	 * @returns The upcoming chests of a player
+	 */
+	async fetchPlayerUpcomingChests<T extends UpcomingChestManager>({
+		tag,
+		force = false,
+	}: FetchPlayerUpcomingChestsOptions): Promise<T> {
+		const player = this.allPlayers.get(tag);
+
+		if (
+			!force &&
+			player &&
+			Date.now() - (player.upcomingChests.first()?.lastUpdate.getTime() ?? 0) <
+				this.structureMaxAge
+		)
+			return player.upcomingChests as T;
+		const { items: chests } = await this.api.get<APIUpcomingChests>(
+			Routes.UpcomingChests(tag)
+		);
+
+		return (player?.upcomingChests.add(...chests) ??
+			new UpcomingChestManager(this, chests)) as T;
 	}
 }
 

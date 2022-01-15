@@ -1,5 +1,12 @@
 import type ClientRoyale from "..";
-import type { APIPlayer, APITag, FetchOptions, Player } from "..";
+import type {
+	APIPlayer,
+	APITag,
+	FetchOptions,
+	FetchPlayerUpcomingChestsOptions,
+	Player,
+} from "..";
+import { UpcomingChestManager } from "../managers";
 import Structure from "./Structure";
 
 export type APIBasePlayer = Pick<APIPlayer, "name" | "tag">;
@@ -23,6 +30,11 @@ export class BasePlayer<
 	readonly tag: APITag;
 
 	/**
+	 * The player's upcoming chests
+	 */
+	readonly upcomingChests: UpcomingChestManager;
+
+	/**
 	 * @param client - The client that instantiated this player
 	 * @param data - The data of the player
 	 */
@@ -31,6 +43,7 @@ export class BasePlayer<
 
 		this.tag = data.tag;
 		this.name = data.name;
+		this.upcomingChests = new UpcomingChestManager(client);
 	}
 
 	/**
@@ -61,6 +74,17 @@ export class BasePlayer<
 	 */
 	fetch(options?: FetchOptions): Promise<Player> {
 		return this.client.players.fetch(this.id, options);
+	}
+
+	/**
+	 * Fetch this player's upcoming chests.
+	 * @param options - The options for the fetch
+	 * @returns A promise that resolves with the player's upcoming chests
+	 */
+	fetchUpcomingChests(
+		options: FetchPlayerUpcomingChestsOptions
+	): Promise<UpcomingChestManager> {
+		return this.upcomingChests.fetch(options);
 	}
 
 	/**

@@ -254,3 +254,10 @@ export type APISeasonId =
 	`${number}${number}${number}${number}-${number}${number}`;
 
 export type APITag = `#${string}`;
+
+export interface APIUpcomingChest {
+	index: number;
+	name: string;
+}
+
+export type APIUpcomingChests = Pick<APIList<APIUpcomingChest>, "items">;
