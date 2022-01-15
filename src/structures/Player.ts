@@ -124,7 +124,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The star points of this player
 	 */
-	starPoints: number;
+	starPoints = 0;
 
 	/**
 	 * The number of three crown wins this player has
@@ -189,7 +189,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 		this.leagueStatistics = data.leagueStatistics;
 		this.losses = data.losses;
 		this.role = data.role;
-		this.starPoints = data.starPoints;
+		if (data.starPoints !== undefined) this.starPoints = data.starPoints;
 		this.threeCrownWins = data.threeCrownWins;
 		this.totalDonations = data.totalDonations;
 		this.tournamentBattleCount = data.tournamentBattleCount;
@@ -210,7 +210,9 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 * The percentual of matches lost by this player
 	 */
 	get lossPercentage(): number {
-		return (this.losses / (this.wins + this.losses)) * 100;
+		const winAndLosses = this.wins + this.losses;
+
+		return winAndLosses !== 0 ? (this.losses / winAndLosses) * 100 : 0;
 	}
 
 	/**
@@ -224,14 +226,16 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 * The percentual of three crown wins of this player
 	 */
 	get threeCrownWinPercentage(): number {
-		return (this.threeCrownWins / this.wins) * 100;
+		return this.wins !== 0 ? (this.threeCrownWins / this.wins) * 100 : 0;
 	}
 
 	/**
 	 * The percentual of matches won by this player
 	 */
 	get winPercentage(): number {
-		return (this.wins / (this.wins + this.losses)) * 100;
+		const winAndLosses = this.wins + this.losses;
+
+		return winAndLosses !== 0 ? (this.wins / winAndLosses) * 100 : 0;
 	}
 
 	/**

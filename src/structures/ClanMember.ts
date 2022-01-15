@@ -83,7 +83,9 @@ export class ClanMember<
 	 * The contribution to the total clan donations of this member
 	 */
 	get donationPercentage(): number {
-		return (this.donationsPerWeek / this.clan.donationsPerWeek) * 100;
+		return this.clan.donationsPerWeek
+			? (this.donationsPerWeek / this.clan.donationsPerWeek) * 100
+			: 0;
 	}
 
 	/**

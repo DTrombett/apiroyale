@@ -72,7 +72,7 @@ export class PlayerAchievement<
 	 * The percentage of the achievement's progress
 	 */
 	get percentage(): number {
-		return (this.progress / this.target) * 100;
+		return this.target !== 0 ? (this.progress / this.target) * 100 : 0;
 	}
 
 	/**

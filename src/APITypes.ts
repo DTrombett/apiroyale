@@ -166,7 +166,7 @@ export interface APIPlayer {
 	losses: number;
 	name: string;
 	role: APIRole;
-	starPoints: number;
+	starPoints?: number;
 	tag: APITag;
 	threeCrownWins: number;
 	totalDonations: number;
