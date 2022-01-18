@@ -257,7 +257,21 @@ export type APITag = `#${string}`;
 
 export interface APIUpcomingChest {
 	index: number;
-	name: string;
+	name: APIUpcomingChestName;
 }
+
+export type APIUpcomingChestName =
+	| "Epic Chest"
+	| "Giant Chest"
+	| "Gold Crate"
+	| "Golden Chest"
+	| "Legendary Chest"
+	| "Magical Chest"
+	| "Mega Lightning Chest"
+	| "Overflowing Gold Crate"
+	| "Plentiful Gold Crate"
+	| "Royal Wild Chest"
+	| "Silver Chest"
+	| "Wooden Chest";
 
 export type APIUpcomingChests = Pick<APIList<APIUpcomingChest>, "items">;

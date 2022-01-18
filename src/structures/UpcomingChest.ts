@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIUpcomingChest } from "..";
+import type { APIUpcomingChest, APIUpcomingChestName } from "..";
 import Structure from "./Structure";
 
 /**
@@ -16,7 +16,7 @@ export class UpcomingChest<
 	/**
 	 * The name of the chest
 	 */
-	name: string;
+	name: APIUpcomingChestName;
 
 	/**
 	 * @param client - The client that instantiated this chest
