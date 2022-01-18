@@ -262,6 +262,16 @@ export interface EventsOptions<T extends ConstructableStructure> {
 }
 
 /**
+ * Options for fetching a clan's members
+ */
+export interface FetchClanMembersOptions extends ListOptions {
+	/**
+	 * The tag of the clan
+	 */
+	tag: APITag;
+}
+
+/**
  * Options to fetch a structure
  */
 export interface FetchOptions {

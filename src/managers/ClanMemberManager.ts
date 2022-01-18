@@ -1,5 +1,13 @@
 import type ClientRoyale from "..";
-import type { APIClanMember, Clan, FetchOptions, Path } from "..";
+import type {
+	APIClanMember,
+	APITag,
+	Clan,
+	ClanPreview,
+	ClanResultPreview,
+	FetchOptions,
+	Path,
+} from "..";
 import { ClanMember } from "../structures";
 import { Routes } from "../util";
 import Manager from "./Manager";
@@ -9,16 +17,16 @@ import Manager from "./Manager";
  */
 export class ClanMemberManager extends Manager<typeof ClanMember> {
 	/**
-	 * The clan this manager is for
+	 * The clan tag this manager is for
 	 */
-	readonly clan: Clan;
+	readonly clanTag: APITag;
 
 	/**
 	 * @param client - The client that instantiated this manager
-	 * @param clan - The clan this manager is for
+	 * @param clanTag - The clan tag this manager is for
 	 * @param data - The data to initialize this manager with
 	 */
-	constructor(client: ClientRoyale, clan: Clan, data?: APIClanMember[]) {
+	constructor(client: ClientRoyale, clanTag: APITag, data?: APIClanMember[]) {
 		super(
 			client,
 			ClanMember,
@@ -29,17 +37,24 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 				sortMethod: (a, b) => b.trophies - a.trophies,
 				updateEvent: "clanMemberUpdate",
 			},
-			clan
+			clanTag
 		);
 
-		this.clan = clan;
+		this.clanTag = clanTag;
+	}
+
+	/**
+	 * The clan this manager is for, if cached
+	 */
+	get clan(): Clan | ClanPreview | ClanResultPreview | null {
+		return this.client.allClans.get(this.clanTag) ?? null;
 	}
 
 	/**
 	 * The path to fetch the members from
 	 */
 	get path(): Path {
-		return Routes.ClanMembers(this.clan.tag) as Path;
+		return Routes.ClanMembers(this.clanTag);
 	}
 
 	/**
@@ -48,15 +63,17 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	 * @returns A promise that resolves with the fetched members
 	 */
 	async fetch({ force = false }: FetchOptions = {}): Promise<this> {
+		const first = this.first();
+
 		if (
 			!force &&
-			Date.now() - this.clan.lastUpdate.getTime() < this.client.structureMaxAge
+			first &&
+			Date.now() - first.lastUpdate.getTime() < this.client.structureMaxAge
 		)
 			return Promise.resolve(this);
 		return this.client.api
 			.get<APIClanMember[]>(this.path)
-			.then((memberList) => this.clan.patch({ memberList }))
-			.then(() => this);
+			.then((memberList) => this.add(...memberList));
 	}
 }
 

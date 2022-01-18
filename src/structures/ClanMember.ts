@@ -1,7 +1,16 @@
 import type ClientRoyale from "..";
-import type { APIClanMember, APIRole, Arena, Clan, Player } from "..";
+import type {
+	APIClanMember,
+	APIRole,
+	APITag,
+	Arena,
+	Clan,
+	ClanPreview,
+	Player,
+} from "..";
 import { APIDateToObject, dateObjectToAPIDate } from "../util";
 import BasePlayer from "./BasePlayer";
+import ClanResultPreview from "./ClanResultPreview";
 
 /**
  * A clan member
@@ -15,9 +24,9 @@ export class ClanMember<
 	readonly arena: Arena;
 
 	/**
-	 * The clan of this member
+	 * The clan tag of this member
 	 */
-	readonly clan: Clan;
+	readonly clanTag: APITag;
 
 	/**
 	 * The number of donations this member has made this week
@@ -62,12 +71,12 @@ export class ClanMember<
 	/**
 	 * @param client - The client that instantiated this clan member
 	 * @param data - The data of the member
-	 * @param clan - The clan of the member
+	 * @param clanTag - The clan of the member
 	 */
-	constructor(client: ClientRoyale, data: T, clan: Clan) {
+	constructor(client: ClientRoyale, data: T, clanTag: APITag) {
 		super(client, data);
 
-		this.clan = clan;
+		this.clanTag = clanTag;
 		this.arena = this.client.arenas.add(data.arena);
 		this.donationsPerWeek = data.donations;
 		this.donationsReceivedPerWeek = data.donationsReceived;
@@ -80,11 +89,21 @@ export class ClanMember<
 	}
 
 	/**
-	 * The contribution to the total clan donations of this member
+	 * The clan of this member, if cached
 	 */
-	get donationPercentage(): number {
-		return this.clan.donationsPerWeek
-			? (this.donationsPerWeek / this.clan.donationsPerWeek) * 100
+	get clan(): Clan | ClanPreview | ClanResultPreview | null {
+		return this.client.allClans.get(this.clanTag) ?? null;
+	}
+
+	/**
+	 * The contribution to the total clan donations of this member, if the clan is cached
+	 */
+	get donationPercentage(): number | null {
+		const { clan } = this;
+
+		if (!(clan instanceof ClanResultPreview)) return null;
+		return clan.donationsPerWeek
+			? (this.donationsPerWeek / clan.donationsPerWeek) * 100
 			: 0;
 	}
 
@@ -107,7 +126,7 @@ export class ClanMember<
 	 * @returns The cloned member
 	 */
 	clone(): ClanMember<T> {
-		return new ClanMember(this.client, this.toJSON(), this.clan);
+		return new ClanMember(this.client, this.toJSON(), this.clanTag);
 	}
 
 	/**
@@ -119,7 +138,7 @@ export class ClanMember<
 		return (
 			super.equals(member) &&
 			this.arena.id === member.arena.id &&
-			this.clan.id === member.clan.id &&
+			this.clanTag === member.clanTag &&
 			this.donationsPerWeek === member.donationsPerWeek &&
 			this.donationsReceivedPerWeek === member.donationsReceivedPerWeek &&
 			this.kingLevel === member.kingLevel &&

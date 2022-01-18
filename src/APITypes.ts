@@ -65,6 +65,8 @@ export interface APIClanMember {
 	trophies: number;
 }
 
+export type APIClanMemberList = APIList<APIClanMember>;
+
 export type APIClanPeriodStanding = Pick<APIClan, "tag">;
 
 export type APIClanPreview = Pick<APIClan, "badgeId" | "name" | "tag">;

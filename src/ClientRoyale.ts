@@ -2,6 +2,7 @@ import type Collection from "@discordjs/collection";
 import EventEmitter from "node:events";
 import { URLSearchParams } from "node:url";
 import type {
+	APIClanMemberList,
 	APIRiverRaceLog,
 	APITag,
 	APIUpcomingChests,
@@ -11,10 +12,12 @@ import type {
 	ClanResultPreview,
 	ClientEvents,
 	ClientOptions,
+	FetchClanMembersOptions,
+	FetchPlayerUpcomingChestsOptions,
 	FetchRiverRaceLogOptions,
 	Player,
 } from ".";
-import { RiverRaceLogResults } from "./lists";
+import { ClanMemberList, RiverRaceLogResults } from "./lists";
 import {
 	ArenaManager,
 	CardManager,
@@ -22,13 +25,11 @@ import {
 	ClanPreviewManager,
 	ClanResultPreviewManager,
 	CurrentRiverRaceManager,
-	FinishedRiverRaceManager,
 	LocationManager,
 	PlayerManager,
 	UpcomingChestManager,
 } from "./managers";
 import Rest from "./rest";
-import type { FetchPlayerUpcomingChestsOptions } from "./util";
 import Constants, { Errors, Routes } from "./util";
 
 /**
@@ -113,11 +114,6 @@ export class ClientRoyale extends EventEmitter {
 	 * A manager for clans
 	 */
 	clans = new ClanManager(this);
-
-	/**
-	 * A manager for finished river races
-	 */
-	finishedRiverRaces = new FinishedRiverRaceManager(this);
 
 	/**
 	 * A manager for locations
@@ -231,6 +227,32 @@ export class ClientRoyale extends EventEmitter {
 
 		return (player?.upcomingChests.add(...chests) ??
 			new UpcomingChestManager(this, chests)) as T;
+	}
+
+	/**
+	 * Fetch the members of a clan.
+	 * @param options - Options for fetching the members
+	 * @returns The members of a clan
+	 */
+	async fetchClanMembers(
+		options: FetchClanMembersOptions
+	): Promise<ClanMemberList> {
+		const clan = this.clans.get(options.tag);
+		const query = new URLSearchParams();
+
+		if (options.limit !== undefined) query.append("limit", `${options.limit}`);
+		if (options.after !== undefined) query.append("after", options.after);
+		if (options.before !== undefined) query.append("before", options.before);
+
+		const members = await this.api.get<APIClanMemberList>(
+			Routes.ClanMembers(options.tag),
+			{
+				query,
+			}
+		);
+
+		clan?.members.add(...members.items);
+		return new ClanMemberList(this, options, members);
 	}
 }
 

@@ -46,7 +46,7 @@ export class ClanPreview<
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data, data.tag);
 
-		this.riverRaceLog = new FinishedRiverRaceManager(client);
+		this.riverRaceLog = new FinishedRiverRaceManager(client, data.tag);
 		this.tag = data.tag;
 		this.badgeId = data.badgeId;
 		this.name = data.name;

@@ -23,7 +23,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	constructor(client: ClientRoyale, data: T) {
 		super(client, data);
 
-		this.members = new ClanMemberManager(client, this, data.memberList);
+		this.members = new ClanMemberManager(client, this.tag, data.memberList);
 		this.description = data.description;
 	}
 

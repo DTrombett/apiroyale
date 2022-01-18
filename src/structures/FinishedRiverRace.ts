@@ -1,4 +1,12 @@
-import type { APIRiverRaceLogEntry, ClientRoyale, StringId } from "..";
+import type {
+	APIRiverRaceLogEntry,
+	APITag,
+	Clan,
+	ClanPreview,
+	ClanResultPreview,
+	ClientRoyale,
+	StringId,
+} from "..";
 import { RiverRaceWeekStandingManager } from "../managers";
 import { APIDateToObject, dateObjectToAPIDate } from "../util";
 import Structure from "./Structure";
@@ -9,6 +17,11 @@ import Structure from "./Structure";
 export class FinishedRiverRace<
 	T extends APIRiverRaceLogEntry = APIRiverRaceLogEntry
 > extends Structure<T> {
+	/**
+	 * The tag of the clan this race is for
+	 */
+	readonly clanTag: APITag;
+
 	/**
 	 * When this race has ended
 	 */
@@ -35,9 +48,10 @@ export class FinishedRiverRace<
 	 * @param client - The client that instantiated this
 	 * @param data - The data of the river race
 	 */
-	constructor(client: ClientRoyale, data: T) {
+	constructor(client: ClientRoyale, data: T, clanTag: APITag) {
 		super(client, data, `${data.seasonId}-${data.sectionIndex}`);
 
+		this.clanTag = clanTag;
 		this.leaderboard = new RiverRaceWeekStandingManager(
 			this.client,
 			this,
@@ -49,10 +63,17 @@ export class FinishedRiverRace<
 	}
 
 	/**
+	 * The clan this race is for, if cached
+	 */
+	get clan(): Clan | ClanPreview | ClanResultPreview | null {
+		return this.client.allClans.get(this.clanTag) ?? null;
+	}
+
+	/**
 	 * Clone this race.
 	 */
 	clone(): FinishedRiverRace {
-		return new FinishedRiverRace(this.client, this.toJSON());
+		return new FinishedRiverRace(this.client, this.toJSON(), this.clanTag);
 	}
 
 	/**
