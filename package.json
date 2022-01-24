@@ -17,7 +17,7 @@
     "url": "https://github.com/DTrombett/apiroyale/issues"
   },
   "dependencies": {
-    "@discordjs/collection": "^0.4.0",
+    "@discordjs/collection": "^0.5.0",
     "@sapphire/async-queue": "^1.1.9",
     "tsup": "^5.11.11"
   },
