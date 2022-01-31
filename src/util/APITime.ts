@@ -5,23 +5,15 @@ import type { APIDate } from "..";
  * @param date - The date to convert
  * @returns The converted date
  */
-export const APIDateToObject = (date: APIDate): Date => {
-	const time = new Date(0);
-
-	time.setFullYear(
+export const APIDateToObject = (date: APIDate): Date =>
+	new Date(
 		Number(date.slice(0, 4)),
 		Number(date.slice(4, 6)) - 1,
-		Number(date.slice(6, 8))
-	);
-	time.setHours(
-		// +1 because we want the time in UTC+1
-		Number(date.slice(9, 11)) + 1,
+		Number(date.slice(6, 8)),
+		Number(date.slice(9, 11)),
 		Number(date.slice(11, 13)),
-		Number(date.slice(14, 15))
+		Number(date.slice(13, 15))
 	);
-
-	return time;
-};
 
 /**
  * Convert a date object to an API date.
