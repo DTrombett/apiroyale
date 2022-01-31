@@ -115,6 +115,14 @@ export class APIRequest {
 					// Handle a possible redirect
 					this.url.href = res.headers.location;
 					this.url.search = this.query.toString();
+					// Remove security headers
+					for (const header of [
+						"authorization",
+						"www-authenticate",
+						"cookie",
+						"cookie2",
+					])
+						delete this.headers[header];
 					this.make(resolve, reject);
 					return;
 				}
