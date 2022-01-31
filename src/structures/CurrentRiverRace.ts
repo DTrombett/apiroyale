@@ -52,9 +52,9 @@ export class CurrentRiverRace<
 	readonly warDays: RiverRacePeriodManager;
 
 	/**
-	 * The number of day from the start of this week
+	 * The number of week from the start of this month
 	 */
-	day: number;
+	week: number;
 
 	/**
 	 * @param client - The client that instantiated this race
@@ -77,14 +77,14 @@ export class CurrentRiverRace<
 		this.monthDay = data.periodIndex + 1;
 		this.state = data.state;
 		this.type = data.periodType;
-		this.day = data.sectionIndex + 1;
+		this.week = data.sectionIndex + 1;
 	}
 
 	/**
-	 * The week number of this race
+	 * The number of day from the start of this week
 	 */
-	get week(): number {
-		return Math.ceil(this.monthDay / 7);
+	get day(): number {
+		return this.monthDay % 7 || 7;
 	}
 
 	/**
@@ -109,7 +109,7 @@ export class CurrentRiverRace<
 			(this.state as string) === race.state &&
 			this.type === race.type &&
 			this.warDays.equals(race.warDays) &&
-			this.day === race.day
+			this.week === race.week
 		);
 	}
 
@@ -131,12 +131,11 @@ export class CurrentRiverRace<
 		if (data.clan !== undefined) this.clan.patch(data.clan);
 		if (data.clans !== undefined) this.leaderboard.overrideItems(data.clans);
 		if (data.state !== undefined) this.state = data.state;
-		if (data.sectionIndex !== undefined)
-			this.day = data.sectionIndex || this.monthDay % 7;
 		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex + 1;
 		if (data.periodType !== undefined) this.type = data.periodType;
 		if (data.periodLogs !== undefined)
 			this.warDays.overrideItems(data.periodLogs);
+		if (data.sectionIndex !== undefined) this.week = data.sectionIndex + 1;
 
 		return super.patch(data);
 	}
@@ -153,7 +152,7 @@ export class CurrentRiverRace<
 			periodIndex: this.monthDay - 1,
 			periodLogs: this.warDays.map((p) => p.toJSON()),
 			periodType: this.type,
-			sectionIndex: this.day < 3 ? 0 : this.day,
+			sectionIndex: this.week - 1,
 			state: this.state,
 		};
 	}
