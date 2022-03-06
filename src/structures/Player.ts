@@ -308,12 +308,12 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	 */
 	patch(data: Partial<T>): this {
 		if (data.achievements !== undefined)
-			this.achievements.overrideItems(data.achievements);
+			this.achievements.overrideItems(...data.achievements);
 		if (data.arena !== undefined) this.arena.patch(data.arena);
-		if (data.badges !== undefined) this.badges.overrideItems(data.badges);
+		if (data.badges !== undefined) this.badges.overrideItems(...data.badges);
 		if (data.battleCount !== undefined) this.battleCount = data.battleCount;
 		if (data.bestTrophies !== undefined) this.bestTrophies = data.bestTrophies;
-		if (data.cards !== undefined) this.cards.overrideItems(data.cards);
+		if (data.cards !== undefined) this.cards.overrideItems(...data.cards);
 		if (data.challengeCardsWon !== undefined)
 			this.cardsWonInChallenges = data.challengeCardsWon;
 		if (data.challengeMaxWins !== undefined)
@@ -323,7 +323,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 		if (data.clanCardsCollected !== undefined)
 			this.oldClanCardsCollected = data.clanCardsCollected;
 		if (data.currentDeck !== undefined)
-			this.deck.overrideItems(data.currentDeck);
+			this.deck.overrideItems(...data.currentDeck);
 		if (data.currentFavouriteCard !== undefined)
 			this.favouriteCard = this.cards.get(
 				`${data.currentFavouriteCard.id}`

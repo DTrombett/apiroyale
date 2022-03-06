@@ -1,12 +1,14 @@
 import Collection from "@discordjs/collection";
 import type {
-	ClientRoyale,
 	ConstructableStructure,
 	ConstructorExtras,
 	EventsOptions,
 	ManagerOptions,
 	StructureType,
 } from "..";
+import { ClientRoyale } from "../ClientRoyale";
+import schemaError from "../util/schemaError";
+import { validateManagerOptions } from "../util/schemas";
 
 /**
  * Handle structures' data
@@ -50,20 +52,30 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	constructor(
 		client: ClientRoyale,
 		structure: T,
-		{ addEvent, data, removeEvent, sortMethod, updateEvent }: ManagerOptions<T>,
+		options: ManagerOptions<T>,
 		...args: ConstructorExtras<T>
 	) {
 		super();
+		if (!(client instanceof ClientRoyale))
+			throw new TypeError("Argument 'client' must be a ClientRoyale");
+		if (!(structure instanceof Function))
+			throw new TypeError(
+				"Argument 'structure' must be a ConstructableStructure"
+			);
+		if (!validateManagerOptions(options))
+			throw schemaError(validateManagerOptions, "options", "ManagerOptions");
+
 		this.client = client;
 		this.events = {
-			add: addEvent,
-			remove: removeEvent,
-			update: updateEvent,
+			add: options.addEvent,
+			remove: options.removeEvent,
+			update: options.updateEvent,
 		};
 		this.extras = args;
-		this.sortMethod = sortMethod;
+		this.sortMethod = options.sortMethod;
 		this.structure = structure;
-		if (data !== undefined) for (const element of data) this.add(element);
+		if (options.data !== undefined)
+			for (const element of options.data) this.add(element as StructureType<T>);
 	}
 
 	/**
@@ -112,7 +124,7 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 				updateEvent: this.events.update,
 			},
 			...this.extras
-		).overrideItems(this.toJSON());
+		).overrideItems(...this.toJSON());
 	}
 
 	/**
@@ -121,6 +133,8 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	 * @returns Whether or not this manager has all the items of another manager
 	 */
 	equals(manager: Manager<T>): manager is this {
+		if (!(manager instanceof Manager))
+			throw new TypeError("Argument 'manager' must be a Manager");
 		for (const [id] of this) if (!manager.has(id)) return false;
 		return true;
 	}
@@ -139,7 +153,7 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 	 * @param items - The items to add
 	 * @returns The patched manager
 	 */
-	overrideItems(items: StructureType<T>[]): this {
+	overrideItems(...items: StructureType<T>[]): this {
 		this.clear();
 		this.add(...items);
 		return this;

@@ -5,8 +5,10 @@ import type { APIDate } from "..";
  * @param date - The date to convert
  * @returns The converted date
  */
-export const APIDateToObject = (date: APIDate): Date =>
-	new Date(
+export const APIDateToObject = (date: APIDate): Date => {
+	if (typeof date !== "string")
+		throw new TypeError(`Argument 'date' must be a string`);
+	return new Date(
 		Number(date.slice(0, 4)),
 		Number(date.slice(4, 6)) - 1,
 		Number(date.slice(6, 8)),
@@ -14,6 +16,7 @@ export const APIDateToObject = (date: APIDate): Date =>
 		Number(date.slice(11, 13)),
 		Number(date.slice(13, 15))
 	);
+};
 
 /**
  * Convert a date object to an API date.

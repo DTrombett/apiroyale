@@ -100,7 +100,8 @@ export class FinishedRiverRace<
 		if (data.sectionIndex != null) this.weekNumber = data.sectionIndex + 1;
 		if (data.createdDate != null)
 			this.finishTime = APIDateToObject(data.createdDate);
-		if (data.standings != null) this.leaderboard.overrideItems(data.standings);
+		if (data.standings != null)
+			this.leaderboard.overrideItems(...data.standings);
 
 		return super.patch(data);
 	}

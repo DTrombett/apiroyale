@@ -56,7 +56,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 	patch(data: Partial<T>): this {
 		if (data.description !== undefined) this.description = data.description;
 		if (data.memberList !== undefined)
-			this.members.overrideItems(data.memberList);
+			this.members.overrideItems(...data.memberList);
 
 		return super.patch(data);
 	}

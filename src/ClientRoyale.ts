@@ -31,6 +31,13 @@ import {
 } from "./managers";
 import Rest from "./rest";
 import Constants, { Errors, Routes } from "./util";
+import schemaError from "./util/schemaError";
+import {
+	validateClientOptions,
+	validateFetchClanMembersOptions,
+	validateFetchPlayerUpcomingChestsOptions,
+	validateFetchRiverRaceLogOptions,
+} from "./util/schemas";
 
 /**
  * A class to connect to the Clash Royale API
@@ -143,19 +150,17 @@ export class ClientRoyale extends EventEmitter {
 	/**
 	 * @param options - Options for the client
 	 */
-	constructor({
-		abortTimeout,
-		baseURL,
-		structureMaxAge,
-		token,
-	}: ClientOptions = {}) {
+	constructor(options: ClientOptions = {}) {
 		super();
+		if (!validateClientOptions(options))
+			throw schemaError(validateClientOptions, "options", "ClientOptions");
 
-		if (token != null) this.token = token;
+		if (options.token != null) this.token = options.token;
 		if (!this.token) throw new TypeError(Errors.tokenMissing());
-		if (abortTimeout != null) this.abortTimeout = abortTimeout;
-		if (baseURL != null) this.baseURL = baseURL;
-		if (structureMaxAge != null) this.structureMaxAge = structureMaxAge;
+		if (options.abortTimeout != null) this.abortTimeout = options.abortTimeout;
+		if (options.baseURL != null) this.baseURL = options.baseURL;
+		if (options.structureMaxAge != null)
+			this.structureMaxAge = options.structureMaxAge;
 	}
 
 	/**
@@ -185,6 +190,12 @@ export class ClientRoyale extends EventEmitter {
 	async fetchRiverRaceLog(
 		options: FetchRiverRaceLogOptions
 	): Promise<RiverRaceLogResults> {
+		if (!validateFetchRiverRaceLogOptions(options))
+			throw schemaError(
+				validateFetchRiverRaceLogOptions,
+				"options",
+				"FetchRiverRaceLogOptions"
+			);
 		const clan = this.allClans.get(options.tag);
 		const query = new URLSearchParams();
 
@@ -208,21 +219,26 @@ export class ClientRoyale extends EventEmitter {
 	 * @param options - Options for fetching the upcoming chests
 	 * @returns The upcoming chests of a player
 	 */
-	async fetchPlayerUpcomingChests<T extends UpcomingChestManager>({
-		tag,
-		force = false,
-	}: FetchPlayerUpcomingChestsOptions): Promise<T> {
-		const player = this.allPlayers.get(tag);
+	async fetchPlayerUpcomingChests<T extends UpcomingChestManager>(
+		options: FetchPlayerUpcomingChestsOptions
+	): Promise<T> {
+		if (!validateFetchPlayerUpcomingChestsOptions(options))
+			throw schemaError(
+				validateFetchPlayerUpcomingChestsOptions,
+				"options",
+				"FetchPlayerUpcomingChestsOptions"
+			);
+		const player = this.allPlayers.get(options.tag);
 
 		if (
-			!force &&
+			!options.force! &&
 			player &&
 			Date.now() - (player.upcomingChests.first()?.lastUpdate.getTime() ?? 0) <
 				this.structureMaxAge
 		)
 			return player.upcomingChests as T;
 		const { items: chests } = await this.api.get<APIUpcomingChests>(
-			Routes.UpcomingChests(tag)
+			Routes.UpcomingChests(options.tag)
 		);
 
 		return (player?.upcomingChests.add(...chests) ??
@@ -237,6 +253,12 @@ export class ClientRoyale extends EventEmitter {
 	async fetchClanMembers(
 		options: FetchClanMembersOptions
 	): Promise<ClanMemberList> {
+		if (!validateFetchClanMembersOptions(options))
+			throw schemaError(
+				validateFetchClanMembersOptions,
+				"options",
+				"FetchClanMembersOptions"
+			);
 		const clan = this.clans.get(options.tag);
 		const query = new URLSearchParams();
 
