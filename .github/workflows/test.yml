@@ -15,7 +15,7 @@ jobs:
           cache: "npm"
       - run: npm ci
 
-      - name: Run tsup tests
+      - name: Run tests
         run: npm test
 
       - name: Upload Coverage
