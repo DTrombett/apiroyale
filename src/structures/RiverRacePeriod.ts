@@ -85,7 +85,7 @@ export class RiverRacePeriod<
 	 * @returns The new clan
 	 */
 	patch(data: Partial<T>): this {
-		if (data.items !== undefined) this.leaderboard.overrideItems(data.items);
+		if (data.items !== undefined) this.leaderboard.overrideItems(...data.items);
 		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex;
 
 		return super.patch(data);
