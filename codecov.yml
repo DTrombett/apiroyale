@@ -1,0 +1,10 @@
+coverage:
+  round: nearest
+  range: "50...100"
+  status:
+    project:
+      default:
+        target: auto
+    patch:
+      default:
+        target: auto

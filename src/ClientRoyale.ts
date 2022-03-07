@@ -241,7 +241,8 @@ export class ClientRoyale extends EventEmitter {
 			Routes.UpcomingChests(options.tag)
 		);
 
-		return (player?.upcomingChests.add(...chests) ??
+		player?.upcomingChests.add(...chests);
+		return (player?.upcomingChests ??
 			new UpcomingChestManager(this, chests)) as T;
 	}
 
