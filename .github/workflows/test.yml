@@ -1,4 +1,4 @@
-name: Typescript, eslint and tsup tests
+name: Run tests with jest
 on: [push]
 jobs:
   test:
@@ -8,12 +8,15 @@ jobs:
         node-version: [16.x]
     steps:
       - uses: actions/checkout@v2
-      - name: Tests with Node.js ${{ matrix.node-version }}
+      - name: Install dependencies with Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm ci
+
+      - name: Run tsup tests
+        run: npm test
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v1
