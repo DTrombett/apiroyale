@@ -1,7 +1,6 @@
-import Collection from "@discordjs/collection";
 import type { APIPaging, ListMethod } from "..";
 import { ClientRoyale } from "..";
-import { Errors } from "../util";
+import { Collection, Errors } from "../util";
 import schemaError from "../util/schemaError";
 import { validateAPIPaging, validateListOptions } from "../util/schemas";
 

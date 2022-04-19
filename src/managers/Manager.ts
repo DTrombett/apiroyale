@@ -1,4 +1,3 @@
-import Collection from "@discordjs/collection";
 import type {
 	ConstructableStructure,
 	ConstructorExtras,
@@ -7,6 +6,7 @@ import type {
 	StructureType,
 } from "..";
 import { ClientRoyale } from "../ClientRoyale";
+import { Collection } from "../util";
 import schemaError from "../util/schemaError";
 import { validateManagerOptions } from "../util/schemas";
 
@@ -125,27 +125,6 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 			},
 			...this.extras
 		).overrideItems(...this.toJSON());
-	}
-
-	/**
-	 * Check if this manager has all the items of another manager.
-	 * @param manager - The manager to check against
-	 * @returns Whether or not this manager has all the items of another manager
-	 */
-	equals(manager: Manager<T>): manager is this {
-		if (!(manager instanceof Manager))
-			throw new TypeError("Argument 'manager' must be a Manager");
-		for (const [id] of this) if (!manager.has(id)) return false;
-		return true;
-	}
-
-	/**
-	 * Returns the index of the first occurrence of a value in the manager, or -1 if it is not present.
-	 * @param searchElement - The value to locate in the manager
-	 * @returns The index of the first occurrence of a value in the manager, or -1 if it is not present
-	 */
-	indexOf(searchElement: T["prototype"]): number {
-		return [...this.values()].indexOf(searchElement);
 	}
 
 	/**
