@@ -1,7 +1,7 @@
-import Collection from "@discordjs/collection";
 import ClientRoyale, {
 	Clan,
 	ClanMemberList,
+	Collection,
 	Errors,
 	Player,
 	Rest,
