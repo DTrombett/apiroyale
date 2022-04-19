@@ -1,4 +1,3 @@
-import type Collection from "@discordjs/collection";
 import EventEmitter from "node:events";
 import { URLSearchParams } from "node:url";
 import type {
@@ -12,6 +11,7 @@ import type {
 	ClanResultPreview,
 	ClientEvents,
 	ClientOptions,
+	Collection,
 	FetchClanMembersOptions,
 	FetchPlayerUpcomingChestsOptions,
 	FetchRiverRaceLogOptions,
@@ -167,19 +167,14 @@ export class ClientRoyale extends EventEmitter {
 	 * A collection of all the clans cached
 	 */
 	get allClans(): Collection<APITag, Clan | ClanPreview | ClanResultPreview> {
-		return (this.clanPreviews as Collection<APITag, unknown>).concat(
-			this.clanResultPreviews,
-			this.clans
-		) as Collection<APITag, Clan | ClanPreview | ClanResultPreview>;
+		return this.clanPreviews.concat(this.clanResultPreviews, this.clans);
 	}
 
 	/**
 	 * A collection of all the players cached
 	 */
 	get allPlayers(): Collection<APITag, ClanMember | Player> {
-		return (this.players as Collection<APITag, unknown>).concat(
-			...this.clans.map((clan) => clan.members)
-		) as Collection<APITag, ClanMember | Player>;
+		return this.players.concat(...this.clans.map((clan) => clan.members));
 	}
 
 	/**

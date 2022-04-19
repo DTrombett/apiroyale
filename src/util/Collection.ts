@@ -205,6 +205,10 @@ export class Collection<K, V> extends BaseCollection<K, V> {
 		);
 	}
 
+	toJSON(): any {
+		return super.toJSON();
+	}
+
 	/**
 	 * * This method is not supported.
 	 * @throws This method is not supported.
