@@ -1,6 +1,7 @@
 type integer = number;
 
-export type APILadderTournamentRankingList = APILadderTournamentRankingList[];
+export type APILadderTournamentRankingList =
+	APIList<APILadderTournamentRanking>;
 
 export interface APILadderTournamentRanking {
 	clan: APIPlayerRankingClan;
@@ -63,7 +64,7 @@ export interface APIRiverRaceClan {
 	name: string;
 	fame: integer;
 	repairPoints: integer;
-	finishTime: string;
+	finishTime?: string;
 	participants: APIRiverRaceParticipantList;
 	periodPoints: integer;
 }
@@ -81,7 +82,7 @@ export interface APIRiverRaceParticipant {
 }
 
 export interface APILocation {
-	localizedName: string;
+	localizedName?: string;
 	id: integer;
 	name: string;
 	isCountry: boolean;
@@ -107,9 +108,9 @@ export interface APIVersion {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface APIJsonNode {}
 
-export type APILocationList = APILocation[];
+export type APILocationList = APIList<APILocation>;
 
-export type APILeagueSeasonList = APILeagueSeason[];
+export type APILeagueSeasonList = APIList<APILeagueSeason>;
 
 export interface APILeagueSeason {
 	id: string;
@@ -118,7 +119,7 @@ export interface APILeagueSeason {
 export type APIChallengeChainsList = APIChallengeChain[];
 
 export interface APIChallengeChain {
-	title: string;
+	title?: string;
 	type: APIChallengeChainType;
 	startTime: string;
 	endTime: string;
@@ -148,14 +149,14 @@ export interface APIChallenge {
 export type APISurvivalMilestoneRewardList = APISurvivalMilestoneReward[];
 
 export interface APISurvivalMilestoneReward {
-	chest: string;
-	rarity: APISurvivalMilestoneRewardRarity;
-	resource: APISurvivalMilestoneRewardResource;
-	type: APISurvivalMilestoneRewardType;
-	amount: integer;
-	card: APIItem;
-	consumableName: string;
-	wins: integer;
+	chest?: string;
+	rarity?: APISurvivalMilestoneRewardRarity;
+	resource?: APISurvivalMilestoneRewardResource;
+	type: APISurvivalMilestoneRewardType | null;
+	amount?: integer;
+	card?: APIItem & { name: string | null };
+	consumableName?: string;
+	wins?: integer;
 }
 
 export enum APISurvivalMilestoneRewardRarity {
@@ -195,7 +196,7 @@ export interface APIChallengeGameMode {
 	name: string;
 }
 
-export type APIClanMemberList = APIClanMember[];
+export type APIClanMemberList = APIList<APIClanMember>;
 
 export interface APIClanMember {
 	clanChestPoints: integer;
@@ -225,13 +226,13 @@ export interface APIArena {
 	id: integer;
 }
 
-export type APILadderTournamentList = APILadderTournament[];
+export type APILadderTournamentList = APIList<APILadderTournament>;
 
 export interface APILadderTournament {
 	minExpLevel: integer;
 	maxLosses: integer;
 	tournamentLevel: integer;
-	gameMode: APIGameMode;
+	gameMode: Omit<APIGameMode, "name">;
 	milestoneRewards: APISurvivalMilestoneRewardList;
 	freeTierRewards: APISurvivalMilestoneRewardList;
 	tag: string;
@@ -247,16 +248,16 @@ export interface APIGameMode {
 	name: string;
 }
 
-export type APIPlayerRankingList = APIPlayerRanking[];
+export type APIPlayerRankingList = APIList<APIPlayerRanking>;
 
 export interface APIPlayerRanking {
 	clan: APIPlayerRankingClan;
-	arena: APIArena;
+	arena?: APIArena;
 	tag: string;
 	name: string;
 	expLevel: integer;
 	rank: integer;
-	previousRank: integer;
+	previousRank?: integer;
 	trophies: integer;
 }
 
@@ -271,7 +272,7 @@ export interface APIVerifyTokenResponse {
 }
 
 export interface APIClan {
-	memberList: APIClanMemberList;
+	memberList: APIClanMember[];
 	tag: string;
 	clanScore: integer;
 	clanWarTrophies: integer;
@@ -376,15 +377,15 @@ export enum APIBattleType {
 export type APIPlayerBattleDataList = APIPlayerBattleData[];
 
 export interface APIPlayerBattleData {
-	clan: APIPlayerClan;
+	clan?: APIPlayerClan;
 	cards: APIPlayerItemLevelList;
 	tag: string;
 	name: string;
-	startingTrophies: integer;
-	trophyChange: integer;
-	crowns: integer;
-	kingTowerHitPoints: integer;
-	princessTowersHitPoints: APIIntegerList;
+	startingTrophies?: integer;
+	trophyChange?: integer;
+	crowns?: integer;
+	kingTowerHitPoints?: integer;
+	princessTowersHitPoints?: APIIntegerList;
 }
 
 export type APIIntegerList = integer[];
@@ -393,13 +394,14 @@ export type APIPlayerItemLevelList = APIPlayerItemLevel[];
 
 export interface APIPlayerItemLevel {
 	id: integer;
-	count: integer;
+	count?: integer;
 	level: integer;
-	starLevel: integer;
+	starLevel?: integer;
 	name: string;
 	maxLevel: integer;
 	iconUrls: {
-		large: string;
+		large?: string;
+		medium: string;
 	};
 }
 
@@ -459,7 +461,7 @@ export interface APIClanWarParticipant {
 	numberOfBattles: integer;
 }
 
-export type APIRiverRaceLog = APIRiverRaceLogEntry[];
+export type APIRiverRaceLog = APIList<APIRiverRaceLogEntry>;
 
 export interface APIRiverRaceLogEntry {
 	standings: APIRiverRaceStandingList;
@@ -484,7 +486,7 @@ export interface APITournament {
 	startedTime: string;
 	endedTime: string;
 	firstPlaceCardPrize: integer;
-	gameMode: APIGameMode;
+	gameMode: Omit<APIGameMode, "name">;
 	type: APITournamentType;
 	duration: integer;
 	tag: string;
@@ -514,20 +516,20 @@ export type APITournamentMemberList = APITournamentMember[];
 export interface APITournamentMember {
 	rank: integer;
 	clan: APIPlayerClan;
-	previousRank: integer;
+	previousRank?: integer;
 	tag: string;
 	name: string;
 	score: integer;
 }
 
-export type APITournamentHeaderList = APITournamentHeader[];
+export type APITournamentHeaderList = APIList<APITournamentHeader>;
 
 export interface APITournamentHeader {
 	status: APITournamentHeaderStatus;
 	preparationDuration: integer;
 	createdTime: string;
 	firstPlaceCardPrize: integer;
-	gameMode: APIGameMode;
+	gameMode: Omit<APIGameMode, "name">;
 	type: APITournamentHeaderType;
 	duration: integer;
 	tag: string;
@@ -552,9 +554,9 @@ export enum APITournamentHeaderType {
 	UNKNOWN = "unknown",
 }
 
-export type APIClanList = APIClan[];
+export type APIClanList = APIList<APIClan>;
 
-export type APIClanRankingList = APIClanRanking[];
+export type APIClanRankingList = APIList<APIClanRanking>;
 
 export interface APIClanRanking {
 	clanScore: integer;
@@ -678,9 +680,9 @@ export interface APIPlayerLeagueStatistics {
 
 export interface APILeagueSeasonResult {
 	trophies: integer;
-	bestTrophies: integer;
-	rank: integer;
-	id: string;
+	bestTrophies?: integer;
+	rank?: integer;
+	id?: string;
 }
 
 export type APIPlayerAchievementBadgeList = APIPlayerAchievementBadge[];
@@ -696,7 +698,7 @@ export interface APIPlayerAchievementBadge {
 	name: string;
 }
 
-export type APIItemList = APIItem[];
+export type APIItemList = APIList<APIItem>;
 
 export interface APIClientError {
 	reason: string;
@@ -707,14 +709,16 @@ export interface APIClientError {
 
 export interface APIList<T> {
 	items: T[];
-	paging: APIPaging;
+	paging?: APIPaging;
 }
 
 export interface APIPaging {
-	cursors: {
-		after?: string;
-		before?: string;
-	};
+	cursors: APICursors;
+}
+
+interface APICursors {
+	after?: string;
+	before?: string;
 }
 
 export enum APIRiverRacePeriodType {
@@ -731,17 +735,3 @@ export enum APIRiverRaceState {
 	FULL = "full",
 	ENDED = "ended",
 }
-
-export type APIUpcomingChestName =
-	| "Epic Chest"
-	| "Giant Chest"
-	| "Gold Crate"
-	| "Golden Chest"
-	| "Legendary Chest"
-	| "Magical Chest"
-	| "Mega Lightning Chest"
-	| "Overflowing Gold Crate"
-	| "Plentiful Gold Crate"
-	| "Royal Wild Chest"
-	| "Silver Chest"
-	| "Wooden Chest";
