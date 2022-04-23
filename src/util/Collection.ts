@@ -195,6 +195,16 @@ export class Collection<K, V> extends BaseCollection<K, V> {
 	}
 
 	/**
+	 * Returns a copy of a section of a collection.
+	 * Identical in behavior to [Array.slice()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice).
+	 * @param start - The beginning index of the specified portion of the array
+	 * @param end - The end index of the specified portion of the array
+	 */
+	slice(start?: number, end?: number): Collection<K, V> {
+		return new Collection<K, V>([...this.entries()].slice(start, end));
+	}
+
+	/**
 	 * The sorted method sorts the items of a collection and returns it.
 	 * The default sort order is according to string Unicode code points.
 	 * @param compareFunction - Specifies a function that defines the sort order
