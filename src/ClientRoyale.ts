@@ -27,13 +27,6 @@ import {
 } from "./managers";
 import Rest from "./rest";
 import Constants, { Errors, Routes } from "./util";
-import schemaError from "./util/schemaError";
-import {
-	validateClientOptions,
-	validateFetchClanMembersOptions,
-	validateFetchPlayerUpcomingChestsOptions,
-	validateFetchRiverRaceLogOptions,
-} from "./util/schemas";
 
 /**
  * A class to connect to the Clash Royale API
@@ -148,8 +141,6 @@ export class ClientRoyale extends EventEmitter {
 	 */
 	constructor(options: ClientOptions = {}) {
 		super();
-		if (!validateClientOptions(options))
-			throw schemaError(validateClientOptions, "options", "ClientOptions");
 
 		if (options.token != null) this.token = options.token;
 		if (!this.token) throw new TypeError(Errors.tokenMissing());
@@ -181,12 +172,6 @@ export class ClientRoyale extends EventEmitter {
 	async fetchRiverRaceLog(
 		options: FetchRiverRaceLogOptions
 	): Promise<RiverRaceLogResults> {
-		if (!validateFetchRiverRaceLogOptions(options))
-			throw schemaError(
-				validateFetchRiverRaceLogOptions,
-				"options",
-				"FetchRiverRaceLogOptions"
-			);
 		const clan = this.allClans.get(options.tag);
 		const query = new URLSearchParams();
 
@@ -210,12 +195,6 @@ export class ClientRoyale extends EventEmitter {
 	async fetchPlayerUpcomingChests<T extends UpcomingChestManager>(
 		options: FetchPlayerUpcomingChestsOptions
 	): Promise<T> {
-		if (!validateFetchPlayerUpcomingChestsOptions(options))
-			throw schemaError(
-				validateFetchPlayerUpcomingChestsOptions,
-				"options",
-				"FetchPlayerUpcomingChestsOptions"
-			);
 		const player = this.allPlayers.get(options.tag);
 
 		if (
@@ -242,12 +221,6 @@ export class ClientRoyale extends EventEmitter {
 	async fetchClanMembers(
 		options: FetchClanMembersOptions
 	): Promise<ClanMemberList> {
-		if (!validateFetchClanMembersOptions(options))
-			throw schemaError(
-				validateFetchClanMembersOptions,
-				"options",
-				"FetchClanMembersOptions"
-			);
 		const clan = this.clans.get(options.tag);
 		const query = new URLSearchParams();
 

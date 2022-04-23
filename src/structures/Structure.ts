@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import ClientRoyale from "../ClientRoyale";
+import type ClientRoyale from "../ClientRoyale";
 
 /**
  * Base class for all other structures
@@ -26,10 +26,6 @@ export class Structure<T extends {} = {}> {
 	 * @param id - The id of the structure
 	 */
 	constructor(client: ClientRoyale, _data: T, id: string) {
-		if (!(client instanceof ClientRoyale))
-			throw new TypeError("Argument 'client' must be a ClientRoyale");
-		if (typeof id !== "string")
-			throw new TypeError("Argument 'id' must be a string");
 		this.client = client;
 		this.id = id;
 	}
@@ -48,8 +44,6 @@ export class Structure<T extends {} = {}> {
 	 * @returns Whether the structures are equal
 	 */
 	equals(structure: Structure): structure is this {
-		if (!(structure instanceof Structure))
-			throw new TypeError("Argument 'structure' must be a Structure");
 		return this.id === structure.id;
 	}
 

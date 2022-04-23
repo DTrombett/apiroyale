@@ -1,12 +1,7 @@
 {
 	"clean": true,
-	"dts": true,
-	"entry": [
-		"src/**/*.ts"
-	],
-	"format": [
-		"cjs"
-	],
+	"entry": ["src/index.ts"],
+	"format": ["cjs"],
 	"minify": true,
 	"platform": "node",
 	"sourcemap": true,

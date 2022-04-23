@@ -5,10 +5,8 @@ import type {
 	ManagerOptions,
 	StructureType,
 } from "..";
-import { ClientRoyale } from "../ClientRoyale";
+import type { ClientRoyale } from "../ClientRoyale";
 import { Collection } from "../util";
-import schemaError from "../util/schemaError";
-import { validateManagerOptions } from "../util/schemas";
 
 /**
  * Handle structures' data
@@ -56,14 +54,6 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 		...args: ConstructorExtras<T>
 	) {
 		super();
-		if (!(client instanceof ClientRoyale))
-			throw new TypeError("Argument 'client' must be a ClientRoyale");
-		if (!(structure instanceof Function))
-			throw new TypeError(
-				"Argument 'structure' must be a ConstructableStructure"
-			);
-		if (!validateManagerOptions(options))
-			throw schemaError(validateManagerOptions, "options", "ManagerOptions");
 
 		this.client = client;
 		this.events = {
@@ -75,7 +65,7 @@ export class Manager<T extends ConstructableStructure> extends Collection<
 		this.sortMethod = options.sortMethod;
 		this.structure = structure;
 		if (options.data !== undefined)
-			for (const element of options.data) this.add(element as StructureType<T>);
+			for (const element of options.data) this.add(element);
 	}
 
 	/**

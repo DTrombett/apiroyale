@@ -17,10 +17,7 @@
 		"noUnusedParameters": true,
 		"resolveJsonModule": true,
 		"outDir": "dist",
-		"pretty": true,
-		"sourceMap": true,
 		"declaration": true,
-		"declarationDir": "types",
-		"declarationMap": true
+		"declarationMap": true,
 	}
 }

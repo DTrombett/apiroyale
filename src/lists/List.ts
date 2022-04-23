@@ -1,8 +1,5 @@
-import type { APIPaging, ListMethod } from "..";
-import { ClientRoyale } from "..";
+import type { APIPaging, ClientRoyale, ListMethod } from "..";
 import { Collection, Errors } from "../util";
-import schemaError from "../util/schemaError";
-import { validateAPIPaging, validateListOptions } from "../util/schemas";
 
 /**
  * Manage API lists
@@ -45,16 +42,6 @@ export class List<K extends number | string, V> extends Collection<K, V> {
 		data: [K, V][]
 	) {
 		super(data);
-		if (!(client instanceof ClientRoyale))
-			throw new TypeError("Argument 'client' must be a ClientRoyale");
-		if (typeof method !== "function")
-			throw new TypeError("Argument 'method' must be a function");
-		if (!validateListOptions(options))
-			throw schemaError(validateListOptions, "options", "ListOptions");
-		if (!validateAPIPaging(paging))
-			throw schemaError(validateAPIPaging, "paging", "APIPaging");
-		if (!Array.isArray(data))
-			throw new TypeError("Argument 'data' must be an array");
 
 		this.client = client;
 		this.method = method;
