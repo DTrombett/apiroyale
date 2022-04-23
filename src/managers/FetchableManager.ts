@@ -58,7 +58,9 @@ export class FetchableManager<
 		)
 			return existing;
 		return this.add<S>(
-			await this.client.api.get<StructureType<T>>(this.route(id as StringId))
+			(await this.client.api.get(
+				this.route(id as StringId)
+			)) as StructureType<T>
 		);
 	}
 }

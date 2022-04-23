@@ -1,9 +1,6 @@
 import EventEmitter from "node:events";
 import { URLSearchParams } from "node:url";
 import type {
-	APIClanMemberList,
-	APIRiverRaceLog,
-	APIUpcomingChests,
 	Clan,
 	ClanMember,
 	ClanPreview,
@@ -197,12 +194,9 @@ export class ClientRoyale extends EventEmitter {
 		if (options.after !== undefined) query.append("after", options.after);
 		if (options.before !== undefined) query.append("before", options.before);
 
-		const log = await this.api.get<APIRiverRaceLog>(
-			Routes.RiverRaceLog(options.tag),
-			{
-				query,
-			}
-		);
+		const log = await this.api.get(Routes.RiverRaceLog(options.tag), {
+			query,
+		});
 
 		clan?.riverRaceLog.add(...log.items);
 		return new RiverRaceLogResults(this, options, log);
@@ -231,7 +225,7 @@ export class ClientRoyale extends EventEmitter {
 				this.structureMaxAge
 		)
 			return player.upcomingChests as T;
-		const { items: chests } = await this.api.get<APIUpcomingChests>(
+		const { items: chests } = await this.api.get(
 			Routes.UpcomingChests(options.tag)
 		);
 
@@ -261,12 +255,9 @@ export class ClientRoyale extends EventEmitter {
 		if (options.after !== undefined) query.append("after", options.after);
 		if (options.before !== undefined) query.append("before", options.before);
 
-		const members = await this.api.get<APIClanMemberList>(
-			Routes.ClanMembers(options.tag),
-			{
-				query,
-			}
-		);
+		const members = await this.api.get(Routes.ClanMembers(options.tag), {
+			query,
+		});
 
 		clan?.members.add(...members.items);
 		return new ClanMemberList(this, options, members);
