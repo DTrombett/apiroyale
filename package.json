@@ -22,7 +22,7 @@
 		"test": "tsc --noEmit && eslint src"
 	},
 	"engines": {
-		"node": ">=16.0.0"
+		"node": ">=16.9.0"
 	},
 	"repository": {
 		"type": "git",
