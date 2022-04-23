@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIRiverRacePeriod, CurrentRiverRace, StringId } from "..";
+import type { APIPeriodLog, CurrentRiverRace, StringId } from "..";
 import { RiverRacePeriodStandingManager } from "../managers";
 import Structure from "./Structure";
 
@@ -7,7 +7,7 @@ import Structure from "./Structure";
  * A river race period
  */
 export class RiverRacePeriod<
-	T extends APIRiverRacePeriod = APIRiverRacePeriod
+	T extends APIPeriodLog = APIPeriodLog
 > extends Structure<T> {
 	declare readonly id: StringId;
 
@@ -95,7 +95,7 @@ export class RiverRacePeriod<
 	 * Get a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
-	toJSON(): APIRiverRacePeriod {
+	toJSON(): APIPeriodLog {
 		return {
 			...super.toJSON(),
 			items: this.leaderboard.toJSON(),

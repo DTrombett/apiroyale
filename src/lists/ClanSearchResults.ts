@@ -1,6 +1,5 @@
 import type {
-	APIClanSearchResults,
-	APITag,
+	APIClanList,
 	ClanManager,
 	ClanResultPreview,
 	SearchClanOptions,
@@ -10,7 +9,7 @@ import List from "./List";
 /**
  * Manage clan search results
  */
-export class ClanSearchResults extends List<APITag, ClanResultPreview> {
+export class ClanSearchResults extends List<string, ClanResultPreview> {
 	/**
 	 * @param manager - The clan manager that instantiated the search
 	 * @param options - The options used to get these results
@@ -19,7 +18,7 @@ export class ClanSearchResults extends List<APITag, ClanResultPreview> {
 	constructor(
 		manager: ClanManager,
 		options: SearchClanOptions,
-		data: APIClanSearchResults
+		data: APIClanList
 	) {
 		super(
 			manager.client,

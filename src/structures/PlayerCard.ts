@@ -1,17 +1,17 @@
 import type ClientRoyale from "..";
-import type { APIPlayerCard, Player } from "..";
+import type { APIPlayerItemLevel, Player } from "..";
 import { Card } from "./Card";
 
 /**
  * A player card
  */
 export class PlayerCard<
-	T extends APIPlayerCard = APIPlayerCard
+	T extends APIPlayerItemLevel = APIPlayerItemLevel
 > extends Card<T> {
 	/**
 	 * The amount of cards in the player card
 	 */
-	count: number;
+	count?: number;
 
 	/**
 	 * The level of the card
@@ -86,7 +86,7 @@ export class PlayerCard<
 	/**
 	 * Get a JSON representation of this card.
 	 */
-	toJSON(): APIPlayerCard {
+	toJSON(): APIPlayerItemLevel {
 		return {
 			...super.toJSON(),
 			count: this.count,

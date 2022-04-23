@@ -1,4 +1,4 @@
-import type { APIClanCurrentStanding, ClientRoyale } from "..";
+import type { APIRiverRaceClan, ClientRoyale } from "..";
 import { RiverRaceParticipantManager } from "../managers";
 import ClanPreview from "./ClanPreview";
 
@@ -6,7 +6,7 @@ import ClanPreview from "./ClanPreview";
  * A base clan standing
  */
 export class BaseClanStanding<
-	T extends APIClanCurrentStanding = APIClanCurrentStanding
+	T extends APIRiverRaceClan = APIRiverRaceClan
 > extends ClanPreview<T> {
 	/**
 	 * The number of medals this clan has earned
@@ -87,7 +87,7 @@ export class BaseClanStanding<
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJSON(): APIClanCurrentStanding {
+	toJSON(): APIRiverRaceClan {
 		return {
 			...super.toJSON(),
 			clanScore: this.score,

@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIUpcomingChest } from "..";
+import type { APIChest } from "..";
 import { UpcomingChest } from "../structures";
 import type { FetchPlayerUpcomingChestsOptions } from "../util";
 import Manager from "./Manager";
@@ -13,7 +13,7 @@ export class UpcomingChestManager extends Manager<typeof UpcomingChest> {
 	 * @param player - The player this manager is for
 	 * @param data - The data to initialize this manager with
 	 */
-	constructor(client: ClientRoyale, data?: APIUpcomingChest[]) {
+	constructor(client: ClientRoyale, data?: APIChest[]) {
 		super(client, UpcomingChest, {
 			addEvent: "newUpcomingChest",
 			data,

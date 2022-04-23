@@ -1,16 +1,16 @@
 import type ClientRoyale from "..";
-import type { APICard, StringId } from "..";
+import type { APIItem, StringId } from "..";
 import { isEqual } from "../util";
 import Structure from "./Structure";
 
 /**
  * A card
  */
-export class Card<T extends APICard = APICard> extends Structure<T> {
+export class Card<T extends APIItem = APIItem> extends Structure<T> {
 	/**
 	 * The icon urls of the card
 	 */
-	readonly iconUrls: APICard["iconUrls"];
+	readonly iconUrls: APIItem["iconUrls"];
 
 	/**
 	 * The id of this arena
@@ -80,7 +80,7 @@ export class Card<T extends APICard = APICard> extends Structure<T> {
 	 * Get a JSON representation of this card.
 	 * @returns The card's data
 	 */
-	toJSON(): APICard {
+	toJSON(): APIItem {
 		return {
 			...super.toJSON(),
 			iconUrls: this.iconUrls,

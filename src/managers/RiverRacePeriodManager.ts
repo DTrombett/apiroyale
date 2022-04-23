@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIRiverRacePeriod, CurrentRiverRace } from "..";
+import type { APIPeriodLog, CurrentRiverRace } from "..";
 import { RiverRacePeriod } from "../structures";
 import Manager from "./Manager";
 
@@ -20,7 +20,7 @@ export class RiverRacePeriodManager extends Manager<typeof RiverRacePeriod> {
 	constructor(
 		client: ClientRoyale,
 		race: CurrentRiverRace,
-		data?: APIRiverRacePeriod[]
+		data?: APIPeriodLog[]
 	) {
 		super(
 			client,

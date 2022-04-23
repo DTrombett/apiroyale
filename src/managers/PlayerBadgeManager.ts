@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIBadge, Player } from "..";
+import type { APIPlayerAchievementBadge, Player } from "..";
 import { PlayerBadge } from "../structures";
 import Manager from "./Manager";
 
@@ -17,7 +17,11 @@ export class PlayerBadgeManager extends Manager<typeof PlayerBadge> {
 	 * @param player - The player that this manager belongs to
 	 * @param data - The data to initialize the manager with
 	 */
-	constructor(client: ClientRoyale, player: Player, data?: APIBadge[]) {
+	constructor(
+		client: ClientRoyale,
+		player: Player,
+		data?: APIPlayerAchievementBadge[]
+	) {
 		super(
 			client,
 			PlayerBadge,

@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIClanResultPreview } from "..";
+import type { APIClan } from "..";
 import { ClanResultPreview } from "../structures";
 import Manager from "./Manager";
 
@@ -13,7 +13,13 @@ export class ClanResultPreviewManager extends Manager<
 	 * @param client - The client that instantiated this manager
 	 * @param data - The data to initialize the manager with
 	 */
-	constructor(client: ClientRoyale, data?: APIClanResultPreview[]) {
+	constructor(
+		client: ClientRoyale,
+		data?: Omit<
+			APIClan,
+			"clanChestPoints" | "clanChestStatus" | "description" | "memberList"
+		>[]
+	) {
 		super(client, ClanResultPreview, {
 			addEvent: "newClanResultPreview",
 			data,

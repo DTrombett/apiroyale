@@ -1,8 +1,8 @@
 import type ClientRoyale from "..";
 import type {
-	APILeagueStatistics,
 	APIPlayer,
-	APIRole,
+	APIPlayerLeagueStatistics,
+	APIPlayerRole,
 	Arena,
 	Clan,
 	ClanMember,
@@ -94,7 +94,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * League statistics of this player
 	 */
-	leagueStatistics?: APILeagueStatistics;
+	leagueStatistics?: APIPlayerLeagueStatistics;
 
 	/**
 	 * The number of matches this player has lost
@@ -119,7 +119,7 @@ export class Player<T extends APIPlayer = APIPlayer> extends BasePlayer<T> {
 	/**
 	 * The role of this player
 	 */
-	role: APIRole;
+	role: APIPlayerRole;
 
 	/**
 	 * The star points of this player

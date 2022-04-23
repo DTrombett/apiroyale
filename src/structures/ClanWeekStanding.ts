@@ -1,8 +1,4 @@
-import type {
-	APIClanWeekStanding,
-	ClientRoyale,
-	RiverRaceWeekStanding,
-} from "..";
+import type { APIRiverRaceClan, ClientRoyale, RiverRaceWeekStanding } from "..";
 import { APIDateToObject, dateObjectToAPIDate } from "../util";
 import BaseClanStanding from "./BaseClanStanding";
 
@@ -10,7 +6,7 @@ import BaseClanStanding from "./BaseClanStanding";
  * A clan week standing
  */
 export class ClanWeekStanding<
-	T extends APIClanWeekStanding = APIClanWeekStanding
+	T extends APIRiverRaceClan = APIRiverRaceClan
 > extends BaseClanStanding<T> {
 	/**
 	 * When this clan finished the war
@@ -29,12 +25,16 @@ export class ClanWeekStanding<
 	 * @param standing - The standing that this clan is in
 	 */
 	constructor(client: ClientRoyale, data: T, standing: RiverRaceWeekStanding) {
-		const finishedAt = APIDateToObject(data.finishTime);
+		const finishedAt =
+			data.finishTime !== undefined
+				? APIDateToObject(data.finishTime)
+				: undefined;
 		super(client, data);
 
 		this.standing = standing;
 		this.finishedAt =
-			finishedAt.getMonth() && finishedAt.getFullYear() >= 2000
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+			finishedAt?.getMonth() && finishedAt.getFullYear() >= 2000
 				? finishedAt
 				: null;
 	}
@@ -79,7 +79,7 @@ export class ClanWeekStanding<
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJSON(): APIClanWeekStanding {
+	toJSON(): APIRiverRaceClan {
 		return {
 			...super.toJSON(),
 			finishTime: dateObjectToAPIDate(this.finishedAt),

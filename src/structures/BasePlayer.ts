@@ -1,7 +1,6 @@
 import type ClientRoyale from "..";
 import type {
 	APIPlayer,
-	APITag,
 	FetchOptions,
 	FetchPlayerUpcomingChestsOptions,
 	Player,
@@ -17,7 +16,7 @@ export type APIBasePlayer = Pick<APIPlayer, "name" | "tag">;
 export class BasePlayer<
 	T extends APIBasePlayer = APIBasePlayer
 > extends Structure<T> {
-	declare readonly id: APITag;
+	declare readonly id: string;
 
 	/**
 	 * The name of this player
@@ -27,7 +26,7 @@ export class BasePlayer<
 	/**
 	 * The tag of this player
 	 */
-	readonly tag: APITag;
+	readonly tag: string;
 
 	/**
 	 * The player's upcoming chests

@@ -1,18 +1,16 @@
 import type ClientRoyale from "..";
-import type { APIRiverRaceWeekStanding, APITag, FinishedRiverRace } from "..";
+import type { APIRiverRaceStanding, FinishedRiverRace } from "..";
 import ClanWeekStanding from "./ClanWeekStanding";
 import Structure from "./Structure";
 
 /**
  * A river race week standing
  */
-export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
+export class RiverRaceWeekStanding extends Structure<APIRiverRaceStanding> {
 	/**
 	 * The clan data for this standing
 	 */
 	readonly clan: ClanWeekStanding;
-
-	declare readonly id: APITag;
 
 	/**
 	 * The race this standing is for
@@ -36,7 +34,7 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	 */
 	constructor(
 		client: ClientRoyale,
-		data: APIRiverRaceWeekStanding,
+		data: APIRiverRaceStanding,
 		race: FinishedRiverRace
 	) {
 		super(client, data, data.clan.tag);
@@ -96,7 +94,7 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	 * @param data - The data to patch this standing with
 	 * @returns The patched standing
 	 */
-	patch(data: Partial<APIRiverRaceWeekStanding>): this {
+	patch(data: Partial<APIRiverRaceStanding>): this {
 		if (data.clan !== undefined) this.clan.patch(data.clan);
 		if (data.rank !== undefined) this.rank = data.rank;
 		if (data.trophyChange !== undefined) this.trophyChange = data.trophyChange;
@@ -108,7 +106,7 @@ export class RiverRaceWeekStanding extends Structure<APIRiverRaceWeekStanding> {
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJSON(): APIRiverRaceWeekStanding {
+	toJSON(): APIRiverRaceStanding {
 		return {
 			...super.toJSON(),
 			rank: this.rank,

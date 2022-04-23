@@ -1,6 +1,5 @@
 import type {
-	APIClanPreview,
-	APITag,
+	APIPlayerClan,
 	Clan,
 	ClientRoyale,
 	CurrentRiverRace,
@@ -15,14 +14,12 @@ import Structure from "./Structure";
  * A clan preview
  */
 export class ClanPreview<
-	T extends APIClanPreview = APIClanPreview
+	T extends APIPlayerClan = APIPlayerClan
 > extends Structure<T> {
 	/**
 	 * The clan's badge id
 	 */
 	badgeId: number;
-
-	declare readonly id: APITag;
 
 	/**
 	 * The clan's name
@@ -37,7 +34,7 @@ export class ClanPreview<
 	/**
 	 * The clan's tag
 	 */
-	readonly tag: APITag;
+	readonly tag: string;
 
 	/**
 	 * @param client - The client that instantiated this clan
@@ -73,7 +70,7 @@ export class ClanPreview<
 	 * @returns The cloned clan preview
 	 */
 	clone(): ClanPreview<T> {
-		return new ClanPreview(this.client, this.toJSON());
+		return new ClanPreview(this.client, this.toJSON() as T);
 	}
 
 	/**
@@ -138,7 +135,7 @@ export class ClanPreview<
 	 * Get a JSON representation of this clan.
 	 * @returns The JSON representation of this clan
 	 */
-	toJSON(): APIClanPreview {
+	toJSON(): APIPlayerClan {
 		return {
 			...super.toJSON(),
 			badgeId: this.badgeId,

@@ -1,27 +1,20 @@
 import type ClientRoyale from "..";
-import type {
-	APIRiverRacePeriodStanding,
-	APITag,
-	Clan,
-	RiverRacePeriod,
-} from "..";
+import type { APIPeriodLogEntry, Clan, RiverRacePeriod } from "..";
 import Structure from "./Structure";
 
 /**
  * A river race period standing
  */
-export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStanding> {
+export class RiverRacePeriodStanding extends Structure<APIPeriodLogEntry> {
 	/**
 	 * The clan tag for this standing
 	 */
-	readonly clanTag: APITag;
+	readonly clanTag: string;
 
 	/**
 	 * The defenses remaining for the clan in this period
 	 */
 	defensesRemaining!: number;
-
-	declare readonly id: APITag;
 
 	/**
 	 * The medal count of the clan in this period
@@ -65,7 +58,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	 */
 	constructor(
 		client: ClientRoyale,
-		data: APIRiverRacePeriodStanding,
+		data: APIPeriodLogEntry,
 		period: RiverRacePeriod
 	) {
 		super(client, data, data.clan.tag);
@@ -126,7 +119,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	 * @param data - The data to patch this standing with
 	 * @returns The patched standing
 	 */
-	patch(data: Partial<APIRiverRacePeriodStanding>): this {
+	patch(data: Partial<APIPeriodLogEntry>): this {
 		if (data.endOfDayRank !== undefined) this.rank = data.endOfDayRank + 1;
 		if (data.numOfDefensesRemaining !== undefined)
 			this.defensesRemaining = data.numOfDefensesRemaining;
@@ -147,7 +140,7 @@ export class RiverRacePeriodStanding extends Structure<APIRiverRacePeriodStandin
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJSON(): APIRiverRacePeriodStanding {
+	toJSON(): APIPeriodLogEntry {
 		return {
 			...super.toJSON(),
 			clan: {

@@ -1,12 +1,12 @@
 import type ClientRoyale from "..";
-import type { APIAchievement, Player } from "..";
+import type { APIPlayerAchievementProgress, Player } from "..";
 import Structure from "./Structure";
 
 /**
  * A player's achievement
  */
 export class PlayerAchievement<
-	T extends APIAchievement = APIAchievement
+	T extends APIPlayerAchievementProgress = APIPlayerAchievementProgress
 > extends Structure<T> {
 	/**
 	 * Info about this achievement
@@ -117,7 +117,7 @@ export class PlayerAchievement<
 	 * Get a JSON representation of this achievement.
 	 * @returns The JSON representation of this achievement
 	 */
-	toJSON(): APIAchievement {
+	toJSON(): APIPlayerAchievementProgress {
 		return {
 			...super.toJSON(),
 			completionInfo: null,

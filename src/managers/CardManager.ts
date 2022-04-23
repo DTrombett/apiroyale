@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APICard, FetchOptions } from "..";
+import type { APIItem, FetchOptions } from "..";
 import { Card } from "../structures";
 import { Routes } from "../util";
 import Manager from "./Manager";
@@ -12,7 +12,7 @@ export class CardManager extends Manager<typeof Card> {
 	 * @param client - The client that instantiated this manager
 	 * @param data - The data to initialize this manager with
 	 */
-	constructor(client: ClientRoyale, data?: APICard[]) {
+	constructor(client: ClientRoyale, data?: APIItem[]) {
 		super(client, Card, {
 			addEvent: "newCard",
 			data,
@@ -36,7 +36,7 @@ export class CardManager extends Manager<typeof Card> {
 			return Promise.resolve(this);
 
 		this.overrideItems(
-			...(await this.client.api.get<APICard[]>(Routes.Cards()))
+			...(await this.client.api.get<APIItem[]>(Routes.Cards()))
 		);
 		return this;
 	}
