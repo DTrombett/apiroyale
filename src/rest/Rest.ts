@@ -1,5 +1,6 @@
 import { AsyncQueue } from "@sapphire/async-queue";
 import type { ClientRoyale, Path, RequestOptions } from "..";
+import type { ResponseType } from "../util";
 import { Errors } from "../util";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
@@ -38,10 +39,10 @@ export class Rest {
 	 * @returns The JSON data received from the API or null if no data was received
 	 */
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	async get<T extends {} | null = {} | null>(
-		path: Path,
+	async get<T extends Path>(
+		path: T,
 		options?: RequestOptions & { retry?: boolean; force?: boolean }
-	): Promise<T> {
+	): Promise<ResponseType<T>> {
 		await this.queue.wait();
 
 		if (this.rateLimited && options?.force !== true)
@@ -49,7 +50,7 @@ export class Rest {
 
 		const request = new APIRequest(this, path, options);
 		const res = await request.send();
-		let data: T | null | undefined;
+		let data: ResponseType<T> | null | undefined;
 
 		if (res.statusCode === 429) {
 			// If we encountered a ratelimit... well, this is a problem!
@@ -59,7 +60,7 @@ export class Rest {
 		}
 		if (res.statusCode >= 200 && res.statusCode < 300)
 			// If the request is ok parse the data received
-			data = JSON.parse(res.data!) as T;
+			data = JSON.parse(res.data!) as ResponseType<T>;
 		else if (res.statusCode >= 300 && res.statusCode < 400)
 			// In this case we have no data
 			data = null;
@@ -72,7 +73,7 @@ export class Rest {
 		this.queue.shift();
 		if (data !== undefined) return data!;
 
-		// If we didn't receive a succesful response, throw an error
+		// If we didn't receive a successful response, throw an error
 		throw new ErrorRoyale(request, res);
 	}
 }
