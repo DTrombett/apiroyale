@@ -2,7 +2,7 @@ import type { OutgoingHttpHeaders } from "node:http";
 import { get } from "node:https";
 import { URL, URLSearchParams } from "node:url";
 import type { Path, RequestOptions, Rest } from "..";
-import Constants, { Errors, RequestStatus } from "../util";
+import Constants, { Errors } from "../util";
 import Response from "./Response";
 
 /**
@@ -30,11 +30,6 @@ export class APIRequest {
 	rest: Rest;
 
 	/**
-	 * The status of this request
-	 */
-	status = RequestStatus.Pending;
-
-	/**
 	 * @param rest - The rest that instantiated this
 	 * @param path - The path to request
 	 * @param options - Options for this request
@@ -42,9 +37,7 @@ export class APIRequest {
 	constructor(rest: Rest, path: Path, { query, headers }: RequestOptions = {}) {
 		this.path = path;
 		this.rest = rest;
-
 		this.query = new URLSearchParams(query);
-
 		this.headers = {
 			Accept: Constants.acceptHeader,
 			Authorization: `${Constants.authorizationHeaderPrefix} ${rest.client.token}`,
@@ -64,22 +57,11 @@ export class APIRequest {
 	}
 
 	/**
-	 * Edit headers for this request.
-	 * @param headers - Headers to add/remove
-	 * @returns The new request
-	 */
-	editHeaders(headers: RequestOptions["headers"]): this {
-		this.headers = { ...this.headers, ...headers };
-		return this;
-	}
-
-	/**
 	 * Send the request to the api.
 	 * @returns A promise that resolves with the response
 	 */
 	send(): Promise<Response> {
 		this.rest.client.emit("requestStart", this);
-		this.status = RequestStatus.InProgress;
 		return new Promise<Response>((resolve, reject) => {
 			this.make(resolve, reject);
 		});
@@ -96,7 +78,6 @@ export class APIRequest {
 	) {
 		// This is the data we'll receive
 		let data = "";
-
 		const { structureMaxAge } = this.rest.client;
 		const timeout = setTimeout(() => {
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -126,27 +107,22 @@ export class APIRequest {
 					this.make(resolve, reject);
 					return;
 				}
-
 				// Handle the data received
 				res.on("data", (d: string) => {
 					data += d;
-					this.rest.client.emit("chunk", d);
 				});
 				res.once("end", () => {
 					if (!res.complete) return;
 					clearTimeout(timeout);
-					const response = new Response(data, res, this);
+					const response = new Response(data, res);
 
 					resolve(response);
-					this.status = RequestStatus.Finished;
 					this.rest.client.emit("requestEnd", response);
 				});
 			}
 		);
-
 		req.once("error", (error) => {
 			reject(new Error(Errors.requestError(this.url, error)));
-			this.status = RequestStatus.Failed;
 		});
 		req.end();
 	}

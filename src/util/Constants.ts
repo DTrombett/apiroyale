@@ -65,7 +65,6 @@ export interface ClientEvents {
 	badgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
 	cardRemove: [card: Card];
 	cardUpdate: [oldCard: Card, newCard: Card];
-	chunk: [chunk: string];
 	clanCurrentStandingRemove: [clan: ClanCurrentStanding];
 	clanCurrentStandingUpdate: [
 		oldStanding: ClanCurrentStanding,
@@ -451,31 +450,6 @@ export interface RequestOptions {
 	 * The query of this request
 	 */
 	query?: ConstructorParameters<typeof URLSearchParams>[0];
-}
-
-/**
- * The status of a request to the API
- */
-export enum RequestStatus {
-	/**
-	 * The request is pending
-	 */
-	Pending,
-
-	/**
-	 * The request is in progress
-	 */
-	InProgress,
-
-	/**
-	 * The request was successful
-	 */
-	Finished,
-
-	/**
-	 * The request failed
-	 */
-	Failed,
 }
 
 /**

@@ -31,12 +31,12 @@ export class ErrorRoyale extends Error {
 	statusCode: number;
 
 	/**
-	 * @param request - The request sent
+	 * @param req - The request sent
 	 * @param res - The response received
 	 */
-	constructor(request: APIRequest, res: Response) {
+	constructor(req: APIRequest, res: Response) {
+		const query = req.query.toString();
 		let error: string | undefined;
-		const query = request.query.toString();
 
 		if (res.data != null)
 			error = (JSON.parse(res.data) as APIClientError).message;
@@ -44,9 +44,8 @@ export class ErrorRoyale extends Error {
 		super(error);
 
 		if (query) this.query = query;
-
-		this.headers = request.headers;
-		this.path = request.path;
+		this.headers = req.headers;
+		this.path = req.path;
 		this.status = res.status;
 		this.statusCode = res.statusCode;
 	}

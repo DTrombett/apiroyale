@@ -19,7 +19,7 @@ export class Rest {
 	queue = new Queue();
 
 	/**
-	 * If we are ratelimited
+	 * Whether or not the client is currently rate limited
 	 */
 	rateLimited = false;
 
@@ -32,12 +32,10 @@ export class Rest {
 
 	/**
 	 * Make a request to the API.
-	 * @param path - The path to request
+	 * @param path - The path to the API endpoint
 	 * @param options - Other options for this request
-	 * @template T The return type that should be used by the function
-	 * @returns The JSON data received from the API or null if no data was received
+	 * @returns The raw JSON data received from the API or null if no data was received
 	 */
-	// eslint-disable-next-line @typescript-eslint/ban-types
 	async get<T extends Path>(
 		path: T,
 		options?: RequestOptions & { retry?: boolean; force?: boolean }
@@ -46,16 +44,15 @@ export class Rest {
 
 		if (this.rateLimited && options?.force !== true)
 			throw new Error(Errors.restRateLimited());
-
-		const request = new APIRequest(this, path, options);
-		const res = await request.send();
+		const req = new APIRequest(this, path, options);
+		const res = await req.send();
 		let data: ResponseType<T> | null | undefined;
 
 		if (res.statusCode === 429) {
 			// If we encountered a ratelimit... well, this is a problem!
 			this.rateLimited = true;
 			this.queue.next();
-			throw new ErrorRoyale(request, res);
+			throw new ErrorRoyale(req, res);
 		}
 		if (res.statusCode >= 200 && res.statusCode < 300)
 			// If the request is ok parse the data received
@@ -68,12 +65,10 @@ export class Rest {
 			this.queue.next();
 			return this.get(path, { ...options, retry: false });
 		}
-
 		this.queue.next();
 		if (data !== undefined) return data!;
-
 		// If we didn't receive a successful response, throw an error
-		throw new ErrorRoyale(request, res);
+		throw new ErrorRoyale(req, res);
 	}
 }
 
