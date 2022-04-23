@@ -1,8 +1,7 @@
 import type ClientRoyale from "..";
 import type {
 	APIClanMember,
-	APIRole,
-	APITag,
+	APIClanMemberRole,
 	Arena,
 	Clan,
 	ClanPreview,
@@ -26,7 +25,7 @@ export class ClanMember<
 	/**
 	 * The clan tag of this member
 	 */
-	readonly clanTag: APITag;
+	readonly clanTag: string;
 
 	/**
 	 * The number of donations this member has made this week
@@ -61,7 +60,7 @@ export class ClanMember<
 	/**
 	 * The role of this member
 	 */
-	role: APIRole;
+	role: APIClanMemberRole;
 
 	/**
 	 * The number of trophies this member has
@@ -73,7 +72,7 @@ export class ClanMember<
 	 * @param data - The data of the member
 	 * @param clanTag - The clan of the member
 	 */
-	constructor(client: ClientRoyale, data: T, clanTag: APITag) {
+	constructor(client: ClientRoyale, data: T, clanTag: string) {
 		super(client, data);
 
 		this.clanTag = clanTag;

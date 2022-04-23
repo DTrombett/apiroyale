@@ -1,5 +1,4 @@
 import type {
-	APITag,
 	ClientRoyale,
 	ConstructableStructure,
 	ConstructorExtras,
@@ -59,9 +58,7 @@ export class FetchableManager<
 		)
 			return existing;
 		return this.add<S>(
-			await this.client.api.get<StructureType<T>>(
-				this.route(id as APITag & StringId)
-			)
+			await this.client.api.get<StructureType<T>>(this.route(id as StringId))
 		);
 	}
 }

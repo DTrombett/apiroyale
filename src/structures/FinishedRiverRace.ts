@@ -1,6 +1,5 @@
 import type {
 	APIRiverRaceLogEntry,
-	APITag,
 	Clan,
 	ClanPreview,
 	ClanResultPreview,
@@ -20,7 +19,7 @@ export class FinishedRiverRace<
 	/**
 	 * The tag of the clan this race is for
 	 */
-	readonly clanTag: APITag;
+	readonly clanTag: string;
 
 	/**
 	 * When this race has ended
@@ -48,7 +47,7 @@ export class FinishedRiverRace<
 	 * @param client - The client that instantiated this
 	 * @param data - The data of the river race
 	 */
-	constructor(client: ClientRoyale, data: T, clanTag: APITag) {
+	constructor(client: ClientRoyale, data: T, clanTag: string) {
 		super(client, data, `${data.seasonId}-${data.sectionIndex}`);
 
 		this.clanTag = clanTag;

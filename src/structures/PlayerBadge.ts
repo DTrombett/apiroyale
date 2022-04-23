@@ -1,7 +1,6 @@
 import type ClientRoyale from "..";
 import type {
-	APIBadge,
-	APIMultipleLevelsBadge,
+	APIPlayerAchievementBadge,
 	NonNullableProperties,
 	Player,
 } from "..";
@@ -13,16 +12,23 @@ export type PlayerMultipleLevelsBadge<T extends PlayerBadge = PlayerBadge> =
 /**
  * A player's badge
  */
-export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
+export class PlayerBadge<
+	T extends APIPlayerAchievementBadge = APIPlayerAchievementBadge
+> extends Structure<T> {
+	/**
+	 * The icon URLs of this badge
+	 */
+	iconUrls: APIPlayerAchievementBadge["iconUrls"];
+
 	/**
 	 * The current level of the badge
 	 */
-	level = 1;
+	level: number;
 
 	/**
 	 * The number of levels of the badge
 	 */
-	levels = 1;
+	levels: number;
 
 	/**
 	 * The name of the badge
@@ -42,7 +48,7 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	/**
 	 * The target of the badge
 	 */
-	target?: number;
+	target: number;
 
 	/**
 	 * @param client - The client that instantiated this badge
@@ -54,10 +60,11 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 
 		this.player = player;
 		this.name = data.name;
+		this.iconUrls = data.iconUrls;
 		this.progress = data.progress;
-		if ("maxLevel" in data) this.levels = data.maxLevel;
-		if ("level" in data) this.level = data.level;
-		if ("target" in data) this.target = data.target;
+		this.levels = data.maxLevel;
+		this.level = data.level;
+		this.target = data.target;
 	}
 
 	/**
@@ -70,15 +77,15 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	/**
 	 * The percentage of the badge's progress, or null if there is no data
 	 */
-	get percentage(): number | null {
-		return this.target != null ? (this.progress / this.target) * 100 : null;
+	get percentage(): number {
+		return (this.progress / this.target) * 100;
 	}
 
 	/**
 	 * The missing progress to reach the next target, or null if there is no data
 	 */
-	get missingProgress(): number | null {
-		return this.target != null ? this.target - this.progress : null;
+	get missingProgress(): number {
+		return this.target - this.progress;
 	}
 
 	/**
@@ -120,12 +127,9 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	 */
 	patch(data: Partial<T>): this {
 		if (data.progress !== undefined) this.progress = data.progress;
-		if ((data as Partial<APIMultipleLevelsBadge>).maxLevel !== undefined)
-			this.levels = (data as unknown as APIMultipleLevelsBadge).maxLevel;
-		if ((data as Partial<APIMultipleLevelsBadge>).level !== undefined)
-			this.level = (data as unknown as APIMultipleLevelsBadge).level;
-		if ((data as Partial<APIMultipleLevelsBadge>).target !== undefined)
-			this.target = (data as unknown as APIMultipleLevelsBadge).target;
+		if (data.maxLevel !== undefined) this.levels = data.maxLevel;
+		if (data.level !== undefined) this.level = data.level;
+		if (data.target !== undefined) this.target = data.target;
 
 		return super.patch(data);
 	}
@@ -134,17 +138,14 @@ export class PlayerBadge<T extends APIBadge = APIBadge> extends Structure<T> {
 	 * Get a JSON representation of this badge.
 	 * @returns The JSON representation of this badge
 	 */
-	toJSON(): APIBadge {
+	toJSON(): APIPlayerAchievementBadge {
 		return {
 			name: this.name,
 			progress: this.progress,
-			...(this.isMultipleLevels()
-				? {
-						maxLevel: this.levels,
-						level: this.level,
-						target: this.target,
-				  }
-				: {}),
+			maxLevel: this.levels,
+			level: this.level,
+			target: this.target,
+			iconUrls: this.iconUrls,
 		};
 	}
 }

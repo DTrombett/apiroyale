@@ -4,7 +4,6 @@ import type { URL, URLSearchParams } from "node:url";
 import type ClientRoyale from "..";
 import type {
 	APIRequest,
-	APITag,
 	Arena,
 	Card,
 	Clan,
@@ -268,7 +267,7 @@ export interface FetchClanMembersOptions extends ListOptions {
 	/**
 	 * The tag of the clan
 	 */
-	tag: APITag;
+	tag: string;
 }
 
 /**
@@ -293,7 +292,7 @@ export interface FetchPlayerUpcomingChestsOptions {
 	/**
 	 * The tag of the player
 	 */
-	tag: APITag;
+	tag: string;
 }
 
 /**
@@ -303,7 +302,7 @@ export interface FetchRiverRaceLogOptions extends ListOptions {
 	/**
 	 * The tag of the clan
 	 */
-	tag: APITag;
+	tag: string;
 }
 
 /**
@@ -450,14 +449,14 @@ export enum RequestStatus {
  */
 export const Routes = {
 	Cards: () => "/cards" as const,
-	Clan: (tag: APITag) => `/clans/${tag}` as const,
-	ClanMembers: (tag: APITag) => `/clans/${tag}/members` as const,
+	Clan: (tag: string) => `/clans/${tag}` as const,
+	ClanMembers: (tag: string) => `/clans/${tag}/members` as const,
 	Clans: () => "/clans" as const,
-	CurrentRiverRace: (tag: APITag) => `/clans/${tag}/currentriverrace` as const,
+	CurrentRiverRace: (tag: string) => `/clans/${tag}/currentriverrace` as const,
 	Location: (id: StringId) => `/locations/${id}` as const,
-	Player: (tag: APITag) => `/players/${tag}` as const,
-	RiverRaceLog: (tag: APITag) => `/clans/${tag}/riverracelog` as const,
-	UpcomingChests: (tag: APITag) => `/players/${tag}/upcomingchests` as const,
+	Player: (tag: string) => `/players/${tag}` as const,
+	RiverRaceLog: (tag: string) => `/clans/${tag}/riverracelog` as const,
+	UpcomingChests: (tag: string) => `/players/${tag}/upcomingchests` as const,
 } as const;
 
 /**

@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIAchievement, Player } from "..";
+import type { APIPlayerAchievementProgress, Player } from "..";
 import { PlayerAchievement } from "../structures";
 import Manager from "./Manager";
 
@@ -19,7 +19,11 @@ export class PlayerAchievementManager extends Manager<
 	 * @param player - The player that this manager belongs to
 	 * @param data - The data to initialize the manager with
 	 */
-	constructor(client: ClientRoyale, player: Player, data?: APIAchievement[]) {
+	constructor(
+		client: ClientRoyale,
+		player: Player,
+		data?: APIPlayerAchievementProgress[]
+	) {
 		super(
 			client,
 			PlayerAchievement,

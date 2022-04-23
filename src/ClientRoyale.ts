@@ -3,7 +3,6 @@ import { URLSearchParams } from "node:url";
 import type {
 	APIClanMemberList,
 	APIRiverRaceLog,
-	APITag,
 	APIUpcomingChests,
 	Clan,
 	ClanMember,
@@ -166,14 +165,14 @@ export class ClientRoyale extends EventEmitter {
 	/**
 	 * A collection of all the clans cached
 	 */
-	get allClans(): Collection<APITag, Clan | ClanPreview | ClanResultPreview> {
+	get allClans(): Collection<string, Clan | ClanPreview | ClanResultPreview> {
 		return this.clanPreviews.concat(this.clanResultPreviews, this.clans);
 	}
 
 	/**
 	 * A collection of all the players cached
 	 */
-	get allPlayers(): Collection<APITag, ClanMember | Player> {
+	get allPlayers(): Collection<string, ClanMember | Player> {
 		return this.players.concat(...this.clans.map((clan) => clan.members));
 	}
 

@@ -1,4 +1,4 @@
-import type { APIClanResultPreview, APIClanType, ClientRoyale } from "..";
+import type { APIClan, APIClanType, ClientRoyale } from "..";
 import ClanPreview from "./ClanPreview";
 import type Location from "./Location";
 
@@ -6,7 +6,13 @@ import type Location from "./Location";
  * A clan result preview
  */
 export class ClanResultPreview<
-	T extends APIClanResultPreview = APIClanResultPreview
+	T extends Omit<
+		APIClan,
+		"clanChestPoints" | "clanChestStatus" | "description" | "memberList"
+	> = Omit<
+		APIClan,
+		"clanChestPoints" | "clanChestStatus" | "description" | "memberList"
+	>
 > extends ClanPreview<T> {
 	/**
 	 * The donations made in the clan since this week started
@@ -71,7 +77,7 @@ export class ClanResultPreview<
 	 * @returns A clone of this clan result preview
 	 */
 	clone(): ClanResultPreview<T> {
-		return new ClanResultPreview(this.client, this.toJSON());
+		return new ClanResultPreview(this.client, this.toJSON() as T);
 	}
 
 	/**
@@ -116,7 +122,10 @@ export class ClanResultPreview<
 	 * Get a JSON representation of this clan result preview
 	 * @returns The JSON representation of this clan result preview
 	 */
-	toJSON(): APIClanResultPreview {
+	toJSON(): Omit<
+		APIClan,
+		"clanChestPoints" | "clanChestStatus" | "description" | "memberList"
+	> {
 		return {
 			...super.toJSON(),
 			clanScore: this.score,
@@ -126,6 +135,9 @@ export class ClanResultPreview<
 			members: this.memberCount,
 			requiredTrophies: this.requiredTrophies,
 			type: this.type,
+			badgeId: this.badgeId,
+			clanChestLevel: 0,
+			clanChestMaxLevel: 0,
 		};
 	}
 }

@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIRiverRaceLogEntry, APITag } from "..";
+import type { APIRiverRaceLogEntry } from "..";
 import { FinishedRiverRace } from "../structures";
 import Manager from "./Manager";
 
@@ -12,7 +12,7 @@ export class FinishedRiverRaceManager extends Manager<
 	/**
 	 * The clan tag this manager is for
 	 */
-	clanTag: APITag;
+	clanTag: string;
 
 	/**
 	 * @param client - The client that instantiated this manager
@@ -20,7 +20,7 @@ export class FinishedRiverRaceManager extends Manager<
 	 */
 	constructor(
 		client: ClientRoyale,
-		clanTag: APITag,
+		clanTag: string,
 		data?: APIRiverRaceLogEntry[]
 	) {
 		super(

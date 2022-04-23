@@ -1,6 +1,6 @@
 import { URLSearchParams } from "node:url";
 import type ClientRoyale from "..";
-import type { APIClan, APIClanSearchResults, SearchClanOptions } from "..";
+import type { APIClan, APIClanList, SearchClanOptions } from "..";
 import { ClanSearchResults } from "../lists";
 import { Clan } from "../structures";
 import Constants, { Errors, Routes } from "../util";
@@ -83,7 +83,7 @@ export class ClanManager extends FetchableManager<typeof Clan> {
 		return new ClanSearchResults(
 			this,
 			options,
-			await this.client.api.get<APIClanSearchResults>(Routes.Clans(), {
+			await this.client.api.get<APIClanList>(Routes.Clans(), {
 				query,
 			})
 		);

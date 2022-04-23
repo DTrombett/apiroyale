@@ -1,11 +1,9 @@
-import type { APIDate } from "..";
-
 /**
  * Convert a date returned from the API to a Date object.
  * @param date - The date to convert
  * @returns The converted date
  */
-export const APIDateToObject = (date: APIDate): Date => {
+export const APIDateToObject = (date: string): Date => {
 	if (typeof date !== "string")
 		throw new TypeError(`Argument 'date' must be a string`);
 	return new Date(
@@ -23,9 +21,9 @@ export const APIDateToObject = (date: APIDate): Date => {
  * @param date - The date to convert
  * @returns The converted date
  */
-export const dateObjectToAPIDate = (date?: Date | null): APIDate =>
+export const dateObjectToAPIDate = (date?: Date | null): string =>
 	date != null
-		? (`${date.getFullYear()}${(date.getMonth() + 1)
+		? `${date.getFullYear()}${(date.getMonth() + 1)
 				.toString()
 				.padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}T${date
 				.getHours()
@@ -33,5 +31,5 @@ export const dateObjectToAPIDate = (date?: Date | null): APIDate =>
 				.padStart(2, "0")}${date.getMinutes().toString().padStart(2, "0")}${date
 				.getSeconds()
 				.toString()
-				.padStart(2, "0")}.000Z` as APIDate)
+				.padStart(2, "0")}.000Z`
 		: "19691231T235959.000Z";

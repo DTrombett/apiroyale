@@ -1,13 +1,11 @@
 import type ClientRoyale from "..";
-import type { APIUpcomingChest, APIUpcomingChestName } from "..";
+import type { APIChest } from "..";
 import Structure from "./Structure";
 
 /**
  * An upcoming chest
  */
-export class UpcomingChest<
-	T extends APIUpcomingChest = APIUpcomingChest
-> extends Structure<T> {
+export class UpcomingChest<T extends APIChest = APIChest> extends Structure<T> {
 	/**
 	 * The index of this chest
 	 */
@@ -16,7 +14,7 @@ export class UpcomingChest<
 	/**
 	 * The name of the chest
 	 */
-	name: APIUpcomingChestName;
+	name: string;
 
 	/**
 	 * @param client - The client that instantiated this chest
@@ -65,7 +63,7 @@ export class UpcomingChest<
 	 * Get a JSON representation of this card.
 	 * @returns The card's data
 	 */
-	toJSON(): APIUpcomingChest {
+	toJSON(): APIChest {
 		return {
 			...super.toJSON(),
 			index: this.index,

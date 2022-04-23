@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIClanCurrentStanding, CurrentRiverRace } from "..";
+import type { APIRiverRaceClan, CurrentRiverRace } from "..";
 import { ClanCurrentStanding } from "../structures";
 import Manager from "./Manager";
 
@@ -22,7 +22,7 @@ export class ClanCurrentStandingManager extends Manager<
 	constructor(
 		client: ClientRoyale,
 		race: CurrentRiverRace,
-		data?: APIClanCurrentStanding[]
+		data?: APIRiverRaceClan[]
 	) {
 		super(
 			client,

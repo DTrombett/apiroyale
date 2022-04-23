@@ -1,15 +1,11 @@
-import type {
-	APIClanCurrentStanding,
-	ClientRoyale,
-	CurrentRiverRace,
-} from "..";
+import type { APIRiverRaceClan, ClientRoyale, CurrentRiverRace } from "..";
 import BaseClanStanding from "./BaseClanStanding";
 
 /**
  * A clan week standing
  */
 export class ClanCurrentStanding<
-	T extends APIClanCurrentStanding = APIClanCurrentStanding
+	T extends APIRiverRaceClan = APIRiverRaceClan
 > extends BaseClanStanding<T> {
 	/**
 	 * The race that this clan is in
@@ -39,7 +35,7 @@ export class ClanCurrentStanding<
 	 * @returns A clone of this standing
 	 */
 	clone(): ClanCurrentStanding<T> {
-		return new ClanCurrentStanding(this.client, this.toJSON(), this.race);
+		return new ClanCurrentStanding(this.client, this.toJSON() as T, this.race);
 	}
 
 	/**
@@ -64,7 +60,7 @@ export class ClanCurrentStanding<
 	 * Get a JSON representation of this standing.
 	 * @returns The JSON representation of this standing
 	 */
-	toJSON(): APIClanCurrentStanding {
+	toJSON(): APIRiverRaceClan {
 		return {
 			...super.toJSON(),
 		};

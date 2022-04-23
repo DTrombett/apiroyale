@@ -1,7 +1,6 @@
 import type ClientRoyale from "..";
 import type {
 	APIClanMember,
-	APITag,
 	Clan,
 	ClanPreview,
 	ClanResultPreview,
@@ -19,14 +18,14 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	/**
 	 * The clan tag this manager is for
 	 */
-	readonly clanTag: APITag;
+	readonly clanTag: string;
 
 	/**
 	 * @param client - The client that instantiated this manager
 	 * @param clanTag - The clan tag this manager is for
 	 * @param data - The data to initialize this manager with
 	 */
-	constructor(client: ClientRoyale, clanTag: APITag, data?: APIClanMember[]) {
+	constructor(client: ClientRoyale, clanTag: string, data?: APIClanMember[]) {
 		super(
 			client,
 			ClanMember,

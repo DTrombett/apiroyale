@@ -3,7 +3,6 @@ import type {
 	APICurrentRiverRace,
 	APIRiverRacePeriodType,
 	APIRiverRaceState,
-	APITag,
 	FetchOptions,
 } from "..";
 import {
@@ -23,8 +22,6 @@ export class CurrentRiverRace<
 	 * The clan of this race
 	 */
 	readonly clan: ClanCurrentStanding;
-
-	declare readonly id: APITag;
 
 	/**
 	 * The leaderboard of clans in this race
@@ -134,7 +131,7 @@ export class CurrentRiverRace<
 		if (data.periodIndex !== undefined) this.monthDay = data.periodIndex + 1;
 		if (data.periodType !== undefined) this.type = data.periodType;
 		if (data.periodLogs !== undefined)
-			this.warDays.overrideItems(...data.periodLogs!);
+			this.warDays.overrideItems(...data.periodLogs);
 		if (data.sectionIndex !== undefined) this.week = data.sectionIndex + 1;
 
 		return super.patch(data);

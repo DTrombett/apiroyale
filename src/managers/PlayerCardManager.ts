@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APIPlayerCard, Player } from "..";
+import type { APIPlayerItemLevel, Player } from "..";
 import { PlayerCard } from "../structures";
 import Manager from "./Manager";
 
@@ -17,7 +17,11 @@ export class PlayerCardManager extends Manager<typeof PlayerCard> {
 	 * @param player - The player that this manager belongs to
 	 * @param data - The data to initialize this manager with
 	 */
-	constructor(client: ClientRoyale, player: Player, data?: APIPlayerCard[]) {
+	constructor(
+		client: ClientRoyale,
+		player: Player,
+		data?: APIPlayerItemLevel[]
+	) {
 		super(
 			client,
 			PlayerCard,

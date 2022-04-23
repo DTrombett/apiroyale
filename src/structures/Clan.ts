@@ -1,4 +1,5 @@
 import type { APIClan, ClientRoyale } from "..";
+import { APIClanChestStatus } from "../APITypes";
 import { ClanMemberManager } from "../managers";
 import ClanResultPreview from "./ClanResultPreview";
 
@@ -72,7 +73,7 @@ export class Clan<T extends APIClan = APIClan> extends ClanResultPreview<T> {
 			memberList: this.members.map((member) => member.toJSON()),
 			clanChestLevel: 1,
 			clanChestMaxLevel: 0,
-			clanChestStatus: "inactive",
+			clanChestStatus: APIClanChestStatus.INACTIVE,
 		};
 	}
 }

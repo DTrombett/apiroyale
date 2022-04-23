@@ -41,7 +41,7 @@ export class List<K extends number | string, V> extends Collection<K, V> {
 		client: ClientRoyale,
 		method: ListMethod<K, V>,
 		options: Parameters<typeof method>[0],
-		paging: APIPaging,
+		paging: APIPaging = { cursors: {} },
 		data: [K, V][]
 	) {
 		super(data);

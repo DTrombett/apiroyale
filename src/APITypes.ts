@@ -23,8 +23,8 @@ export interface APICurrentRiverRace {
 	state: APIRiverRaceState;
 	clan: APIRiverRaceClan;
 	clans: APIRiverRaceClanList;
-	collectionEndTime: string;
-	warEndTime: string;
+	collectionEndTime?: string;
+	warEndTime?: string;
 	sectionIndex: integer;
 	periodIndex: integer;
 	periodType: APIRiverRacePeriodType;
@@ -287,7 +287,7 @@ export interface APIClan {
 	type: APIClanType;
 	members: integer;
 	description: string;
-	clanChestPoints: integer;
+	clanChestPoints?: integer;
 }
 
 export enum APIClanChestStatus {
@@ -554,7 +554,12 @@ export enum APITournamentHeaderType {
 	UNKNOWN = "unknown",
 }
 
-export type APIClanList = APIList<APIClan>;
+export type APIClanList = APIList<
+	Omit<
+		APIClan,
+		"clanChestPoints" | "clanChestStatus" | "description" | "memberList"
+	>
+>;
 
 export type APIClanRankingList = APIList<APIClanRanking>;
 
