@@ -426,6 +426,18 @@ export type NonNullableProperties<T, K extends keyof T> = {
  */
 export type Path = ValueOf<Routes>;
 
+export interface QueuePromise {
+	/**
+	 * The promise to resolve
+	 */
+	promise: Promise<void>;
+
+	/**
+	 * The resolve function of the promise
+	 */
+	resolve(): void;
+}
+
 /**
  * The options for a request
  */

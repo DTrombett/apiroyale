@@ -1,7 +1,6 @@
-import { AsyncQueue } from "@sapphire/async-queue";
 import type { ClientRoyale, Path, RequestOptions } from "..";
 import type { ResponseType } from "../util";
-import { Errors } from "../util";
+import { Errors, Queue } from "../util";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
 
@@ -17,7 +16,7 @@ export class Rest {
 	/**
 	 * A queue for the requests
 	 */
-	queue = new AsyncQueue();
+	queue = new Queue();
 
 	/**
 	 * If we are ratelimited
@@ -55,7 +54,7 @@ export class Rest {
 		if (res.statusCode === 429) {
 			// If we encountered a ratelimit... well, this is a problem!
 			this.rateLimited = true;
-			this.queue.shift();
+			this.queue.next();
 			throw new ErrorRoyale(request, res);
 		}
 		if (res.statusCode >= 200 && res.statusCode < 300)
@@ -66,11 +65,11 @@ export class Rest {
 			data = null;
 		else if (res.statusCode >= 500 && options?.retry === true) {
 			// If there's a server error retry just one time
-			this.queue.shift();
+			this.queue.next();
 			return this.get(path, { ...options, retry: false });
 		}
 
-		this.queue.shift();
+		this.queue.next();
 		if (data !== undefined) return data!;
 
 		// If we didn't receive a successful response, throw an error
