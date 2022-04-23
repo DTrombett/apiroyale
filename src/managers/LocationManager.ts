@@ -16,7 +16,7 @@ export class LocationManager extends FetchableManager<typeof Location> {
 			addEvent: "newLocation",
 			data,
 			removeEvent: "locationRemove",
-			route: Routes.Location,
+			route: Routes.Location as never,
 			sortMethod: (a, b) => a.name.localeCompare(b.name),
 			updateEvent: "locationUpdate",
 		});

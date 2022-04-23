@@ -5,7 +5,6 @@ import type {
 	ClanPreview,
 	ClanResultPreview,
 	FetchOptions,
-	Path,
 } from "..";
 import { ClanMember } from "../structures";
 import { Routes } from "../util";
@@ -52,7 +51,7 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 	/**
 	 * The path to fetch the members from
 	 */
-	get path(): Path {
+	get path(): Routes["ClanMembers"] {
 		return Routes.ClanMembers(this.clanTag);
 	}
 
@@ -71,8 +70,8 @@ export class ClanMemberManager extends Manager<typeof ClanMember> {
 		)
 			return Promise.resolve(this);
 		return this.client.api
-			.get<APIClanMember[]>(this.path)
-			.then((memberList) => this.add(...memberList));
+			.get(this.path)
+			.then((memberList) => this.add(...memberList.items));
 	}
 }
 

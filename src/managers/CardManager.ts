@@ -35,9 +35,7 @@ export class CardManager extends Manager<typeof Card> {
 		)
 			return Promise.resolve(this);
 
-		this.overrideItems(
-			...(await this.client.api.get<APIItem[]>(Routes.Cards()))
-		);
+		this.overrideItems(...(await this.client.api.get(Routes.Cards())).items);
 		return this;
 	}
 }

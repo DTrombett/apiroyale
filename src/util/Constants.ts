@@ -642,14 +642,10 @@ export type ResponseType<T extends ValueOf<Routes>> = T extends Routes["WarLog"]
 	? APIRiverRaceLog
 	: T extends Routes["CurrentWar"]
 	? APICurrentClanWar
-	: T extends Routes["Clan"]
-	? APIClan
 	: T extends Routes["ClanMembers"]
 	? APIClanMemberList
 	: T extends Routes["CurrentRiverRace"]
 	? APICurrentRiverRace
-	: T extends Routes["Player"]
-	? APIPlayer
 	: T extends Routes["UpcomingChests"]
 	? APIUpcomingChests
 	: T extends Routes["BattleLog"]
@@ -658,30 +654,34 @@ export type ResponseType<T extends ValueOf<Routes>> = T extends Routes["WarLog"]
 	? APIItemList
 	: T extends Routes["Tournaments"]
 	? APITournamentHeaderList
-	: T extends Routes["Tournament"]
-	? APITournament
 	: T extends Routes["ClanRankings"]
 	? APIClanRankingList
 	: T extends Routes["PlayerRankings"]
 	? APIPlayerRankingList
 	: T extends Routes["ClanWarRankings"]
 	? APIClanRankingList
-	: T extends Routes["Season"]
-	? APILeagueSeason
 	: T extends Routes["TopPlayerRankings"]
 	? APIPlayerRankingList
 	: T extends Routes["Seasons"]
 	? APILeagueSeasonList
 	: T extends Routes["Locations"]
 	? APILocationList
-	: T extends Routes["Location"]
-	? APILocation
-	: T extends Routes["GlobalTournamentRankings"]
-	? APILadderTournamentRankingList
 	: T extends Routes["Challenges"]
 	? APIChallengeChainsList
 	: T extends Routes["GlobalTournaments"]
 	? APILadderTournamentList
+	: T extends Routes["Clan"]
+	? APIClan
+	: T extends Routes["Player"]
+	? APIPlayer
+	: T extends Routes["Tournament"]
+	? APITournament
+	: T extends Routes["Season"]
+	? APILeagueSeason
+	: T extends Routes["Location"]
+	? APILocation
+	: T extends Routes["GlobalTournamentRankings"]
+	? APILadderTournamentRankingList
 	: never;
 
 /**
