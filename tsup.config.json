@@ -4,6 +4,5 @@
 	"format": ["cjs"],
 	"minify": true,
 	"platform": "node",
-	"sourcemap": true,
 	"target": "es2021"
 }
