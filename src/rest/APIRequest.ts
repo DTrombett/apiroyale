@@ -78,11 +78,11 @@ export class APIRequest {
 	) {
 		// This is the data we'll receive
 		let data = "";
-		const { structureMaxAge } = this.rest.client;
+		const { abortTimeout } = this.rest.client;
 		const timeout = setTimeout(() => {
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
-			req.destroy(new Error(Errors.requestAborted(this.path, structureMaxAge)));
-		}, structureMaxAge).unref();
+			req.destroy(new Error(Errors.requestAborted(this.path, abortTimeout)));
+		}, abortTimeout).unref();
 		const req = get(
 			this.url,
 			{
@@ -117,7 +117,7 @@ export class APIRequest {
 					const response = new Response(data, res);
 
 					resolve(response);
-					this.rest.client.emit("requestEnd", response);
+					this.rest.client.emit("requestEnd", this, response);
 				});
 			}
 		);

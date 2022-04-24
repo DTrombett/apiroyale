@@ -1,10 +1,10 @@
-import type { Comparator } from "@discordjs/collection";
 import type { OutgoingHttpHeaders } from "node:http";
 import type { URL, URLSearchParams } from "node:url";
-import type ClientRoyale from "..";
 import type {
 	APIBattleList,
+	APIChallengeChain,
 	APIChallengeChainsList,
+	APIChestList,
 	APIClan,
 	APIClanList,
 	APIClanMemberList,
@@ -12,7 +12,9 @@ import type {
 	APIClanWarLog,
 	APICurrentClanWar,
 	APICurrentRiverRace,
+	APIItem,
 	APIItemList,
+	APILadderTournament,
 	APILadderTournamentList,
 	APILadderTournamentRankingList,
 	APILeagueSeason,
@@ -23,136 +25,69 @@ import type {
 	APIPlayerRankingList,
 	APIRequest,
 	APIRiverRaceLog,
+	APIRiverRaceLogEntry,
 	APITournament,
 	APITournamentHeaderList,
 	APIUpcomingChests,
-	Arena,
-	Card,
-	Clan,
-	ClanCurrentStanding,
-	ClanMember,
-	ClanPreview,
-	ClanResultPreview,
-	CurrentRiverRace,
-	FinishedRiverRace,
-	List,
-	Location,
-	Player,
-	PlayerAchievement,
-	PlayerBadge,
-	PlayerCard,
 	Response,
-	RiverRaceParticipant,
-	RiverRacePeriod,
-	RiverRacePeriodStanding,
-	RiverRaceWeekStanding,
-	Structure,
-	UpcomingChest,
 } from "..";
 
 /**
  * Events that can be emitted by the client
  */
 export interface ClientEvents {
-	achievementRemove: [achievement: PlayerAchievement];
-	achievementUpdate: [
-		oldAchievement: PlayerAchievement,
-		newAchievement: PlayerAchievement
-	];
-	arenaRemove: [arena: Arena];
-	arenaUpdate: [oldArena: Arena, newArena: Arena];
-	badgeRemove: [badge: PlayerBadge];
-	badgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
-	cardRemove: [card: Card];
-	cardUpdate: [oldCard: Card, newCard: Card];
-	clanCurrentStandingRemove: [clan: ClanCurrentStanding];
-	clanCurrentStandingUpdate: [
-		oldStanding: ClanCurrentStanding,
-		newStanding: ClanCurrentStanding
-	];
-	clanMemberRemove: [member: ClanMember];
-	clanMemberUpdate: [oldMember: ClanMember, newMember: ClanMember];
-	clanPreviewRemove: [clan: ClanPreview];
-	clanPreviewUpdate: [oldClan: ClanPreview, newClan: ClanPreview];
-	clanRemove: [clan: Clan];
-	clanResultPreviewRemove: [clan: ClanResultPreview];
-	clanResultPreviewUpdate: [
-		oldClan: ClanResultPreview,
-		newClan: ClanResultPreview
-	];
-	clanUpdate: [oldClan: Clan, newClan: Clan];
-	currentRiverRaceUpdate: [
-		oldCurrentRiverRace: CurrentRiverRace,
-		newCurrentRiverRace: CurrentRiverRace
-	];
-	currentRiverRaceRemove: [currentRiverRace: CurrentRiverRace];
-	finishedRiverRaceRemove: [riverRace: FinishedRiverRace];
-	finishedRiverRaceUpdate: [
-		oldRiverRace: FinishedRiverRace,
-		newRiverRace: FinishedRiverRace
-	];
-	locationRemove: [location: Location];
-	locationUpdate: [oldLocation: Location, newLocation: Location];
-	newAchievement: [achievement: PlayerAchievement];
-	newArena: [arena: Arena];
-	newBadge: [badge: PlayerBadge];
-	newCard: [card: Card];
-	newClan: [clan: Clan];
-	newClanCurrentStanding: [clan: ClanCurrentStanding];
-	newClanMember: [member: ClanMember];
-	newClanPreview: [clan: ClanPreview];
-	newClanResultPreview: [clan: ClanResultPreview];
-	newCurrentRiverRace: [currentRiverRace: CurrentRiverRace];
-	newFinishedRiverRace: [riverRace: FinishedRiverRace];
-	newLocation: [location: Location];
-	newPlayer: [player: Player];
-	newPlayerCard: [card: PlayerCard];
-	newRiverRaceParticipant: [participant: RiverRaceParticipant];
-	newRiverRacePeriod: [period: RiverRacePeriod];
-	newRiverRacePeriodStanding: [standing: RiverRacePeriodStanding];
-	newRiverRaceWeekStanding: [standing: RiverRaceWeekStanding];
-	newUpcomingChest: [chest: UpcomingChest];
-	playerAchievementUpdate: [
-		oldAchievement: PlayerAchievement,
-		newAchievement: PlayerAchievement
-	];
-	playerBadgeUpdate: [oldBadge: PlayerBadge, newBadge: PlayerBadge];
-	playerCardRemove: [card: PlayerCard];
-	playerCardUpdate: [oldCard: PlayerCard, newCard: PlayerCard];
-	playerRemove: [player: Player];
-	playerUpdate: [oldMember: Player, newMember: Player];
-	requestEnd: [request: Response];
 	requestStart: [request: APIRequest];
-	riverRaceParticipantRemove: [participant: RiverRaceParticipant];
-	riverRaceParticipantUpdate: [
-		oldParticipant: RiverRaceParticipant,
-		newParticipant: RiverRaceParticipant
+	requestEnd: [request: APIRequest, response: Response];
+	clanWarLogAdd: [warLog: APIClanWarLog];
+	clanWarLogUpdate: [oldWarLog: APIClanWarLog, newWarLog: APIClanWarLog];
+	clanAdd: [clan: APIClan];
+	clanRemove: [clan: APIClan];
+	clanUpdate: [oldClan: APIClan, newClan: APIClan];
+	riverRaceLogEntryAdd: [entry: APIRiverRaceLogEntry];
+	riverRaceLogEntryRemove: [entry: APIRiverRaceLogEntry];
+	riverRaceLogEntryUpdate: [
+		oldEntry: APIRiverRaceLogEntry,
+		newEntry: APIRiverRaceLogEntry
 	];
-	riverRacePeriodRemove: [period: RiverRacePeriod];
-	riverRacePeriodStandingRemove: [standing: RiverRacePeriodStanding];
-	riverRacePeriodStandingUpdate: [
-		oldStanding: RiverRacePeriodStanding,
-		newStanding: RiverRacePeriodStanding
+	currentRiverRaceAdd: [race: APICurrentRiverRace];
+	currentRiverRaceRemove: [race: APICurrentRiverRace];
+	currentRiverRaceUpdate: [
+		oldRace: APICurrentRiverRace,
+		newRace: APICurrentRiverRace
 	];
-	riverRacePeriodUpdate: [
-		oldPeriod: RiverRacePeriod,
-		newPeriod: RiverRacePeriod
+	playerAdd: [player: APIPlayer];
+	playerRemove: [player: APIPlayer];
+	playerUpdate: [oldMember: APIPlayer, newMember: APIPlayer];
+	chestListAdd: [chestList: APIChestList];
+	chestListRemove: [chestList: APIChestList];
+	chestListUpdate: [oldChestList: APIChestList, newChestList: APIChestList];
+	battleListAdd: [battleList: APIBattleList];
+	battleListRemove: [battleList: APIBattleList];
+	battleListUpdate: [
+		oldBattleList: APIBattleList,
+		newBattleList: APIBattleList
 	];
-	riverRaceStandingUpdate: [
-		oldStanding: RiverRaceWeekStanding,
-		newStanding: RiverRaceWeekStanding
+	itemAdd: [item: APIItem];
+	itemRemove: [item: APIItem];
+	itemUpdate: [oldItem: APIItem, newItem: APIItem];
+	tournamentAdd: [tournament: APITournament];
+	tournamentRemove: [tournament: APITournament];
+	tournamentUpdate: [
+		oldTournament: APITournament,
+		newTournament: APITournament
 	];
-	riverRaceUpdate: [
-		oldRiverRace: FinishedRiverRace,
-		newRiverRace: FinishedRiverRace
+	challengeChainAdd: [challengeChain: APIChallengeChain];
+	challengeChainRemove: [challengeChain: APIChallengeChain];
+	challengeChainUpdate: [
+		oldChallengeChain: APIChallengeChain,
+		newChallengeChain: APIChallengeChain
 	];
-	riverRaceWeekStandingRemove: [standing: RiverRaceWeekStanding];
-	riverRaceWeekStandingUpdate: [
-		oldStanding: RiverRaceWeekStanding,
-		newStanding: RiverRaceWeekStanding
+	ladderTournamentAdd: [ladderTournament: APILadderTournament];
+	ladderTournamentRemove: [ladderTournament: APILadderTournament];
+	ladderTournamentUpdate: [
+		oldLadderTournament: APILadderTournament,
+		newLadderTournament: APILadderTournament
 	];
-	upcomingChestRemove: [chest: UpcomingChest];
-	upcomingChestUpdate: [oldChest: UpcomingChest, newChest: UpcomingChest];
 }
 
 /**
@@ -168,11 +103,6 @@ export interface ClientOptions {
 	 * The base URL of the API
 	 */
 	baseURL?: string;
-
-	/**
-	 * The maximum time in milliseconds passed after the structure was last fetched before fetching again
-	 */
-	structureMaxAge?: number;
 
 	/**
 	 * The token of this client
@@ -198,11 +128,6 @@ export const enum Constants {
 	baseURL = "https://api.clashroyale.com/v1",
 
 	/**
-	 * Default maximum time in milliseconds passed after the structure was last fetched before fetching again
-	 */
-	defaultMaxAge = 300_000,
-
-	/**
 	 * Default maximum time in milliseconds before cancelling a REST request
 	 */
 	defaultAbortTimeout = 10_000,
@@ -211,29 +136,12 @@ export const enum Constants {
 	 * Minimum number of characters in a clan name
 	 */
 	minClanNameLength = 3,
+
+	/**
+	 * Minimum number of characters in a tournament name
+	 */
+	minTournamentNameLength = 3,
 }
-
-/**
- * The class of a structure
- */
-export type ConstructableStructure<
-	S extends Omit<typeof Structure, "constructor"> = typeof Structure
-> = Omit<S, "constructor"> & {
-	prototype: S["prototype"];
-	new (client: ClientRoyale, data: any, ...args: any[]): S["prototype"];
-};
-
-/**
- * Other parameters required by a structure constructor
- */
-export type ConstructorExtras<T extends ConstructableStructure> =
-	T extends new (
-		client: ClientRoyale,
-		data: StructureType<T>,
-		...args: infer R
-	) => Structure
-		? R
-		: never;
 
 /**
  * Error messages
@@ -249,37 +157,17 @@ export const Errors = {
 	restRateLimited: () =>
 		"The rest is ratelimited so no other requests are allowed until you set the force option to true" as const,
 	tokenMissing: () => "No token provided for the client" as const,
-	clanMaxMembersNotPositive: () =>
-		"The maximum number of members must be a positive number" as const,
 	clanMaxMembersTooLow: () =>
-		"The maximum number of members must be greater than or equal to the minimum" as const,
+		"The maximum number of members must be greater than or equal to the minimum and positive" as const,
 	clanMinMembersNotPositive: () =>
 		"The minimum number of members must be a positive number" as const,
 	clanMinScoreNotPositive: () =>
 		"The minimum score must be a positive number" as const,
 	clanNameSearchTooShort: () =>
 		`The clan name must be at least ${Constants.minClanNameLength} characters long` as const,
+	tournamentNameSearchTooShort: () =>
+		`The tournament name must be at least ${Constants.minTournamentNameLength} characters long` as const,
 } as const;
-
-/**
- * Options with events to emit when a structure is updated
- */
-export interface EventsOptions<T extends ConstructableStructure> {
-	/**
-	 * The event to emit when a new structure is added
-	 */
-	add: StructureEvents<T>;
-
-	/**
-	 * The event to emit when a structure is removed
-	 */
-	remove: StructureEvents<T>;
-
-	/**
-	 * The event to emit when a structure is updated
-	 */
-	update: StructureEvents<T>;
-}
 
 /**
  * Options for fetching a clan's members
@@ -338,14 +226,6 @@ export type Json =
 	| null;
 
 /**
- * A function to fetch a list of objects from the API
- */
-export type ListMethod<K extends number | string, V> = (
-	options: { [k: string]: any; after?: string; before?: string },
-	...args: any[]
-) => Promise<List<K, V>>;
-
-/**
  * Base options for fetching a list
  */
 export interface ListOptions {
@@ -372,45 +252,21 @@ export interface ListOptions {
 /**
  * Options for creating a manager
  */
-export interface ManagerOptions<T extends ConstructableStructure> {
+export interface ManagerOptions<V> {
 	/**
 	 * The event to emit when a new structure is added
 	 */
-	addEvent: StructureEvents<T>;
-
-	/**
-	 * The data to initialize the manager with
-	 */
-	data?: StructureType<T>[];
+	addEvent?: StructureEvents<V>;
 
 	/**
 	 * The event to emit when a structure is removed
 	 */
-	removeEvent: StructureEvents<T>;
-
-	/**
-	 * The method to sort the data
-	 */
-	sortMethod?: Comparator<T["prototype"]["id"], T["prototype"]>;
+	removeEvent?: StructureEvents<V>;
 
 	/**
 	 * The event to emit when a structure is updated
 	 */
-	updateEvent: StructureEvents<T>;
-}
-
-export interface FetchableManagerOptions<T extends ConstructableStructure>
-	extends ManagerOptions<T> {
-	/**
-	 * The route to fetch the data from
-	 */
-	route: ValueOf<{
-		[K in keyof typeof Routes]: Parameters<
-			typeof Routes[K]
-		>[0] extends T["prototype"]["id"]
-			? typeof Routes[K]
-			: never;
-	}>;
+	updateEvent?: StructureEvents<V>;
 }
 
 /**
@@ -449,7 +305,12 @@ export interface RequestOptions {
 	/**
 	 * The query of this request
 	 */
-	query?: ConstructorParameters<typeof URLSearchParams>[0];
+	query?:
+		| Iterable<[string, string]>
+		| Record<string, string | readonly string[]>
+		| URLSearchParams
+		| string
+		| readonly [string, string][];
 }
 
 /**
@@ -484,7 +345,6 @@ export const Routes = {
 	/**
 	 * Get information about a single clan by clan tag.
 	 * Clan tags can be found using clan search operation.
-	 * Note that clan tags start with hash character '#' and that needs to be URL-encoded properly to work in URL, so for example clan tag '#2ABC' would become '%232ABC' in the URL.
 	 * @param clanTag - Tag of the clan
 	 */
 	Clan: (clanTag: string) => `/clans/${clanTag}` as const,
@@ -505,7 +365,6 @@ export const Routes = {
 	/**
 	 * Get information about a single player by player tag.
 	 * Player tags can be found either in game or by from clan member lists.
-	 * Note that player tags start with hash character '#' and that needs to be URL-encoded properly to work in URL, so for example player tag '#2ABC' would become '%232ABC' in the URL.
 	 * @param playerTag - Tag of the player
 	 */
 	Player: (playerTag: string) => `/players/${playerTag}` as const,
@@ -673,11 +532,11 @@ export type ResponseType<T extends ValueOf<Routes>> = T extends Routes["WarLog"]
 /**
  * Options for searching a clan
  */
-export type SearchClanOptions = ListOptions & {
+export interface SearchClanOptions extends ListOptions {
 	/**
 	 * Clan location identifier
 	 */
-	location?: Location | Location["id"];
+	location?: number;
 
 	/**
 	 * Maximum number of clan members
@@ -700,7 +559,19 @@ export type SearchClanOptions = ListOptions & {
 	 * Name search parameter is interpreted as wild card search, so it may appear anywhere in the clan name
 	 */
 	name?: string;
-};
+}
+
+/**
+ * Options for searching a tournament
+ */
+export interface SearchTournamentOptions extends ListOptions {
+	/**
+	 * The name of the tournament.
+	 * It needs to be at least three characters long.
+	 * Name search parameter is interpreted as wild card search, so it may appear anywhere in the clan name
+	 */
+	name?: string;
+}
 
 /**
  * A stringified id from the API
@@ -710,24 +581,13 @@ export type StringId = `${number}`;
 /**
  * Client events for a structure
  */
-export type StructureEvents<T extends ConstructableStructure> = ValueOf<{
-	[K in keyof ClientEvents]: T["prototype"] extends ClientEvents[K][0]
-		? ClientEvents[K][0] extends T["prototype"]
+export type StructureEvents<V> = ValueOf<{
+	[K in keyof ClientEvents]: V extends ClientEvents[K][0]
+		? ClientEvents[K][0] extends V
 			? K
 			: never
 		: never;
 }>;
-
-/**
- * The API type of a structure
- */
-export type StructureType<T extends ConstructableStructure> = T extends new (
-	client: ClientRoyale,
-	data: infer R,
-	...args: any[]
-) => Structure
-	? R
-	: never;
 
 /**
  * A valid token for the API

@@ -6,6 +6,13 @@ import BaseCollection from "@discordjs/collection";
  */
 export class Collection<K, V> extends BaseCollection<K, V> {
 	/**
+	 * Creates an array with the values of this collection.
+	 */
+	array(): V[] {
+		return [...this.values()];
+	}
+
+	/**
 	 * Creates an identical shallow copy of this collection.
 	 * @returns The cloned collection
 	 */
