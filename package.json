@@ -2,11 +2,11 @@
 	"author": "DTrombett",
 	"description": "A Node.js library to interact with the Clash Royale API",
 	"homepage": "https://github.com/DTrombett/apiroyale#readme",
-	"license": "Apache-2.0",
+	"license": "MIT",
 	"main": "dist/index.js",
 	"name": "apiroyale",
 	"types": "dist/index.d.ts",
-	"version": "0.0.1",
+	"version": "0.0.0",
 	"keywords": [
 		"nodejs",
 		"api",
@@ -14,10 +14,12 @@
 		"clashroyale"
 	],
 	"scripts": {
-		"build": "tsup && tsc --emitDeclarationOnly",
+		"build": "tsup",
 		"lint": "eslint src --fix && prettier --write src/**/*.ts",
 		"precommit": "npm run lint",
-		"postinstall": "npm run build",
+		"release:major": "npm test && npm run build && npm version major -m \"chore(release): %s\" && git push && npm publish",
+		"release:minor": "npm test && npm run build && npm version minor -m \"chore(release): %s\" && git push && npm publish",
+		"release:patch": "npm test && npm run build && npm version patch -m \"chore(release): %s\" && git push && npm publish",
 		"start": "npm run build && node .",
 		"test": "tsc --noEmit && eslint src"
 	},
@@ -33,8 +35,7 @@
 	},
 	"dependencies": {
 		"@discordjs/collection": "^0.5.0",
-		"royale-api-types": "^1.0.0",
-		"tsup": "^5.12.6"
+		"royale-api-types": "^1.0.0"
 	},
 	"devDependencies": {
 		"@tsconfig/node16": "^1.0.2",
@@ -44,6 +45,7 @@
 		"eslint": "^8.14.0",
 		"husky": "^7.0.4",
 		"prettier": "^2.6.2",
+		"tsup": "^5.12.6",
 		"typescript": "^4.6.3"
 	}
 }

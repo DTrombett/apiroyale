@@ -1,0 +1,11 @@
+.github/
+.husky/
+.vscode/
+node_modules/
+src/
+.eslintrc.json
+.gitignore
+.prettierrc.json
+tsconfig.json
+tsup.config.json
+tests/

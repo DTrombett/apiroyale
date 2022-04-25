@@ -4,5 +4,6 @@
 	"format": ["cjs"],
 	"minify": true,
 	"platform": "node",
-	"target": "es2021"
+	"target": "es2021",
+	"dts": true
 }
