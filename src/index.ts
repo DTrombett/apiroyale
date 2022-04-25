@@ -1,6 +1,6 @@
 import ClientRoyale from "./ClientRoyale";
 
-export * from "./APITypes";
+export * from "royale-api-types";
 export * from "./ClientRoyale";
 export * from "./managers";
 export * from "./rest";

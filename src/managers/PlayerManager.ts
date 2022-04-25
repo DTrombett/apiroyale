@@ -1,3 +1,4 @@
+import { Routes } from "royale-api-types";
 import type ClientRoyale from "..";
 import type {
 	APIClanMember,
@@ -8,7 +9,6 @@ import type {
 	ListOptions,
 	StructureOptions,
 } from "..";
-import { Routes } from "../util";
 import { Manager } from "./Manager";
 
 /**

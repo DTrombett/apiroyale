@@ -1,7 +1,7 @@
+import { Routes } from "royale-api-types";
 import type ClientRoyale from "..";
 import type { APIBattleList, FetchOptions } from "..";
 import type { StructureOptions } from "../util";
-import { Routes } from "../util";
 import Manager from "./Manager";
 
 /**

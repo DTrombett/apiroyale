@@ -1,3 +1,4 @@
+import { Routes } from "royale-api-types";
 import type ClientRoyale from "..";
 import type {
 	APIChallengeChain,
@@ -5,7 +6,6 @@ import type {
 	FetchOptions,
 	StructureOptions,
 } from "..";
-import { Routes } from "../util";
 import { Manager } from "./Manager";
 
 /**

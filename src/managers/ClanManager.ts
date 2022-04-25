@@ -1,3 +1,4 @@
+import { Routes } from "royale-api-types";
 import type ClientRoyale from "..";
 import type {
 	APIClan,
@@ -12,7 +13,7 @@ import type {
 	SearchClanOptions,
 	StructureOptions,
 } from "..";
-import Constants, { Errors, Routes } from "../util";
+import Constants, { Errors } from "../util";
 import { Manager } from "./Manager";
 
 /**

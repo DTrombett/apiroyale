@@ -1,6 +1,6 @@
+import { Routes } from "royale-api-types";
 import type ClientRoyale from "..";
 import type { APICurrentRiverRace, FetchOptions, StructureOptions } from "..";
-import { Routes } from "../util";
 import { Manager } from "./Manager";
 
 /**

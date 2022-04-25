@@ -1,3 +1,4 @@
+import { Routes } from "royale-api-types";
 import type ClientRoyale from "..";
 import type {
 	APITournament,
@@ -5,7 +6,7 @@ import type {
 	FetchOptions,
 	SearchTournamentOptions,
 } from "..";
-import Constants, { Errors, Routes } from "../util";
+import Constants, { Errors } from "../util";
 import { Manager } from "./Manager";
 
 /**

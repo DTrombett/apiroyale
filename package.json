@@ -33,6 +33,7 @@
 	},
 	"dependencies": {
 		"@discordjs/collection": "^0.5.0",
+		"royale-api-types": "^1.0.0",
 		"tsup": "^5.12.6"
 	},
 	"devDependencies": {

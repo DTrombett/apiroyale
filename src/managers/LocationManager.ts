@@ -1,3 +1,4 @@
+import { Routes } from "royale-api-types";
 import type ClientRoyale from "..";
 import type {
 	APILocation,
@@ -5,7 +6,6 @@ import type {
 	FetchOptions,
 	ListOptions,
 } from "..";
-import { Routes } from "../util";
 import { Manager } from "./Manager";
 
 /**
