@@ -4,7 +4,7 @@ import { Routes } from "../util";
 import { Manager } from "./Manager";
 
 /**
- * A manager for challenge chains
+ * A manager for ladder tournaments
  */
 export class LadderTournamentManager extends Manager<
 	APILadderTournament["tag"],
@@ -29,7 +29,7 @@ export class LadderTournamentManager extends Manager<
 	/**
 	 * Get list of global tournaments.
 	 * @param options - Options for the request
-	 * @returns The challenge chains
+	 * @returns The global tournaments
 	 */
 	async fetch(options: FetchOptions): Promise<APILadderTournament[]> {
 		const existing = this.last();

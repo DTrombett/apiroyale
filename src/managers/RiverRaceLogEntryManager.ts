@@ -12,7 +12,7 @@ import Manager from "./Manager";
  * A manager for river race log entries
  */
 export class RiverRaceLogEntryManager extends Manager<
-	`${string}-${number}-${number}`,
+	`${string}-${APIRiverRaceLogEntry["seasonId"]}-${APIRiverRaceLogEntry["sectionIndex"]}`,
 	APIRiverRaceLogEntry
 > {
 	/**
@@ -54,10 +54,10 @@ export class RiverRaceLogEntryManager extends Manager<
 
 	/**
 	 * Filter the entries for a specific clan from the cache.
-	 * @param clanTag - Tag of the
+	 * @param clanTag - Tag of the clan
 	 * @returns The filtered entries
 	 */
-	of(
+	for(
 		clanTag: string
 	): Collection<`${string}-${number}-${number}`, APIRiverRaceLogEntry> {
 		return this.filter((_, key) => key.startsWith(clanTag));

@@ -33,8 +33,6 @@ export class ChallengeChainManager extends Manager<
 	/**
 	 * Get current and upcoming challenges.
 	 * Challenges are returned as chains.
-	 * Chains are either of type singleChallenge or challengeChain.
-	 * Possible types for prizes are: none, cardStack, chest, cardStackRandom, resource, tradeToken, consumable.
 	 * @param options - Options for the request
 	 * @returns The challenge chains
 	 */
@@ -43,7 +41,7 @@ export class ChallengeChainManager extends Manager<
 
 		if (
 			existing &&
-			options.force !== undefined &&
+			options.force !== true &&
 			!this.isOutdated(existing.startTime)
 		)
 			return this.array();

@@ -1,6 +1,5 @@
 import type ClientRoyale from "..";
-import type { FetchOptions } from "..";
-import type { APIBattleList } from "../APITypes";
+import type { APIBattleList, FetchOptions } from "..";
 import { Routes } from "../util";
 import Manager from "./Manager";
 
@@ -31,12 +30,12 @@ export class BattleListManager extends Manager<string, APIBattleList> {
 	): Promise<APIBattleList> {
 		const existing = this.get(playerTag);
 
-		if (existing && options.force !== undefined && !this.isOutdated(playerTag))
+		if (existing && options.force !== true && !this.isOutdated(playerTag))
 			return existing;
-		const player = await this.client.api.get(Routes.BattleLog(playerTag));
+		const list = await this.client.api.get(Routes.BattleLog(playerTag));
 
-		return this.add(playerTag, player.data, {
-			maxAge: player.maxAge,
+		return this.add(playerTag, list.data, {
+			maxAge: list.maxAge,
 		});
 	}
 }

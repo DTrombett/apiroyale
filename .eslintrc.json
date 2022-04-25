@@ -100,6 +100,7 @@
 		"no-async-promise-executor": "off",
 		"no-await-in-loop": "warn",
 		"no-caller": "warn",
+		"no-console": "warn",
 		"no-constructor-return": "warn",
 		"no-else-return": [
 			"warn",

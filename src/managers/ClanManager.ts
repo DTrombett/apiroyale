@@ -1,5 +1,14 @@
 import type ClientRoyale from "..";
-import type { APIClan, APIClanList, FetchOptions, SearchClanOptions } from "..";
+import type {
+	APIClan,
+	APIClanList,
+	APIClanMemberList,
+	APIClanRanking,
+	APIClanRankingList,
+	FetchOptions,
+	ListOptions,
+	SearchClanOptions,
+} from "..";
 import Constants, { Errors, Routes } from "../util";
 import { Manager } from "./Manager";
 
@@ -8,7 +17,7 @@ import { Manager } from "./Manager";
  */
 export class ClanManager extends Manager<
 	APIClan["tag"],
-	APIClan | APIClanList["items"][number]
+	APIClan | APIClanList["items"][number] | APIClanRanking
 > {
 	/**
 	 * @param client - The client that instantiated this manager
@@ -30,6 +39,7 @@ export class ClanManager extends Manager<
 	 * Get information about a single clan by clan tag.
 	 * Clan tags can be found using clan search operation.
 	 * @param tag - Tag of the clan
+	 * @param options - Options for the request
 	 * @returns The clan
 	 */
 	async fetch(tag: string, options: FetchOptions = {}): Promise<APIClan> {
@@ -37,7 +47,7 @@ export class ClanManager extends Manager<
 
 		if (
 			existing &&
-			options.force !== undefined &&
+			options.force !== true &&
 			"memberList" in existing &&
 			!this.isOutdated(tag)
 		)
@@ -47,6 +57,84 @@ export class ClanManager extends Manager<
 		return this.add(clan.data.tag, clan.data, {
 			maxAge: clan.maxAge,
 		});
+	}
+
+	/**
+	 * List clan members.
+	 * @param clanTag - Tag of the clan
+	 * @param options - Options for the request
+	 * @returns The clan members
+	 */
+	async fetchMembers(
+		clanTag: string,
+		options: ListOptions = {}
+	): Promise<APIClanMemberList> {
+		const query: Record<string, string> = {};
+
+		if (options.limit !== undefined) query.limit = options.limit.toString();
+		if (options.after !== undefined) query.after = options.after;
+		if (options.before !== undefined) query.before = options.before;
+		const members = await this.client.api.get(Routes.ClanMembers(clanTag), {
+			query,
+		});
+
+		for (const member of members.data.items)
+			this.client.players.add(member.tag, member, { maxAge: members.maxAge });
+		return members.data;
+	}
+
+	/**
+	 * Get clan rankings for a specific location.
+	 * @param locationId - Identifier of the location to retrieve
+	 * @param options - Options for the request
+	 * @returns The clan rankings
+	 */
+	async fetchRankings(
+		locationId: number,
+		options: ListOptions
+	): Promise<APIClanRankingList> {
+		const query: Record<string, string> = {};
+
+		if (options.limit !== undefined) query.limit = options.limit.toString();
+		if (options.after !== undefined) query.after = options.after;
+		if (options.before !== undefined) query.before = options.before;
+		const rankings = await this.client.api.get(
+			Routes.ClanRankings(locationId),
+			{
+				query,
+			}
+		);
+
+		for (const clan of rankings.data.items)
+			this.add(clan.tag, clan, { maxAge: rankings.maxAge });
+		return rankings.data;
+	}
+
+	/**
+	 * Get clan war rankings for a specific location.
+	 * @param locationId - Identifier of the location to retrieve
+	 * @param options - Options for the request
+	 * @returns The clan war rankings
+	 */
+	async fetchWarRankings(
+		locationId: number,
+		options: ListOptions
+	): Promise<APIClanRankingList> {
+		const query: Record<string, string> = {};
+
+		if (options.limit !== undefined) query.limit = options.limit.toString();
+		if (options.after !== undefined) query.after = options.after;
+		if (options.before !== undefined) query.before = options.before;
+		const rankings = await this.client.api.get(
+			Routes.ClanWarRankings(locationId),
+			{
+				query,
+			}
+		);
+
+		for (const clan of rankings.data.items)
+			this.add(clan.tag, clan, { maxAge: rankings.maxAge });
+		return rankings.data;
 	}
 
 	/**

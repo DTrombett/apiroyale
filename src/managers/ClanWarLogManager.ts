@@ -1,10 +1,11 @@
 import type ClientRoyale from "..";
-import type { APIClanWarLog, FetchOptions, ListOptions } from "..";
-import { Routes } from "../util";
+import type { APIClanWarLog } from "..";
 import Manager from "./Manager";
 
 /**
  * A manager for clan war logs
+ * @deprecated **The WarLog API endpoint has been temporarily disabled, possibilities to bring it back are being investigated.
+ * Use {@link RiverRaceLogEntryManager} instead**
  */
 export class ClanWarLogManager extends Manager<string, APIClanWarLog> {
 	/**
@@ -19,32 +20,14 @@ export class ClanWarLogManager extends Manager<string, APIClanWarLog> {
 
 	/**
 	 * Retrieve clan's clan war log.
-	 * @param clanTag - Tag of the clan
-	 * @param options - Options for the request
+	 * @param _clanTag - Tag of the clan
 	 * @returns The clan war log
+	 * @throws {@link Error} - This API endpoint has been temporarily disabled, possibilities to bring it back are being investigated.
 	 */
-	async fetch(
-		clanTag: string,
-		options: FetchOptions & ListOptions = {}
-	): Promise<APIClanWarLog> {
-		const existing = this.get(clanTag);
-
-		if (
-			existing &&
-			options.force !== true &&
-			(this.maxAges[clanTag] ?? 0) < Date.now()
-		)
-			return existing;
-		const query: Record<string, string> = {};
-
-		if (options.limit !== undefined) query.limit = options.limit.toString();
-		if (options.after !== undefined) query.after = options.after;
-		if (options.before !== undefined) query.before = options.before;
-		const res = await this.client.api.get(Routes.WarLog(clanTag), {
-			query,
-		});
-
-		return this.add(clanTag, res.data, { maxAge: res.maxAge });
+	fetch(_clanTag: string): never {
+		throw new Error(
+			"The WarLog API endpoint has been temporarily disabled, possibilities to bring it back are being investigated."
+		);
 	}
 }
 

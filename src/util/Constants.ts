@@ -10,12 +10,12 @@ import type {
 	APIClanMemberList,
 	APIClanRankingList,
 	APIClanWarLog,
-	APICurrentClanWar,
 	APICurrentRiverRace,
 	APIItem,
 	APIItemList,
 	APILadderTournament,
 	APILadderTournamentList,
+	APILadderTournamentRanking,
 	APILadderTournamentRankingList,
 	APILeagueSeason,
 	APILeagueSeasonList,
@@ -88,12 +88,31 @@ export interface ClientEvents {
 		oldLadderTournament: APILadderTournament,
 		newLadderTournament: APILadderTournament
 	];
+	leagueSeasonAdd: [leagueSeason: APILeagueSeason];
+	leagueSeasonRemove: [leagueSeason: APILeagueSeason];
+	leagueSeasonUpdate: [
+		oldLeagueSeason: APILeagueSeason,
+		newLeagueSeason: APILeagueSeason
+	];
+	locationAdd: [location: APILocation];
+	locationRemove: [location: APILocation];
+	locationUpdate: [oldLocation: APILocation, newLocation: APILocation];
+	ladderTournamentRankingAdd: [
+		ladderTournamentRanking: APILadderTournamentRanking
+	];
+	ladderTournamentRankingRemove: [
+		ladderTournamentRanking: APILadderTournamentRanking
+	];
+	ladderTournamentRankingUpdate: [
+		oldLadderTournamentRanking: APILadderTournamentRanking,
+		newLadderTournamentRanking: APILadderTournamentRanking
+	];
 }
 
 /**
  * Options to instantiate a client
  */
-export interface ClientOptions {
+export interface ClientOptions extends Partial<DefaultOptions> {
 	/**
 	 * The maximum time in milliseconds before cancelling a REST request
 	 */
@@ -144,6 +163,21 @@ export const enum Constants {
 }
 
 /**
+ * Default options for the client
+ */
+export interface DefaultOptions {
+	/**
+	 * Whether to cache a fetched structure
+	 */
+	defaultCache: boolean;
+
+	/**
+	 * Whether to cache the nested structures of a fetched structure
+	 */
+	defaultCacheNested: boolean;
+}
+
+/**
  * Error messages
  */
 export const Errors = {
@@ -187,6 +221,16 @@ export interface FetchOptions {
 	 * Whether to skip the cache and fetch from the API
 	 */
 	force?: boolean;
+
+	/**
+	 * Whether to cache the structure
+	 */
+	cache?: boolean;
+
+	/**
+	 * Whether to cache the nested structures
+	 */
+	cacheNested?: boolean;
 }
 
 /**
@@ -320,6 +364,8 @@ export const Routes = {
 	/**
 	 * Retrieve clan's clan war log.
 	 * @param clanTag - Tag of the clan
+	 * @deprecated **This API endpoint has been temporarily disabled, possibilities to bring it back are being investigated.
+	 * Use {@link Routes.RiverRaceLog} instead**
 	 */
 	WarLog: (clanTag: string) => `/clans/${clanTag}/warlog` as const,
 
@@ -335,12 +381,6 @@ export const Routes = {
 	 * @param clanTag - Tag of the clan
 	 */
 	RiverRaceLog: (clanTag: string) => `/clans/${clanTag}/riverracelog` as const,
-
-	/**
-	 * Retrieve information about clan's current clan war.
-	 * @param clanTag - Tag of the clan
-	 */
-	CurrentWar: (clanTag: string) => `/clans/${clanTag}/currentwar` as const,
 
 	/**
 	 * Get information about a single clan by clan tag.
@@ -485,8 +525,6 @@ export type ResponseType<T extends ValueOf<Routes>> = T extends Routes["WarLog"]
 	? APIClanList
 	: T extends Routes["RiverRaceLog"]
 	? APIRiverRaceLog
-	: T extends Routes["CurrentWar"]
-	? APICurrentClanWar
 	: T extends Routes["ClanMembers"]
 	? APIClanMemberList
 	: T extends Routes["CurrentRiverRace"]
@@ -528,6 +566,14 @@ export type ResponseType<T extends ValueOf<Routes>> = T extends Routes["WarLog"]
 	: T extends Routes["GlobalTournamentRankings"]
 	? APILadderTournamentRankingList
 	: never;
+
+/**
+ * The response returned by the rest
+ */
+export interface RestResponse<T extends Path> {
+	data: ResponseType<T>;
+	maxAge: number;
+}
 
 /**
  * Options for searching a clan
@@ -588,6 +634,13 @@ export type StructureEvents<V> = ValueOf<{
 			: never
 		: never;
 }>;
+
+/**
+ * Options for adding a structure to a manager
+ */
+export interface StructureOptions {
+	maxAge?: number;
+}
 
 /**
  * A valid token for the API

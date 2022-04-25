@@ -30,12 +30,12 @@ export class ChestListManager extends Manager<string, APIChestList> {
 	): Promise<APIChestList> {
 		const existing = this.get(playerTag);
 
-		if (existing && options.force !== undefined && !this.isOutdated(playerTag))
+		if (existing && options.force !== true && !this.isOutdated(playerTag))
 			return existing;
-		const player = await this.client.api.get(Routes.UpcomingChests(playerTag));
+		const list = await this.client.api.get(Routes.UpcomingChests(playerTag));
 
-		return this.add(playerTag, player.data.items, {
-			maxAge: player.maxAge,
+		return this.add(playerTag, list.data.items, {
+			maxAge: list.maxAge,
 		});
 	}
 }

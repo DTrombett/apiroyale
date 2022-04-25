@@ -1,5 +1,5 @@
-import type { ClientRoyale, Path, RequestOptions } from "..";
-import type { ResponseType } from "../util";
+import type ClientRoyale from "..";
+import type { Path, RequestOptions, ResponseType, RestResponse } from "..";
 import { Errors, Queue } from "../util";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
@@ -39,7 +39,7 @@ export class Rest {
 	async get<T extends Path>(
 		path: T,
 		options?: RequestOptions & { retry?: boolean; force?: boolean }
-	): Promise<{ data: ResponseType<T>; maxAge: number }> {
+	): Promise<RestResponse<T>> {
 		await this.queue.wait();
 
 		if (this.rateLimited && options?.force !== true)

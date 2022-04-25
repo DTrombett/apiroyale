@@ -1,5 +1,5 @@
-import type { ClientRoyale } from "../ClientRoyale";
-import type { ManagerOptions } from "../util";
+import type ClientRoyale from "..";
+import type { ManagerOptions, StructureOptions } from "..";
 import { Collection } from "../util";
 
 /**
@@ -44,9 +44,10 @@ export class Manager<K extends number | string | symbol, V> extends Collection<
 	 * Adds a structure to this manager.
 	 * @param key - The key of the structure to add
 	 * @param value - The structure to add
+	 * @param options - Options for the structure
 	 * @returns The added structure
 	 */
-	add<T extends V>(key: K, value: T, options: { maxAge?: number } = {}): T {
+	add<T extends V>(key: K, value: T, options: StructureOptions = {}): T {
 		const old = this.get(key);
 
 		this.maxAges[key] = options.maxAge;

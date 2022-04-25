@@ -41,7 +41,7 @@ export class TournamentManager extends Manager<
 
 		if (
 			existing &&
-			options.force !== undefined &&
+			options.force !== true &&
 			"membersList" in existing &&
 			!this.isOutdated(tag)
 		)

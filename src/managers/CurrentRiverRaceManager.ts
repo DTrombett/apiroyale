@@ -29,6 +29,7 @@ export class CurrentRiverRaceManager extends Manager<
 	/**
 	 * Retrieve information about clan's current river race.
 	 * @param clanTag - Tag of the clan
+	 * @param options - Options for the request
 	 * @returns The current river race
 	 */
 	async fetch(
@@ -37,7 +38,7 @@ export class CurrentRiverRaceManager extends Manager<
 	): Promise<APICurrentRiverRace> {
 		const existing = this.get(clanTag);
 
-		if (existing && options.force !== undefined && !this.isOutdated(clanTag))
+		if (existing && options.force !== true && !this.isOutdated(clanTag))
 			return existing;
 		const race = await this.client.api.get(Routes.CurrentRiverRace(clanTag));
 
