@@ -29,6 +29,7 @@ export class BattleListManager extends Manager<string, APIBattleList> {
 				this.client.gameModes.add(battle.gameMode.id, battle.gameMode, options);
 				this.client.arenas.add(battle.arena.id, battle.arena, options);
 			}
+		// TODO: Cache structure only if options.cache is true
 		return super.add(key, value, options);
 	}
 

@@ -26,6 +26,7 @@ export class Rest {
 	/**
 	 * @param client - The client that instantiated this
 	 */
+	// TODO: remove client
 	constructor(client: ClientRoyale) {
 		this.client = client;
 	}
