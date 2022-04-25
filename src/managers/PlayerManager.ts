@@ -6,6 +6,7 @@ import type {
 	APIPlayerRankingList,
 	FetchOptions,
 	ListOptions,
+	StructureOptions,
 } from "..";
 import { Routes } from "../util";
 import { Manager } from "./Manager";
@@ -31,6 +32,26 @@ export class PlayerManager extends Manager<
 			},
 			...data.map((player) => [player.tag, player] as const)
 		);
+	}
+
+	add<T extends APIClanMember | APIPlayer | APIPlayerRanking>(
+		key: string,
+		value: T,
+		options?: StructureOptions
+	): T {
+		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested) {
+			if ("clan" in value && value.clan)
+				this.client.clans.add(value.clan.tag, value.clan, options);
+			if (value.arena)
+				this.client.arenas.add(value.arena.id, value.arena, options);
+			if ("currentFavouriteCard" in value && value.currentFavouriteCard)
+				this.client.cards.add(
+					value.currentFavouriteCard.id,
+					value.currentFavouriteCard,
+					options
+				);
+		}
+		return super.add(key, value, options);
 	}
 
 	/**

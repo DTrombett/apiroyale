@@ -1,5 +1,5 @@
 import type ClientRoyale from "..";
-import type { APICurrentRiverRace, FetchOptions } from "..";
+import type { APICurrentRiverRace, FetchOptions, StructureOptions } from "..";
 import { Routes } from "../util";
 import { Manager } from "./Manager";
 
@@ -24,6 +24,17 @@ export class CurrentRiverRaceManager extends Manager<
 			},
 			...data.map((race) => [race.clan.tag, race] as const)
 		);
+	}
+
+	add<T extends APICurrentRiverRace>(
+		key: string,
+		value: T,
+		options?: StructureOptions
+	): T {
+		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+			for (const clan of value.clans)
+				this.client.clans.add(clan.tag, clan, options);
+		return super.add(key, value, options);
 	}
 
 	/**

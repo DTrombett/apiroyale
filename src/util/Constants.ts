@@ -1,7 +1,9 @@
 import type { OutgoingHttpHeaders } from "node:http";
 import type { URL, URLSearchParams } from "node:url";
 import type {
+	APIArena,
 	APIBattleList,
+	APIChallenge,
 	APIChallengeChain,
 	APIChallengeChainsList,
 	APIChestList,
@@ -11,6 +13,7 @@ import type {
 	APIClanRankingList,
 	APIClanWarLog,
 	APICurrentRiverRace,
+	APIGameMode,
 	APIItem,
 	APIItemList,
 	APILadderTournament,
@@ -107,6 +110,15 @@ export interface ClientEvents {
 		oldLadderTournamentRanking: APILadderTournamentRanking,
 		newLadderTournamentRanking: APILadderTournamentRanking
 	];
+	arenaAdd: [arena: APIArena];
+	arenaRemove: [arena: APIArena];
+	arenaUpdate: [oldArena: APIArena, newArena: APIArena];
+	gameModeAdd: [gameMode: APIGameMode];
+	gameModeRemove: [gameMode: APIGameMode];
+	gameModeUpdate: [oldGameMode: APIGameMode, newGameMode: APIGameMode];
+	challengeAdd: [challenge: APIChallenge];
+	challengeRemove: [challenge: APIChallenge];
+	challengeUpdate: [oldChallenge: APIChallenge, newChallenge: APIChallenge];
 }
 
 /**
@@ -639,7 +651,15 @@ export type StructureEvents<V> = ValueOf<{
  * Options for adding a structure to a manager
  */
 export interface StructureOptions {
+	/**
+	 * When this structure should be considered outdated
+	 */
 	maxAge?: number;
+
+	/**
+	 * Whether nested structures should be cached
+	 */
+	cacheNested?: boolean;
 }
 
 /**

@@ -1,12 +1,15 @@
 import EventEmitter from "node:events";
 import type { ClientEvents, ClientOptions, DefaultOptions } from ".";
 import {
+	ArenaManager,
 	BattleListManager,
 	ChallengeChainManager,
+	ChallengeManager,
 	ChestListManager,
 	ClanManager,
 	ClanWarLogManager,
 	CurrentRiverRaceManager,
+	GameModeManager,
 	ItemManager,
 	LadderTournamentManager,
 	LadderTournamentRankingManager,
@@ -90,6 +93,11 @@ export class ClientRoyale extends EventEmitter {
 	token: string = process.env.CLASH_ROYALE_TOKEN!;
 
 	/**
+	 * A manager for arenas
+	 */
+	arenas = new ArenaManager(this);
+
+	/**
 	 * A manager for battle logs
 	 */
 	battleLogs = new BattleListManager(this);
@@ -102,7 +110,12 @@ export class ClientRoyale extends EventEmitter {
 	/**
 	 * A manager for challenges
 	 */
-	challenges = new ChallengeChainManager(this);
+	challenges = new ChallengeManager(this);
+
+	/**
+	 * A manager for challenge chains
+	 */
+	challengeChains = new ChallengeChainManager(this);
 
 	/**
 	 * A manager for clans
@@ -120,6 +133,11 @@ export class ClientRoyale extends EventEmitter {
 	 * A manager for current river races
 	 */
 	currentRiverRaces = new CurrentRiverRaceManager(this);
+
+	/**
+	 * A manager for game modes
+	 */
+	gameModes = new GameModeManager(this);
 
 	/**
 	 * A manager for global tournament rankings

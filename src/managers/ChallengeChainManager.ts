@@ -3,6 +3,7 @@ import type {
 	APIChallengeChain,
 	APIChallengeChainsList,
 	FetchOptions,
+	StructureOptions,
 } from "..";
 import { Routes } from "../util";
 import { Manager } from "./Manager";
@@ -28,6 +29,17 @@ export class ChallengeChainManager extends Manager<
 			},
 			...data.map((challenge) => [challenge.startTime, challenge] as const)
 		);
+	}
+
+	add<T extends APIChallengeChain>(
+		key: string,
+		value: T,
+		options?: StructureOptions
+	): T {
+		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+			for (const challenge of value.challenges)
+				this.client.challenges.add(challenge.id, challenge, options);
+		return super.add(key, value, options);
 	}
 
 	/**

@@ -4,6 +4,7 @@ import type {
 	APILadderTournamentRankingList,
 	Collection,
 	ListOptions,
+	StructureOptions,
 } from "..";
 import { Routes } from "../util";
 import Manager from "./Manager";
@@ -24,6 +25,16 @@ export class LadderTournamentRankingManager extends Manager<
 			updateEvent: "ladderTournamentRankingUpdate",
 			removeEvent: "ladderTournamentRankingRemove",
 		});
+	}
+
+	add<T extends APILadderTournamentRanking>(
+		key: `${string}-${string}`,
+		value: T,
+		options?: StructureOptions
+	): T {
+		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+			this.client.clans.add(value.clan.tag, value.clan, options);
+		return super.add(key, value, options);
 	}
 
 	/**

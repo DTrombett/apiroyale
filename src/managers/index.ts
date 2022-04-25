@@ -1,11 +1,14 @@
 import Manager from "./Manager";
 
+export * from "./ArenaManager";
 export * from "./BattleListManager";
 export * from "./ChallengeChainManager";
+export * from "./ChallengeManager";
 export * from "./ChestListManager";
 export * from "./ClanManager";
 export * from "./ClanWarLogManager";
 export * from "./CurrentRiverRaceManager";
+export * from "./GameModeManager";
 export * from "./ItemManager";
 export * from "./LadderTournamentManager";
 export * from "./LadderTournamentRankingManager";

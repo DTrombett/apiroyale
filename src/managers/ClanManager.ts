@@ -5,9 +5,12 @@ import type {
 	APIClanMemberList,
 	APIClanRanking,
 	APIClanRankingList,
+	APIPlayerRankingClan,
+	APIRiverRaceClan,
 	FetchOptions,
 	ListOptions,
 	SearchClanOptions,
+	StructureOptions,
 } from "..";
 import Constants, { Errors, Routes } from "../util";
 import { Manager } from "./Manager";
@@ -17,7 +20,11 @@ import { Manager } from "./Manager";
  */
 export class ClanManager extends Manager<
 	APIClan["tag"],
-	APIClan | APIClanList["items"][number] | APIClanRanking
+	| APIClan
+	| APIClanList["items"][number]
+	| APIClanRanking
+	| APIPlayerRankingClan
+	| APIRiverRaceClan
 > {
 	/**
 	 * @param client - The client that instantiated this manager
@@ -33,6 +40,27 @@ export class ClanManager extends Manager<
 			},
 			...data.map((clan) => [clan.tag, clan] as const)
 		);
+	}
+
+	add<
+		T extends
+			| APIClan
+			| APIClanRanking
+			| APIPlayerRankingClan
+			| APIRiverRaceClan
+			| Omit<
+					APIClan,
+					"clanChestPoints" | "clanChestStatus" | "description" | "memberList"
+			  >
+	>(key: string, value: T, options?: StructureOptions): T {
+		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested) {
+			if ("memberList" in value)
+				for (const member of value.memberList)
+					this.client.players.add(member.tag, member, options);
+			if ("location" in value)
+				this.client.locations.add(value.location.id, value.location, options);
+		}
+		return super.add(key, value, options);
 	}
 
 	/**

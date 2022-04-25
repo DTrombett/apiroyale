@@ -1,5 +1,6 @@
 import type ClientRoyale from "..";
 import type { APIBattleList, FetchOptions } from "..";
+import type { StructureOptions } from "../util";
 import { Routes } from "../util";
 import Manager from "./Manager";
 
@@ -16,6 +17,19 @@ export class BattleListManager extends Manager<string, APIBattleList> {
 			updateEvent: "battleListUpdate",
 			removeEvent: "battleListRemove",
 		});
+	}
+
+	add<T extends APIBattleList>(
+		key: string,
+		value: T,
+		options?: StructureOptions
+	): T {
+		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+			for (const battle of value) {
+				this.client.gameModes.add(battle.gameMode.id, battle.gameMode, options);
+				this.client.arenas.add(battle.arena.id, battle.arena, options);
+			}
+		return super.add(key, value, options);
 	}
 
 	/**
