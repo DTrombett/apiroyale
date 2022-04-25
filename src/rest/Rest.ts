@@ -1,5 +1,5 @@
-import type { ClientRoyale, Path, RequestOptions } from "..";
-import type { ResponseType } from "../util";
+import type ClientRoyale from "..";
+import type { Path, RequestOptions, ResponseType, RestResponse } from "..";
 import { Errors, Queue } from "../util";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
@@ -39,7 +39,7 @@ export class Rest {
 	async get<T extends Path>(
 		path: T,
 		options?: RequestOptions & { retry?: boolean; force?: boolean }
-	): Promise<ResponseType<T>> {
+	): Promise<RestResponse<T>> {
 		await this.queue.wait();
 
 		if (this.rateLimited && options?.force !== true)
@@ -56,7 +56,8 @@ export class Rest {
 		}
 		if (res.statusCode >= 200 && res.statusCode < 300)
 			// If the request is ok parse the data received
-			data = JSON.parse(res.data!) as ResponseType<T>;
+			data =
+				res.data != null ? (JSON.parse(res.data) as ResponseType<T>) : null;
 		else if (res.statusCode >= 300 && res.statusCode < 400)
 			// In this case we have no data
 			data = null;
@@ -65,8 +66,14 @@ export class Rest {
 			this.queue.next();
 			return this.get(path, { ...options, retry: false });
 		}
+		const maxAge = res.headers["cache-control"]?.match(/max-age=(\d+)/)?.[1];
+
 		this.queue.next();
-		if (data !== undefined) return data!;
+		if (data !== undefined)
+			return {
+				data: data!,
+				maxAge: Date.now() + (maxAge !== undefined ? parseInt(maxAge, 10) : 0),
+			};
 		// If we didn't receive a successful response, throw an error
 		throw new ErrorRoyale(req, res);
 	}

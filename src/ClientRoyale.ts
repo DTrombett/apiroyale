@@ -1,32 +1,26 @@
 import EventEmitter from "node:events";
-import { URLSearchParams } from "node:url";
-import type {
-	Clan,
-	ClanMember,
-	ClanPreview,
-	ClanResultPreview,
-	ClientEvents,
-	ClientOptions,
-	Collection,
-	FetchClanMembersOptions,
-	FetchPlayerUpcomingChestsOptions,
-	FetchRiverRaceLogOptions,
-	Player,
-} from ".";
-import { ClanMemberList, RiverRaceLogResults } from "./lists";
+import type { ClientEvents, ClientOptions, DefaultOptions } from ".";
 import {
 	ArenaManager,
-	CardManager,
+	BattleListManager,
+	ChallengeChainManager,
+	ChallengeManager,
+	ChestListManager,
 	ClanManager,
-	ClanPreviewManager,
-	ClanResultPreviewManager,
+	ClanWarLogManager,
 	CurrentRiverRaceManager,
+	GameModeManager,
+	ItemManager,
+	LadderTournamentManager,
+	LadderTournamentRankingManager,
+	LeagueSeasonManager,
 	LocationManager,
 	PlayerManager,
-	UpcomingChestManager,
+	RiverRaceLogEntryManager,
+	TournamentManager,
 } from "./managers";
 import Rest from "./rest";
-import Constants, { Errors, Routes } from "./util";
+import Constants, { Errors } from "./util";
 
 /**
  * A class to connect to the Clash Royale API
@@ -71,7 +65,7 @@ export interface ClientRoyale extends EventEmitter {
  */
 export class ClientRoyale extends EventEmitter {
 	/**
-	 * The maximum time in milliseconds before cancelling a REST request
+	 * The maximum time in milliseconds before cancelling a request
 	 */
 	abortTimeout: number = Constants.defaultAbortTimeout;
 
@@ -81,35 +75,99 @@ export class ClientRoyale extends EventEmitter {
 	api = new Rest(this);
 
 	/**
-	 * A manager for arenas
-	 */
-	arenas = new ArenaManager(this);
-
-	/**
 	 * The base URL of the API
 	 */
 	baseURL: string = Constants.baseURL;
 
 	/**
+	 * Default values for the client
+	 */
+	defaults: DefaultOptions = {
+		defaultCache: true,
+		defaultCacheNested: true,
+	};
+
+	/**
+	 * The token used for the API
+	 */
+	token: string = process.env.CLASH_ROYALE_TOKEN!;
+
+	/**
+	 * A manager for arenas
+	 */
+	arenas = new ArenaManager(this);
+
+	/**
+	 * A manager for battle logs
+	 */
+	battleLogs = new BattleListManager(this);
+
+	/**
 	 * A manager for cards
 	 */
-	cards = new CardManager(this);
+	cards = new ItemManager(this);
 
 	/**
-	 * A manager for clan previews
-	 * This is updated with player clans info
+	 * A manager for challenges
 	 */
-	clanPreviews = new ClanPreviewManager(this);
+	challenges = new ChallengeManager(this);
 
 	/**
-	 * A manager for clan result previews
+	 * A manager for challenge chains
 	 */
-	clanResultPreviews = new ClanResultPreviewManager(this);
+	challengeChains = new ChallengeChainManager(this);
 
 	/**
 	 * A manager for clans
 	 */
 	clans = new ClanManager(this);
+
+	/**
+	 * The cache of clan war logs
+	 * @deprecated **The WarLog API endpoint has been temporarily disabled, possibilities to bring it back are being investigated.
+	 * Use {@link RiverRaceLogEntryManager} instead**
+	 */
+	clanWarLogs = new ClanWarLogManager(this);
+
+	/**
+	 * A manager for current river races
+	 */
+	currentRiverRaces = new CurrentRiverRaceManager(this);
+
+	/**
+	 * A manager for game modes
+	 */
+	gameModes = new GameModeManager(this);
+
+	/**
+	 * A manager for global tournament rankings
+	 */
+	globalTournamentRankings = new LadderTournamentRankingManager(this);
+
+	/**
+	 * A manager for global tournaments
+	 */
+	globalTournaments = new LadderTournamentManager(this);
+
+	/**
+	 * A manager for river race logs
+	 */
+	riverRaceLogs = new RiverRaceLogEntryManager(this);
+
+	/**
+	 * A manager for tournaments
+	 */
+	tournaments = new TournamentManager(this);
+
+	/**
+	 * A manager for upcoming chests
+	 */
+	upcomingChests = new ChestListManager(this);
+
+	/**
+	 * A manager for seasons
+	 */
+	seasons = new LeagueSeasonManager(this);
 
 	/**
 	 * A manager for locations
@@ -122,118 +180,20 @@ export class ClientRoyale extends EventEmitter {
 	players = new PlayerManager(this);
 
 	/**
-	 * A manager for clans current river races
-	 */
-	races = new CurrentRiverRaceManager(this);
-
-	/**
-	 * The maximum time in milliseconds passed after the structure was last fetched before fetching again.
-	 */
-	structureMaxAge: number = Constants.defaultMaxAge;
-
-	/**
-	 * The token used for the API
-	 */
-	token: string = process.env.CLASH_ROYALE_TOKEN!;
-
-	/**
 	 * @param options - Options for the client
 	 */
 	constructor(options: ClientOptions = {}) {
 		super();
 
-		if (options.token != null) this.token = options.token;
+		if (options.token !== undefined) this.token = options.token;
 		if (!this.token) throw new TypeError(Errors.tokenMissing());
-		if (options.abortTimeout != null) this.abortTimeout = options.abortTimeout;
-		if (options.baseURL != null) this.baseURL = options.baseURL;
-		if (options.structureMaxAge != null)
-			this.structureMaxAge = options.structureMaxAge;
-	}
-
-	/**
-	 * A collection of all the clans cached
-	 */
-	get allClans(): Collection<string, Clan | ClanPreview | ClanResultPreview> {
-		return this.clanPreviews.concat(this.clanResultPreviews, this.clans);
-	}
-
-	/**
-	 * A collection of all the players cached
-	 */
-	get allPlayers(): Collection<string, ClanMember | Player> {
-		return this.players.concat(...this.clans.map((clan) => clan.members));
-	}
-
-	/**
-	 * Fetch the river race log of a clan.
-	 * @param options - Options for fetching the river race log
-	 * @returns The river race log of a clan
-	 */
-	async fetchRiverRaceLog(
-		options: FetchRiverRaceLogOptions
-	): Promise<RiverRaceLogResults> {
-		const clan = this.allClans.get(options.tag);
-		const query = new URLSearchParams();
-
-		if (options.limit !== undefined) query.append("limit", `${options.limit}`);
-		if (options.after !== undefined) query.append("after", options.after);
-		if (options.before !== undefined) query.append("before", options.before);
-
-		const log = await this.api.get(Routes.RiverRaceLog(options.tag), {
-			query,
-		});
-
-		clan?.riverRaceLog.add(...log.items);
-		return new RiverRaceLogResults(this, options, log);
-	}
-
-	/**
-	 * Fetch the upcoming chests of a player.
-	 * @param options - Options for fetching the upcoming chests
-	 * @returns The upcoming chests of a player
-	 */
-	async fetchPlayerUpcomingChests<T extends UpcomingChestManager>(
-		options: FetchPlayerUpcomingChestsOptions
-	): Promise<T> {
-		const player = this.allPlayers.get(options.tag);
-
-		if (
-			!options.force! &&
-			player &&
-			Date.now() - (player.upcomingChests.first()?.lastUpdate.getTime() ?? 0) <
-				this.structureMaxAge
-		)
-			return player.upcomingChests as T;
-		const { items: chests } = await this.api.get(
-			Routes.UpcomingChests(options.tag)
-		);
-
-		player?.upcomingChests.add(...chests);
-		return (player?.upcomingChests ??
-			new UpcomingChestManager(this, chests)) as T;
-	}
-
-	/**
-	 * Fetch the members of a clan.
-	 * @param options - Options for fetching the members
-	 * @returns The members of a clan
-	 */
-	async fetchClanMembers(
-		options: FetchClanMembersOptions
-	): Promise<ClanMemberList> {
-		const clan = this.clans.get(options.tag);
-		const query = new URLSearchParams();
-
-		if (options.limit !== undefined) query.append("limit", `${options.limit}`);
-		if (options.after !== undefined) query.append("after", options.after);
-		if (options.before !== undefined) query.append("before", options.before);
-
-		const members = await this.api.get(Routes.ClanMembers(options.tag), {
-			query,
-		});
-
-		clan?.members.add(...members.items);
-		return new ClanMemberList(this, options, members);
+		if (options.abortTimeout !== undefined)
+			this.abortTimeout = options.abortTimeout;
+		if (options.baseURL !== undefined) this.baseURL = options.baseURL;
+		if (options.defaultCache !== undefined)
+			this.defaults.defaultCache = options.defaultCache;
+		if (options.defaultCacheNested !== undefined)
+			this.defaults.defaultCacheNested = options.defaultCacheNested;
 	}
 }
 
