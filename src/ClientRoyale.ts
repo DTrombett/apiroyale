@@ -20,7 +20,6 @@ import {
 	TournamentManager,
 } from "./managers";
 import Rest from "./rest";
-import Constants, { Errors } from "./util";
 
 /**
  * A class to connect to the Clash Royale API
@@ -65,19 +64,9 @@ export interface ClientRoyale extends EventEmitter {
  */
 export class ClientRoyale extends EventEmitter {
 	/**
-	 * The maximum time in milliseconds before cancelling a request
-	 */
-	abortTimeout: number = Constants.defaultAbortTimeout;
-
-	/**
 	 * The rest client
 	 */
-	api = new Rest(this);
-
-	/**
-	 * The base URL of the API
-	 */
-	baseURL: string = Constants.baseURL;
+	api: Rest;
 
 	/**
 	 * Default cache options for the client
@@ -86,11 +75,6 @@ export class ClientRoyale extends EventEmitter {
 		cache: true,
 		cacheNested: true,
 	};
-
-	/**
-	 * The token used for the API
-	 */
-	token: string = process.env.CLASH_ROYALE_TOKEN!;
 
 	/**
 	 * A manager for arenas
@@ -185,11 +169,7 @@ export class ClientRoyale extends EventEmitter {
 	constructor(options: ClientOptions = {}) {
 		super();
 
-		if (options.token !== undefined) this.token = options.token;
-		if (!this.token) throw new TypeError(Errors.tokenMissing());
-		if (options.abortTimeout !== undefined)
-			this.abortTimeout = options.abortTimeout;
-		if (options.baseURL !== undefined) this.baseURL = options.baseURL;
+		this.api = new Rest(this, options);
 		if (options.cache !== undefined) this.cacheOptions.cache = options.cache;
 		if (options.cacheNested !== undefined)
 			this.cacheOptions.cacheNested = options.cacheNested;
