@@ -114,23 +114,7 @@ export interface ClientEvents {
 /**
  * Options to instantiate a client
  */
-export interface ClientOptions extends CacheOptions {
-	/**
-	 * The maximum time in milliseconds before cancelling a REST request
-	 */
-	abortTimeout?: number;
-
-	/**
-	 * The base URL of the API
-	 */
-	baseURL?: string;
-
-	/**
-	 * The token of this client
-	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
-	 */
-	token?: Token;
-}
+export type ClientOptions = CacheOptions & RestOptions;
 
 export const enum Constants {
 	/**
@@ -340,6 +324,7 @@ export interface RequestOptions {
 export interface RestOptions {
 	/**
 	 * The token of the rest
+	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
 	 */
 	token?: Token;
 
