@@ -32,7 +32,7 @@ export class LadderTournamentRankingManager extends Manager<
 		value: T,
 		options?: StructureOptions
 	): T {
-		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+		if (options?.cacheNested ?? this.client.cacheOptions.cacheNested)
 			this.client.clans.add(value.clan.tag, value.clan, options);
 		return super.add(key, value, options);
 	}
@@ -62,6 +62,7 @@ export class LadderTournamentRankingManager extends Manager<
 		for (const ranking of list.data.items)
 			this.add(`${tournamentTag}-${ranking.tag}`, ranking, {
 				maxAge: list.maxAge,
+				...options,
 			});
 		return list.data;
 	}

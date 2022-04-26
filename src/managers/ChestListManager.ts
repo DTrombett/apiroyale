@@ -36,6 +36,7 @@ export class ChestListManager extends Manager<string, APIChestList> {
 
 		return this.add(playerTag, list.data.items, {
 			maxAge: list.maxAge,
+			...options,
 		});
 	}
 }
