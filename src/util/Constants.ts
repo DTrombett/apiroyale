@@ -347,6 +347,23 @@ export interface RequestOptions {
 		| readonly [string, string][];
 }
 
+export interface RestOptions {
+	/**
+	 * The token of the rest
+	 */
+	token?: Token;
+
+	/**
+	 * The base URL of the rest
+	 */
+	baseURL?: string;
+
+	/**
+	 * The maximum time in milliseconds before cancelling a REST request
+	 */
+	abortTimeout?: number;
+}
+
 /**
  * The response returned by the rest
  */
