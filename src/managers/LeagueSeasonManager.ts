@@ -57,6 +57,7 @@ export class LeagueSeasonManager extends Manager<
 
 			return this.add(season.data.id, season.data, {
 				maxAge: season.maxAge,
+				...options,
 			});
 		}
 		const query: Record<string, string> = {};
@@ -70,7 +71,7 @@ export class LeagueSeasonManager extends Manager<
 		});
 
 		for (const season of seasons.data.items)
-			this.add(season.id, season, { maxAge: seasons.maxAge });
+			this.add(season.id, season, { maxAge: seasons.maxAge, ...idOrOptions });
 		return seasons.data;
 	}
 }

@@ -39,7 +39,7 @@ export class ItemManager extends Manager<APIItem["id"], APIItem> {
 		});
 
 		for (const item of items.data.items)
-			this.add(item.id, item, { maxAge: items.maxAge });
+			this.add(item.id, item, { maxAge: items.maxAge, ...options });
 		return items.data;
 	}
 }

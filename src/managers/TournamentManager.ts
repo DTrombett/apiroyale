@@ -51,6 +51,7 @@ export class TournamentManager extends Manager<
 
 		return this.add(tournament.data.tag, tournament.data, {
 			maxAge: tournament.maxAge,
+			...options,
 		});
 	}
 
@@ -82,7 +83,10 @@ export class TournamentManager extends Manager<
 		});
 
 		for (const tournament of tournaments.data.items)
-			this.add(tournament.tag, tournament, { maxAge: tournaments.maxAge });
+			this.add(tournament.tag, tournament, {
+				maxAge: tournaments.maxAge,
+				...options,
+			});
 		return tournaments.data;
 	}
 }

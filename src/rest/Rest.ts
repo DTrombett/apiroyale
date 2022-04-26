@@ -1,17 +1,34 @@
+import { env } from "process";
 import type ClientRoyale from "..";
-import type { Path, RequestOptions, ResponseType, RestResponse } from "..";
-import { Errors, Queue } from "../util";
+import type {
+	Path,
+	RequestOptions,
+	ResponseType,
+	RestOptions,
+	RestResponse,
+	Token,
+} from "..";
+import Constants, { Errors, Queue } from "../util";
 import APIRequest from "./APIRequest";
 import ErrorRoyale from "./ErrorRoyale";
 
 /**
- * A rest manager for the client
+ * A rest manager
  */
 export class Rest {
 	/**
-	 * The client that instantiated this
+	 * The client that instantiated this, if any
 	 */
-	client: ClientRoyale;
+	client?: ClientRoyale;
+
+	/**
+	 * The options for this rest manager
+	 */
+	options: Required<RestOptions> = {
+		baseURL: Constants.baseURL as string,
+		token: env.CLASH_ROYALE_TOKEN as Token,
+		abortTimeout: Constants.defaultAbortTimeout as number,
+	};
 
 	/**
 	 * A queue for the requests
@@ -25,10 +42,17 @@ export class Rest {
 
 	/**
 	 * @param client - The client that instantiated this
+	 * @param options - The options for this rest manager
 	 */
-	// TODO: remove client
-	constructor(client: ClientRoyale) {
+	constructor(client?: ClientRoyale, options: RestOptions = {}) {
 		this.client = client;
+
+		if (options.token !== undefined) this.options.token = options.token;
+		if (!this.options.token as boolean)
+			throw new TypeError(Errors.tokenMissing());
+		if (options.baseURL !== undefined) this.options.baseURL = options.baseURL;
+		if (options.abortTimeout !== undefined)
+			this.options.abortTimeout = options.abortTimeout;
 	}
 
 	/**

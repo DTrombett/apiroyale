@@ -54,7 +54,7 @@ export class ClanManager extends Manager<
 					"clanChestPoints" | "clanChestStatus" | "description" | "memberList"
 			  >
 	>(key: string, value: T, options?: StructureOptions): T {
-		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested) {
+		if (options?.cacheNested ?? this.client.cacheOptions.cacheNested) {
 			if ("memberList" in value)
 				for (const member of value.memberList)
 					this.client.players.add(member.tag, member, options);
@@ -85,6 +85,7 @@ export class ClanManager extends Manager<
 
 		return this.add(clan.data.tag, clan.data, {
 			maxAge: clan.maxAge,
+			...options,
 		});
 	}
 
@@ -108,7 +109,7 @@ export class ClanManager extends Manager<
 		});
 
 		for (const member of members.data.items)
-			this.client.players.add(member.tag, member, { maxAge: members.maxAge });
+			this.client.players.add(member.tag, member, { maxAge: members.maxAge, ...options });
 		return members.data;
 	}
 
@@ -135,7 +136,7 @@ export class ClanManager extends Manager<
 		);
 
 		for (const clan of rankings.data.items)
-			this.add(clan.tag, clan, { maxAge: rankings.maxAge });
+			this.add(clan.tag, clan, { maxAge: rankings.maxAge, ...options });
 		return rankings.data;
 	}
 
@@ -162,7 +163,7 @@ export class ClanManager extends Manager<
 		);
 
 		for (const clan of rankings.data.items)
-			this.add(clan.tag, clan, { maxAge: rankings.maxAge });
+			this.add(clan.tag, clan, { maxAge: rankings.maxAge, ...options });
 		return rankings.data;
 	}
 
@@ -213,7 +214,7 @@ export class ClanManager extends Manager<
 		});
 
 		for (const clan of clans.data.items)
-			this.add(clan.tag, clan, { maxAge: clans.maxAge });
+			this.add(clan.tag, clan, { maxAge: clans.maxAge, ...options });
 		return clans.data;
 	}
 }

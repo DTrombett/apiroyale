@@ -36,7 +36,7 @@ export class ChallengeChainManager extends Manager<
 		value: T,
 		options?: StructureOptions
 	): T {
-		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+		if (options?.cacheNested ?? this.client.cacheOptions.cacheNested)
 			for (const challenge of value.challenges)
 				this.client.challenges.add(challenge.id, challenge, options);
 		return super.add(key, value, options);
@@ -60,7 +60,10 @@ export class ChallengeChainManager extends Manager<
 		const challenges = await this.client.api.get(Routes.Challenges());
 
 		for (const challenge of challenges.data)
-			this.add(challenge.startTime, challenge, { maxAge: challenges.maxAge });
+			this.add(challenge.startTime, challenge, {
+				maxAge: challenges.maxAge,
+				...options,
+			});
 		return challenges.data;
 	}
 }

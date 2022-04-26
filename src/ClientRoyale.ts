@@ -1,5 +1,5 @@
 import EventEmitter from "node:events";
-import type { ClientEvents, ClientOptions, DefaultOptions } from ".";
+import type { CacheOptions, ClientEvents, ClientOptions } from ".";
 import {
 	ArenaManager,
 	BattleListManager,
@@ -20,7 +20,6 @@ import {
 	TournamentManager,
 } from "./managers";
 import Rest from "./rest";
-import Constants, { Errors } from "./util";
 
 /**
  * A class to connect to the Clash Royale API
@@ -65,32 +64,17 @@ export interface ClientRoyale extends EventEmitter {
  */
 export class ClientRoyale extends EventEmitter {
 	/**
-	 * The maximum time in milliseconds before cancelling a request
-	 */
-	abortTimeout: number = Constants.defaultAbortTimeout;
-
-	/**
 	 * The rest client
 	 */
-	api = new Rest(this);
+	api: Rest;
 
 	/**
-	 * The base URL of the API
+	 * Default cache options for the client
 	 */
-	baseURL: string = Constants.baseURL;
-
-	/**
-	 * Default values for the client
-	 */
-	defaults: DefaultOptions = {
-		defaultCache: true,
-		defaultCacheNested: true,
+	cacheOptions: Required<CacheOptions> = {
+		cache: true,
+		cacheNested: true,
 	};
-
-	/**
-	 * The token used for the API
-	 */
-	token: string = process.env.CLASH_ROYALE_TOKEN!;
 
 	/**
 	 * A manager for arenas
@@ -185,15 +169,10 @@ export class ClientRoyale extends EventEmitter {
 	constructor(options: ClientOptions = {}) {
 		super();
 
-		if (options.token !== undefined) this.token = options.token;
-		if (!this.token) throw new TypeError(Errors.tokenMissing());
-		if (options.abortTimeout !== undefined)
-			this.abortTimeout = options.abortTimeout;
-		if (options.baseURL !== undefined) this.baseURL = options.baseURL;
-		if (options.defaultCache !== undefined)
-			this.defaults.defaultCache = options.defaultCache;
-		if (options.defaultCacheNested !== undefined)
-			this.defaults.defaultCacheNested = options.defaultCacheNested;
+		this.api = new Rest(this, options);
+		if (options.cache !== undefined) this.cacheOptions.cache = options.cache;
+		if (options.cacheNested !== undefined)
+			this.cacheOptions.cacheNested = options.cacheNested;
 	}
 }
 
