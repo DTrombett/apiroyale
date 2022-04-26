@@ -114,7 +114,7 @@ export interface ClientEvents {
 /**
  * Options to instantiate a client
  */
-export interface ClientOptions extends Partial<CacheOptions> {
+export interface ClientOptions extends CacheOptions {
 	/**
 	 * The maximum time in milliseconds before cancelling a REST request
 	 */
