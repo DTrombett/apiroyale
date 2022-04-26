@@ -67,7 +67,7 @@ export class LocationManager extends Manager<APILocation["id"], APILocation> {
 		});
 
 		for (const season of locations.data.items)
-			this.add(season.id, season, { maxAge: locations.maxAge });
+			this.add(season.id, season, { maxAge: locations.maxAge, ...options });
 		return locations.data;
 	}
 }

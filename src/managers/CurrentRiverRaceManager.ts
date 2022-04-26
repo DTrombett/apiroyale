@@ -31,7 +31,7 @@ export class CurrentRiverRaceManager extends Manager<
 		value: T,
 		options?: StructureOptions
 	): T {
-		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+		if (options?.cacheNested ?? this.client.cacheOptions.cacheNested)
 			for (const clan of value.clans)
 				this.client.clans.add(clan.tag, clan, options);
 		return super.add(key, value, options);
@@ -55,6 +55,7 @@ export class CurrentRiverRaceManager extends Manager<
 
 		return this.add(clanTag, race.data, {
 			maxAge: race.maxAge,
+			...options,
 		});
 	}
 }

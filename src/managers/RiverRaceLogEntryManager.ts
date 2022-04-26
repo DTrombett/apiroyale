@@ -48,6 +48,7 @@ export class RiverRaceLogEntryManager extends Manager<
 		for (const entry of res.data.items)
 			this.add(`${clanTag}-${entry.seasonId}-${entry.sectionIndex}`, entry, {
 				maxAge: res.maxAge,
+				...options,
 			});
 		return res.data;
 	}

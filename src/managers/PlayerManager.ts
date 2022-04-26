@@ -39,7 +39,7 @@ export class PlayerManager extends Manager<
 		value: T,
 		options?: StructureOptions
 	): T {
-		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested) {
+		if (options?.cacheNested ?? this.client.cacheOptions.cacheNested) {
 			if ("clan" in value && value.clan)
 				this.client.clans.add(value.clan.tag, value.clan, options);
 			if (value.arena)
@@ -74,6 +74,7 @@ export class PlayerManager extends Manager<
 
 		return this.add(player.data.tag, player.data, {
 			maxAge: player.maxAge,
+			...options,
 		});
 	}
 
@@ -100,7 +101,7 @@ export class PlayerManager extends Manager<
 		);
 
 		for (const player of rankings.data.items)
-			this.add(player.tag, player, { maxAge: rankings.maxAge });
+			this.add(player.tag, player, { maxAge: rankings.maxAge, ...options });
 		return rankings.data;
 	}
 
@@ -127,7 +128,7 @@ export class PlayerManager extends Manager<
 		);
 
 		for (const player of rankings.data.items)
-			this.add(player.tag, player, { maxAge: rankings.maxAge });
+			this.add(player.tag, player, { maxAge: rankings.maxAge, ...options });
 		return rankings.data;
 	}
 }

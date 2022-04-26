@@ -43,7 +43,10 @@ export class LadderTournamentManager extends Manager<
 		const tournaments = await this.client.api.get(Routes.GlobalTournaments());
 
 		for (const tournament of tournaments.data.items)
-			this.add(tournament.tag, tournament, { maxAge: tournaments.maxAge });
+			this.add(tournament.tag, tournament, {
+				maxAge: tournaments.maxAge,
+				...options,
+			});
 		return tournaments.data.items;
 	}
 }

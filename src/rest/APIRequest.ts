@@ -40,7 +40,7 @@ export class APIRequest {
 		this.query = new URLSearchParams(query);
 		this.headers = {
 			Accept: Constants.acceptHeader,
-			Authorization: `${Constants.authorizationHeaderPrefix} ${rest.client.token}`,
+			Authorization: `${Constants.authorizationHeaderPrefix} ${rest.options.token}`,
 			...headers,
 		};
 	}
@@ -49,7 +49,7 @@ export class APIRequest {
 	 * The full URL of this request
 	 */
 	get url(): URL {
-		const url = new URL(this.rest.client.baseURL);
+		const url = new URL(this.rest.options.baseURL);
 
 		url.pathname += this.path;
 		url.search = this.query.toString();
@@ -61,7 +61,7 @@ export class APIRequest {
 	 * @returns A promise that resolves with the response
 	 */
 	send(): Promise<Response> {
-		this.rest.client.emit("requestStart", this);
+		this.rest.client?.emit("requestStart", this);
 		return new Promise<Response>((resolve, reject) => {
 			this.make(resolve, reject);
 		});
@@ -78,7 +78,7 @@ export class APIRequest {
 	) {
 		// This is the data we'll receive
 		let data = "";
-		const { abortTimeout } = this.rest.client;
+		const { abortTimeout } = this.rest.options;
 		const timeout = setTimeout(() => {
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
 			req.destroy(new Error(Errors.requestAborted(this.path, abortTimeout)));
@@ -117,7 +117,7 @@ export class APIRequest {
 					const response = new Response(data, res);
 
 					resolve(response);
-					this.rest.client.emit("requestEnd", this, response);
+					this.rest.client?.emit("requestEnd", this, response);
 				});
 			}
 		);
