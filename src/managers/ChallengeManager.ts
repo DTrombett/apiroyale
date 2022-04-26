@@ -27,7 +27,7 @@ export class ChallengeManager extends Manager<number, APIChallenge> {
 		value: T,
 		options?: StructureOptions
 	): T {
-		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+		if (options?.cacheNested ?? this.client.cacheOptions.cacheNested)
 			this.client.gameModes.add(value.gameMode.id, value.gameMode, options);
 		return super.add(key, value, options);
 	}
