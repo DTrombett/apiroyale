@@ -1,5 +1,5 @@
 import EventEmitter from "node:events";
-import type { ClientEvents, ClientOptions, DefaultOptions } from ".";
+import type { CacheOptions, ClientEvents, ClientOptions } from ".";
 import {
 	ArenaManager,
 	BattleListManager,
@@ -80,11 +80,11 @@ export class ClientRoyale extends EventEmitter {
 	baseURL: string = Constants.baseURL;
 
 	/**
-	 * Default values for the client
+	 * Default cache options for the client
 	 */
-	defaults: DefaultOptions = {
-		defaultCache: true,
-		defaultCacheNested: true,
+	cacheOptions: Required<CacheOptions> = {
+		cache: true,
+		cacheNested: true,
 	};
 
 	/**
@@ -190,10 +190,9 @@ export class ClientRoyale extends EventEmitter {
 		if (options.abortTimeout !== undefined)
 			this.abortTimeout = options.abortTimeout;
 		if (options.baseURL !== undefined) this.baseURL = options.baseURL;
-		if (options.defaultCache !== undefined)
-			this.defaults.defaultCache = options.defaultCache;
-		if (options.defaultCacheNested !== undefined)
-			this.defaults.defaultCacheNested = options.defaultCacheNested;
+		if (options.cache !== undefined) this.cacheOptions.cache = options.cache;
+		if (options.cacheNested !== undefined)
+			this.cacheOptions.cacheNested = options.cacheNested;
 	}
 }
 
