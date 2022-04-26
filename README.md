@@ -36,7 +36,15 @@ client.clans.fetch("<clan-tag>").then((clan) => {
 client.clans.fetch("<clan-tag>", { cache: false }).then((clan) => {
 	console.log(clan.name);
 });
+// Note that you can also pass default cache/cacheNested options to the client constructor
+const client = new ClientRoyale({
+	token: "<your-token>",
+	cache: false,
+	cacheNested: false,
+});
+```
 
+```ts
 // Search for a clan by name
 client.clans
 	.search({ name: "clan name", limit: 10 })

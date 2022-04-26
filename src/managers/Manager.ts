@@ -48,6 +48,7 @@ export class Manager<K extends number | string | symbol, V> extends Collection<
 	 * @returns The added structure
 	 */
 	add<T extends V>(key: K, value: T, options: StructureOptions = {}): T {
+		if (!(options.cache ?? this.client.cacheOptions.cache)) return value;
 		const old = this.get(key);
 
 		this.maxAges[key] = options.maxAge;

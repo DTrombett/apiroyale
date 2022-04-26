@@ -24,12 +24,11 @@ export class BattleListManager extends Manager<string, APIBattleList> {
 		value: T,
 		options?: StructureOptions
 	): T {
-		if (options?.cacheNested ?? this.client.defaults.defaultCacheNested)
+		if (options?.cacheNested ?? this.client.cacheOptions.cacheNested)
 			for (const battle of value) {
 				this.client.gameModes.add(battle.gameMode.id, battle.gameMode, options);
 				this.client.arenas.add(battle.arena.id, battle.arena, options);
 			}
-		// TODO: Cache structure only if options.cache is true
 		return super.add(key, value, options);
 	}
 
@@ -51,6 +50,7 @@ export class BattleListManager extends Manager<string, APIBattleList> {
 
 		return this.add(playerTag, list.data, {
 			maxAge: list.maxAge,
+			...options,
 		});
 	}
 }

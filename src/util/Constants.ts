@@ -114,23 +114,7 @@ export interface ClientEvents {
 /**
  * Options to instantiate a client
  */
-export interface ClientOptions extends Partial<DefaultOptions> {
-	/**
-	 * The maximum time in milliseconds before cancelling a REST request
-	 */
-	abortTimeout?: number;
-
-	/**
-	 * The base URL of the API
-	 */
-	baseURL?: string;
-
-	/**
-	 * The token of this client
-	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
-	 */
-	token?: Token;
-}
+export type ClientOptions = CacheOptions & RestOptions;
 
 export const enum Constants {
 	/**
@@ -165,18 +149,18 @@ export const enum Constants {
 }
 
 /**
- * Default options for the client
+ * Cache options for the client
  */
-export interface DefaultOptions {
+export interface CacheOptions {
 	/**
 	 * Whether to cache a fetched structure
 	 */
-	defaultCache: boolean;
+	cache?: boolean;
 
 	/**
 	 * Whether to cache the nested structures of a fetched structure
 	 */
-	defaultCacheNested: boolean;
+	cacheNested?: boolean;
 }
 
 /**
@@ -218,21 +202,11 @@ export interface FetchClanMembersOptions extends ListOptions {
 /**
  * Options to fetch a structure
  */
-export interface FetchOptions {
+export interface FetchOptions extends CacheOptions {
 	/**
 	 * Whether to skip the cache and fetch from the API
 	 */
 	force?: boolean;
-
-	/**
-	 * Whether to cache the structure
-	 */
-	cache?: boolean;
-
-	/**
-	 * Whether to cache the nested structures
-	 */
-	cacheNested?: boolean;
 }
 
 /**
@@ -274,7 +248,7 @@ export type Json =
 /**
  * Base options for fetching a list
  */
-export interface ListOptions {
+export interface ListOptions extends CacheOptions {
 	/**
 	 * Return only items that occur after this marker.
 	 * This marker can be found in the search results, inside the 'paging' property.
@@ -347,6 +321,24 @@ export interface RequestOptions {
 		| readonly [string, string][];
 }
 
+export interface RestOptions {
+	/**
+	 * The token of the rest
+	 * This defaults to `process.env.CLASH_ROYALE_TOKEN` if none is provided
+	 */
+	token?: Token;
+
+	/**
+	 * The base URL of the rest
+	 */
+	baseURL?: string;
+
+	/**
+	 * The maximum time in milliseconds before cancelling a REST request
+	 */
+	abortTimeout?: number;
+}
+
 /**
  * The response returned by the rest
  */
@@ -413,16 +405,11 @@ export type StructureEvents<V> = ValueOf<{
 /**
  * Options for adding a structure to a manager
  */
-export interface StructureOptions {
+export interface StructureOptions extends CacheOptions {
 	/**
 	 * When this structure should be considered outdated
 	 */
 	maxAge?: number;
-
-	/**
-	 * Whether nested structures should be cached
-	 */
-	cacheNested?: boolean;
 }
 
 /**
