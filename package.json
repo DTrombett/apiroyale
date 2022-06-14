@@ -34,7 +34,7 @@
 		"url": "https://github.com/DTrombett/apiroyale/issues"
 	},
 	"dependencies": {
-		"@discordjs/collection": "^0.5.0",
+		"@discordjs/collection": "^0.7.0",
 		"royale-api-types": "^1.0.0"
 	},
 	"devDependencies": {
@@ -45,7 +45,7 @@
 		"eslint": "^8.14.0",
 		"husky": "^8.0.1",
 		"prettier": "^2.6.2",
-		"tsup": "^5.12.6",
+		"tsup": "^6.1.2",
 		"typescript": "^4.6.3"
 	}
 }
