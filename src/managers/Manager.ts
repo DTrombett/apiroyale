@@ -74,7 +74,7 @@ export class Manager<K extends number | string | symbol, V> extends Collection<
 	 * @returns Whether the structure is outdated
 	 */
 	isOutdated(id: K): boolean {
-		return this.maxAges[id] !== undefined && Date.now() > this.maxAges[id];
+		return this.maxAges[id] !== undefined && Date.now() > this.maxAges[id]!;
 	}
 
 	/**
