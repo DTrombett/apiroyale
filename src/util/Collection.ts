@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck This is for type incompatibility between custom and base collections
 import type { Comparator } from "@discordjs/collection";
-import BaseCollection from "@discordjs/collection";
+import { Collection as BaseCollection } from "@discordjs/collection";
 
 /**
  * A custom collection
