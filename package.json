@@ -38,7 +38,7 @@
 		"royale-api-types": "^1.0.0"
 	},
 	"devDependencies": {
-		"@tsconfig/node16": "^1.0.2",
+		"@tsconfig/node16": "^16.1.1",
 		"@types/node": "^20.2.5",
 		"@typescript-eslint/eslint-plugin": "^5.20.0",
 		"@typescript-eslint/parser": "^5.20.0",
